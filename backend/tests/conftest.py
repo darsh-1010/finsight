@@ -7,6 +7,9 @@ def compile_array_sqlite(element, compiler, **kw):
     return "TEXT"
 
 
+import os
+os.environ["DATABASE_URL"] = "sqlite:///./test.db"
+
 import pytest
 from starlette.testclient import TestClient
 

@@ -127,14 +127,7 @@ implementation_plan.md
 .pyre_configuration
 pyrightconfig.json
 
-# Test directories and specific test files to exclude/include
-tests/
+# Test directories and specific test files
+# We track all unit tests in version control
 !tests/
-tests/*
-!tests/data_sources/
-!tests/data_sources/test_yfinance_source.py
-!tests/services/
-tests/services/*
-!tests/services/test_ticker_service_concurrency.py
-!tests/utils/
-!tests/utils/test_rate_limiter.py
+import_log.txt
