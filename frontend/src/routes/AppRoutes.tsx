@@ -36,6 +36,7 @@ const AskFinSight = lazy(() => import('@/pages/AskFinSight'));
 const MarketInsigts = lazy(() => import('@/pages/MarketInsigts'));
 const UserOnboarding = lazy(() => import('@/pages/UserOnboarding'));
 const UserProfile = lazy(() => import('@/pages/UserProfile'));
+const Sandbox = lazy(() => import('@/pages/Sandbox'));
 
 
 const HomeRoute = () => {
@@ -129,6 +130,7 @@ const routesConfig = [
       { path: '/ask_finsight', element: <AskFinSight /> },
       { path: '/ask_finsight/c/:conversationId', element: <AskFinSight /> },
       { path: '/user_profile', element: <UserProfile /> },
+      { path: '/sandbox', element: <Sandbox /> },
       {
         path: '/admin',
         element: (

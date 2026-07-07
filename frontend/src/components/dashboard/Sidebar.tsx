@@ -58,6 +58,11 @@ const navItems = [
     icon: <PiChartLineUpDuotone size={22} />,
     path: '/market_insights',
   },
+  {
+    label: 'Portfolio Sandbox',
+    icon: <Briefcase size={22} />,
+    path: '/sandbox',
+  },
 ];
 
 const adminSubItems = [
