@@ -11,7 +11,7 @@ channel based on user tier entitlement:
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime, timezone
 
 import redis.asyncio as aioredis
 from pydantic import ValidationError
@@ -125,7 +125,7 @@ class NotificationDispatcher:
             insight=insight,
             user_tier=user_tier,
             user_id=user_id,
-            dispatched_at=datetime.now(tz=timezone.utc),
+            dispatched_at=datetime.now(tz=UTC),
             is_immediate=is_immediate,
         )
 
@@ -265,7 +265,7 @@ class NotificationDispatcher:
         Returns:
             True if pushed, False when the daily send limit is reached.
         """
-        date_str = datetime.now(tz=timezone.utc).strftime("%Y-%m-%d")
+        date_str = datetime.now(tz=UTC).strftime("%Y-%m-%d")
         count_key = _DAILY_COUNT_KEY.format(user_id=payload.user_id, date=date_str)
 
         current_count = await self._redis.get(count_key)

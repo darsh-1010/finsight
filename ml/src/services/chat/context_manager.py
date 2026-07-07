@@ -36,12 +36,12 @@ class ContextManager:
         message: str,
         enriched_query: str,
         **kwargs: Any,
-    ) -> Tuple[
+    ) -> tuple[
         str | None,
-        List[Dict[str, Any]],
+        list[dict[str, Any]],
         bool,
-        Dict[str, Any] | None,
-        List[float] | None,
+        dict[str, Any] | None,
+        list[float] | None,
         list[str],
     ]:
         """Orchestrate fetching and combining context.
@@ -64,10 +64,11 @@ class ContextManager:
 
         try:
             raw_query = enriched_query or message
-            raw_vector, *_ = (
-                await self.rag_service.vector_service.embedding_service.aembed_documents(
-                    [raw_query]
-                )
+            (
+                raw_vector,
+                *_,
+            ) = await self.rag_service.vector_service.embedding_service.aembed_documents(
+                [raw_query]
             )
 
             # ── PHASE 1 ──
@@ -210,12 +211,12 @@ class ContextManager:
     async def _orchestrate_phase1(
         self,
         raw_query: str,
-        raw_vector: List[float],
+        raw_vector: list[float],
         *,
         features: Any,
         request_id: str,
         **kwargs: Any,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Start analysis and initial RAG in parallel."""
         # Financial analysis task
         if features and features.search_depth <= 0:
@@ -263,12 +264,12 @@ class ContextManager:
         self,
         message: str,
         raw_query: str,
-        analysis_data: Dict[str, Any],
+        analysis_data: dict[str, Any],
         *,
         features: Any,
         request_id: str,
         **kwargs: Any,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Execute supplemental RAG based on analysis results."""
         built_rag_query = self._build_rag_search_query(message, analysis_data)
         should_fetch_articles = self._should_fetch_articles(analysis_data)
@@ -328,10 +329,10 @@ class ContextManager:
         self,
         message: str,
         raw_query: str,
-        analysis_data: Dict[str, Any],
+        analysis_data: dict[str, Any],
         doc_phase1_task: asyncio.Task,
         **kwargs: Any,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Run supplemental retrieval tasks based on analysis."""
         request_id = kwargs.get("request_id", "unknown")
         built_rag_query = self._build_rag_search_query(message, analysis_data)
@@ -345,7 +346,7 @@ class ContextManager:
             built_rag_query != raw_query and len(built_rag_query) > len(raw_query) + 20
         )
 
-        expanded_vector: List[float] | None = None
+        expanded_vector: list[float] | None = None
         if query_was_expanded or should_fetch_articles:
             expanded_vector = await self._get_expanded_vector(built_rag_query)
 
@@ -382,7 +383,7 @@ class ContextManager:
             results, query_was_expanded, should_fetch_articles, request_id
         )
 
-    async def _get_expanded_vector(self, query: str) -> List[float] | None:
+    async def _get_expanded_vector(self, query: str) -> list[float] | None:
         """Utility to get vector for expanded query."""
         batch_vecs = (
             await self.rag_service.vector_service.embedding_service.aembed_documents(
@@ -393,11 +394,11 @@ class ContextManager:
 
     def _unpack_phase2_results(
         self,
-        results: List[Any],
+        results: list[Any],
         was_expanded: bool,
         fetch_articles: bool,
         request_id: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Unpack raw gather results into a clean dictionary."""
         doc_res_p1 = results[0]
         idx = 1
@@ -413,9 +414,9 @@ class ContextManager:
 
     def _extract_doc_article_contexts(
         self,
-        retrieval_results: Dict[str, Any],
+        retrieval_results: dict[str, Any],
         request_id: str,
-    ) -> Tuple[str, List[Dict[str, Any]], str, List[Dict[str, Any]]]:
+    ) -> tuple[str, list[dict[str, Any]], str, list[dict[str, Any]]]:
         """Unpack doc and article sub-results from the retrieval dict."""
         doc_ctx, doc_cits = self._handle_sub_result(
             retrieval_results.get("doc_res"), "Document", request_id
@@ -427,18 +428,18 @@ class ContextManager:
 
     def _process_retrieval_results(
         self,
-        analysis_data: Dict[str, Any],
-        retrieval_results: Dict[str, Any],
+        analysis_data: dict[str, Any],
+        retrieval_results: dict[str, Any],
         session_summary: str,
         request_id: str,
-    ) -> Tuple[str | None, List[Dict[str, Any]], bool, Dict[str, Any] | None]:
+    ) -> tuple[str | None, list[dict[str, Any]], bool, dict[str, Any] | None]:
         """Process results from semantic searches and financial pipelines."""
         doc_ctx, doc_cits, art_ctx, art_cits = self._extract_doc_article_contexts(
             retrieval_results, request_id
         )
 
         fin_ctx = ""
-        fin_cits: List[Dict[str, Any]] = []
+        fin_cits: list[dict[str, Any]] = []
         if isinstance(analysis_data, dict) and analysis_data.get("contexts"):
             fin_ctx, fin_cits = self._process_financial_context(
                 analysis_data, session_summary
@@ -462,7 +463,7 @@ class ContextManager:
 
     def _handle_sub_result(
         self, res: Any, lab: str, rid: str
-    ) -> Tuple[str, List[Dict[str, Any]]]:
+    ) -> tuple[str, list[dict[str, Any]]]:
         """Safely unpack retrieval sub-results."""
         if isinstance(res, Exception):
             logger.error(
@@ -478,7 +479,7 @@ class ContextManager:
         self,
         message: str,
         **kwargs: Any,
-    ) -> Tuple[str | None, List[Dict[str, Any]]]:
+    ) -> tuple[str | None, list[dict[str, Any]]]:
         """Get document context from RAG service."""
         if not self.enable_rag:
             return None, []
@@ -539,8 +540,8 @@ class ContextManager:
             return None, []
 
     def _format_doc_chunk(
-        self, position: int, doc: Dict[str, Any]
-    ) -> Tuple[str, Dict[str, Any]]:
+        self, position: int, doc: dict[str, Any]
+    ) -> tuple[str, dict[str, Any]]:
         """Format a single document chunk into a display string and its citation."""
         meta = doc.get("metadata", {})
         title = meta.get("title", "Untitled Document")
@@ -558,8 +559,8 @@ class ContextManager:
         return chunk_text, citation
 
     def _process_financial_context(
-        self, analysis_result: Dict[str, Any], session_summary: str
-    ) -> Tuple[str, List[Dict[str, Any]]]:
+        self, analysis_result: dict[str, Any], session_summary: str
+    ) -> tuple[str, list[dict[str, Any]]]:
         """Parse QueryService results into strings and citations."""
         contexts = [FinancialContext(**ctx) for ctx in analysis_result["contexts"]]
         expansion = QueryExpansionResult(**analysis_result["expansion"])
@@ -576,7 +577,7 @@ class ContextManager:
 
         return context_str, citations
 
-    def _should_fetch_articles(self, analysis_result: Dict[str, Any]) -> bool:
+    def _should_fetch_articles(self, analysis_result: dict[str, Any]) -> bool:
         """Check if LLM flagged that we need research/news article context."""
         if not analysis_result or not isinstance(analysis_result, dict):
             return True
@@ -586,7 +587,7 @@ class ContextManager:
         return expansion.get("requires_article_context", True)
 
     def _build_rag_search_query(
-        self, message: str, analysis_data: Dict[str, Any]
+        self, message: str, analysis_data: dict[str, Any]
     ) -> str:
         """Combine raw message with LLM expanded queries for richer semantic search."""
         if not analysis_data or not isinstance(analysis_data, dict):
@@ -686,7 +687,7 @@ class ContextManager:
         self,
         message: str,
         **kwargs: Any,
-    ) -> Tuple[str | None, List[Dict[str, Any]]]:
+    ) -> tuple[str | None, list[dict[str, Any]]]:
         """Get scraped article context from RAG service."""
         if not self.enable_rag:
             return None, []
@@ -759,9 +760,9 @@ class ContextManager:
     def _merge_contexts(
         self,
         fin_context: str,
-        fin_citations: List[Dict[str, Any]],
+        fin_citations: list[dict[str, Any]],
         **kwargs: Any,
-    ) -> Tuple[str, List[Dict[str, Any]]]:
+    ) -> tuple[str, list[dict[str, Any]]]:
         """Merge contexts and deduplicate citations by URL."""
         doc_context = kwargs.get("doc_ctx")
         doc_citations = kwargs.get("doc_cits", [])

@@ -17,9 +17,10 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from collections.abc import Sequence
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Sequence
+from typing import Any
 
 from playwright.async_api import Error as PlaywrightError
 
@@ -200,8 +201,7 @@ def build_retry_decision(
             "Retrying to check for a partial load."
         ),
         FailureCategory.UNKNOWN: (
-            f"Unexpected issue while scraping {source}. "
-            "Attempting standard recovery."
+            f"Unexpected issue while scraping {source}. Attempting standard recovery."
         ),
     }
 

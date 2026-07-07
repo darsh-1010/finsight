@@ -6,9 +6,15 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
-from src.core.exceptions import (ChatbotException, DataSourceError, LLMError,
-                                 QueryAnalysisError, RAGError, RateLimitError,
-                                 ValidationError)
+from src.core.exceptions import (
+    ChatbotException,
+    DataSourceError,
+    LLMError,
+    QueryAnalysisError,
+    RAGError,
+    RateLimitError,
+    ValidationError,
+)
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)

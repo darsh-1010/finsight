@@ -6,12 +6,18 @@ import asyncio
 import inspect
 import time
 from contextlib import suppress
-from datetime import datetime, timezone
+from datetime import UTC, datetime, timezone
 from typing import Any
 
-from openai import (APIConnectionError, APITimeoutError, AuthenticationError,
-                    BadRequestError, InternalServerError,
-                    PermissionDeniedError, RateLimitError)
+from openai import (
+    APIConnectionError,
+    APITimeoutError,
+    AuthenticationError,
+    BadRequestError,
+    InternalServerError,
+    PermissionDeniedError,
+    RateLimitError,
+)
 
 from config.settings import settings
 from src.llm.prompts import PromptLoader
@@ -149,7 +155,7 @@ def _build_checked_component_status(
 
 def _current_utc_timestamp() -> str:
     """Return an ISO-8601 UTC timestamp for health metadata."""
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 def _get_openai_canary_lock() -> asyncio.Lock:
@@ -175,7 +181,10 @@ def _set_openai_canary_status(is_healthy: bool, details: str) -> None:
 
 async def refresh_openai_canary() -> None:
     """Refresh the cached OpenAI dependency status using a small embedding request."""
-    if not settings.openai_api_key or settings.openai_api_key == "your_openai_api_key_here":
+    if (
+        not settings.openai_api_key
+        or settings.openai_api_key == "your_openai_api_key_here"
+    ):
         _set_openai_canary_status(True, "embedding canary ok (mocked for local dev)")
         return
 

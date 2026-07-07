@@ -14,7 +14,9 @@ from src.services.market_insights.llm_engine import LLMEngine
 from src.services.market_insights.market_triggers import MarketTriggerService
 from src.services.market_insights.models import ScanRequest, ScanResponse
 from src.services.market_insights.notification_dispatcher import (
-    NotificationDispatcher, build_dispatcher)
+    NotificationDispatcher,
+    build_dispatcher,
+)
 from src.services.market_insights.rag_client import MarketInsightsRAGClient
 from src.services.market_insights.weekly_compiler import WeeklySummaryCompiler
 from src.utils.logger import get_logger

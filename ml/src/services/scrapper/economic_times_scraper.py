@@ -12,7 +12,6 @@ import argparse
 import asyncio
 import logging
 from datetime import timedelta
-from typing import Dict, List, Optional
 from urllib.parse import urljoin
 
 from crawlee._request import Request
@@ -20,9 +19,12 @@ from crawlee._types import ConcurrencySettings
 from crawlee.configuration import Configuration
 from crawlee.crawlers import BeautifulSoupCrawler, BeautifulSoupCrawlingContext
 
-from src.services.schema.article_schema import (Article, ArticleMetadata,
-                                                ScrapeOutput,
-                                                load_scraper_config)
+from src.services.schema.article_schema import (
+    Article,
+    ArticleMetadata,
+    ScrapeOutput,
+    load_scraper_config,
+)
 
 from .date_filter import is_within_lookback
 
@@ -65,7 +67,7 @@ class EconomicTimesScraper:
         self.request_timeout_sec = cfg.get("request_timeout_sec", 30)
         self.max_pages = cfg.get("max_pages", 3)
 
-        self._articles: List[Article] = []
+        self._articles: list[Article] = []
         self._total_found = 0
         self._total_within_window = 0
 
@@ -73,11 +75,11 @@ class EconomicTimesScraper:
     # Public API
     # ------------------------------------------------------------------
 
-    def scrape(self) -> List[Dict]:
+    def scrape(self) -> list[dict]:
         """Run the full pipeline synchronously."""
         return asyncio.run(self.scrape_async())
 
-    async def scrape_async(self) -> List[Dict]:
+    async def scrape_async(self) -> list[dict]:
         """Crawlee-based async pipeline."""
         self._articles = []
         self._total_found = 0
@@ -322,7 +324,7 @@ class EconomicTimesScraper:
         return meta_desc["content"] if meta_desc else ""
 
     @staticmethod
-    def _extract_author(soup) -> Optional[str]:
+    def _extract_author(soup) -> str | None:
         """Extract author name from meta or span."""
         author_meta = soup.find("meta", attrs={"name": "author"})
         if author_meta:

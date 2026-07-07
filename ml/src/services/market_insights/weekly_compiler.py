@@ -10,23 +10,26 @@ from __future__ import annotations
 
 import asyncio
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime, timezone
 from typing import Any
 
 import pandas as pd
 import redis
 import yfinance as yf
 from openai import OpenAIError
-from src.llm.fallback_client import FallbackAsyncOpenAI
 
-from src.services.market_insights.models import (AlertPayload, InsightCategory,
-                                                 InsightTopic,
-                                                 WeeklyStockHighlight,
-                                                 WeeklySummaryReport,
-                                                 WeeklySummaryReportTier1,
-                                                 WeeklySummaryReportTier2,
-                                                 WeeklySummaryReportTier3,
-                                                 WeeklySummaryReportTier4)
+from src.llm.fallback_client import FallbackAsyncOpenAI
+from src.services.market_insights.models import (
+    AlertPayload,
+    InsightCategory,
+    InsightTopic,
+    WeeklyStockHighlight,
+    WeeklySummaryReport,
+    WeeklySummaryReportTier1,
+    WeeklySummaryReportTier2,
+    WeeklySummaryReportTier3,
+    WeeklySummaryReportTier4,
+)
 from src.utils.logger import get_logger
 from src.utils.redis_client import get_async_redis
 
@@ -183,7 +186,11 @@ class WeeklySummaryCompiler:
             self._client = openai_client
         else:
             api_key = openai_api_key or os.getenv("OPENAI_API_KEY")
-            self._client = FallbackAsyncOpenAI(api_key=api_key) if api_key else FallbackAsyncOpenAI()
+            self._client = (
+                FallbackAsyncOpenAI(api_key=api_key)
+                if api_key
+                else FallbackAsyncOpenAI()
+            )
 
         self._redis = redis_client or get_async_redis()
 
@@ -302,7 +309,7 @@ class WeeklySummaryCompiler:
                 )
 
             try:
-                date_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+                date_str = datetime.now(UTC).strftime("%Y-%m-%d")
                 audit_key = f"mi:weekly_report:audit:tier:{user_tier}:{date_str}"
                 await self._redis.set(
                     audit_key, report.model_dump_json(), ex=30 * 86400
@@ -922,7 +929,7 @@ class WeeklySummaryCompiler:
             if isinstance(pub_time, int):
                 try:
                     pub_time_str = datetime.fromtimestamp(
-                        pub_time, tz=timezone.utc
+                        pub_time, tz=UTC
                     ).strftime("%Y-%m-%d %H:%M:%S")
                 except (ValueError, TypeError, OSError):
                     pub_time_str = str(pub_time)
@@ -1125,7 +1132,7 @@ class WeeklySummaryCompiler:
             WeeklySummaryReport with fallback contents.
         """
         return WeeklySummaryReport(
-            generated_at=datetime.now(tz=timezone.utc),
+            generated_at=datetime.now(tz=UTC),
             overall_sentiment="Market data compilation completed. Refer to individual alerts for daily changes.",
             highlights=[
                 WeeklyStockHighlight(

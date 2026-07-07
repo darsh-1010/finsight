@@ -18,7 +18,7 @@ SCRAPER_PATTERN = (
 
 
 def update_scraper_intervals(
-    intervals: dict[str, float], config_path: Optional[Path] = None
+    intervals: dict[str, float], config_path: Path | None = None
 ) -> None:
     """Update the interval_days for scrapers in the config/scraper_config.yaml file.
 
@@ -39,7 +39,7 @@ def update_scraper_intervals(
         return
 
     try:
-        with open(config_path, "r", encoding="utf-8") as file_handle:
+        with open(config_path, encoding="utf-8") as file_handle:
             content = file_handle.read()
 
         updated_content = content

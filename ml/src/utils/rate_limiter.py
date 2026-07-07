@@ -3,11 +3,16 @@
 import asyncio
 import hashlib
 import time
+from collections.abc import Awaitable, Callable
 from functools import wraps
-from typing import Awaitable, Callable, ParamSpec, TypeVar
+from typing import ParamSpec, TypeVar
 
-from tenacity import (retry, retry_if_exception_type, stop_after_attempt,
-                      wait_exponential)
+from tenacity import (
+    retry,
+    retry_if_exception_type,
+    stop_after_attempt,
+    wait_exponential,
+)
 
 from config.settings import settings
 from src.utils.logger import get_logger
@@ -47,7 +52,7 @@ class RateLimiter:
 
     def _make_bucket_key(self, identifier: str, route: str) -> str:
         """Create a stable Redis key without storing raw client identifiers."""
-        digest = hashlib.sha256(f"{route}:{identifier}".encode("utf-8")).hexdigest()[
+        digest = hashlib.sha256(f"{route}:{identifier}".encode()).hexdigest()[
             :24
         ]
         return f"rate_limit:{route}:{digest}"

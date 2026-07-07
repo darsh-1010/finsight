@@ -11,7 +11,7 @@ logger = get_logger(__name__)
 class QuantService:
     """Mock quantitative service for Tier 4 Institutional users."""
 
-    async def get_risk_metrics(self, ticker: str) -> Dict[str, Any]:
+    async def get_risk_metrics(self, ticker: str) -> dict[str, Any]:
         """Calculate mock risk/volatility metrics for a ticker.
 
         In a real production system, this would call a quant-engine or

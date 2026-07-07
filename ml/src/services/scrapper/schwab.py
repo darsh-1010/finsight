@@ -15,7 +15,6 @@ import logging
 import os
 import shutil
 from datetime import timedelta
-from typing import Dict, List, Optional
 
 from crawlee._request import Request
 from crawlee._types import ConcurrencySettings
@@ -23,14 +22,19 @@ from crawlee.browsers import BrowserPool
 from crawlee.configuration import Configuration
 from crawlee.crawlers import PlaywrightCrawler, PlaywrightCrawlingContext
 
-from src.services.schema.article_schema import (Article, ArticleMetadata,
-                                                ScrapeOutput,
-                                                load_scraper_config)
+from src.services.schema.article_schema import (
+    Article,
+    ArticleMetadata,
+    ScrapeOutput,
+    load_scraper_config,
+)
 from src.services.scrapper.camoufox_plugin import CamoufoxPlugin
-from src.services.scrapper.resilience import (SCRAPER_TRY_EXCEPTIONS,
-                                              build_playwright_retry_defaults,
-                                              build_retry_decision,
-                                              wait_for_any_selector)
+from src.services.scrapper.resilience import (
+    SCRAPER_TRY_EXCEPTIONS,
+    build_playwright_retry_defaults,
+    build_retry_decision,
+    wait_for_any_selector,
+)
 
 from .date_filter import is_within_lookback
 
@@ -77,7 +81,7 @@ class SchwabScraper:
         self.output_file = output_file or cfg["output_file"]
         self.max_concurrency = max_concurrency or cfg.get("max_concurrency", 2)
 
-        self._articles: List[Article] = []
+        self._articles: list[Article] = []
         self._total_found = 0
         self._total_within_window = 0
 
@@ -85,11 +89,11 @@ class SchwabScraper:
     # Public API
     # ------------------------------------------------------------------
 
-    def scrape(self) -> Optional[List[Dict]]:
+    def scrape(self) -> list[dict] | None:
         """Run the full pipeline synchronously."""
         return asyncio.run(self.scrape_async())
 
-    async def scrape_async(self) -> Optional[List[Dict]]:
+    async def scrape_async(self) -> list[dict] | None:
         """Crawlee-based async pipeline."""
         self._articles = []
         self._total_found = 0

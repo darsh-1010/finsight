@@ -6,8 +6,8 @@ Production-ready API for financial query intelligence and chatbot services.
 
 import asyncio
 import time
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
 
 import uvicorn
 from fastapi import FastAPI, Request
@@ -17,10 +17,13 @@ from fastapi.responses import JSONResponse
 
 from config.settings import settings
 from src.api.error_handler import setup_exception_handlers
-from src.api.health import (APP_VERSION, build_liveness_report,
-                            build_readiness_report,
-                            start_openai_canary_monitor,
-                            stop_openai_canary_monitor)
+from src.api.health import (
+    APP_VERSION,
+    build_liveness_report,
+    build_readiness_report,
+    start_openai_canary_monitor,
+    stop_openai_canary_monitor,
+)
 from src.api.middleware.quota_middleware import QuotaMiddleware
 from src.api.routes import chatbot, market_insights, scraper, uploads
 from src.llm.prompts import PromptLoader

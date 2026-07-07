@@ -10,9 +10,9 @@ from typing import Any
 import fitz  # PyMuPDF
 import pandas as pd
 from openai import AsyncOpenAI
-from src.llm.fallback_client import FallbackAsyncOpenAI
 
 from config.settings import settings
+from src.llm.fallback_client import FallbackAsyncOpenAI
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -88,7 +88,9 @@ return 1
 class UserUploadService:
     """Service for handling user-uploaded documents with tier enforcement via OpenAI Files API."""
 
-    def __init__(self, redis_client: Any, openai_client: AsyncOpenAI | FallbackAsyncOpenAI) -> None:
+    def __init__(
+        self, redis_client: Any, openai_client: AsyncOpenAI | FallbackAsyncOpenAI
+    ) -> None:
         """Initialize with Redis and OpenAI clients."""
         self.redis_client = redis_client
         self.openai_client = openai_client

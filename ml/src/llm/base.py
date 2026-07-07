@@ -1,7 +1,8 @@
 """Base LLM client abstract class."""
 
 from abc import ABC, abstractmethod
-from typing import Any, AsyncGenerator, Type, TypeVar
+from collections.abc import AsyncGenerator
+from typing import Any, Type, TypeVar
 
 T = TypeVar("T")
 
@@ -33,7 +34,7 @@ class BaseLLMClient(ABC):
         """
 
     @abstractmethod
-    async def generate_structured(self, prompt: str, schema: Type[T], **kwargs) -> T:
+    async def generate_structured(self, prompt: str, schema: type[T], **kwargs) -> T:
         """Generate a structured response from the LLM.
 
         Args:

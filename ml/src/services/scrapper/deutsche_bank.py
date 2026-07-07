@@ -19,14 +19,19 @@ from crawlee._types import ConcurrencySettings
 from crawlee.configuration import Configuration
 from crawlee.crawlers import PlaywrightCrawler, PlaywrightCrawlingContext
 
-from src.services.schema.article_schema import (Article, ArticleMetadata,
-                                                ScrapeOutput,
-                                                load_scraper_config)
+from src.services.schema.article_schema import (
+    Article,
+    ArticleMetadata,
+    load_scraper_config,
+)
 from src.services.scrapper.date_filter import is_within_lookback, parse_date
-from src.services.scrapper.resilience import (SCRAPER_TRY_EXCEPTIONS,
-                                              build_playwright_retry_defaults,
-                                              wait_for_any_selector)
+from src.services.scrapper.resilience import (
+    SCRAPER_TRY_EXCEPTIONS,
+    build_playwright_retry_defaults,
+    wait_for_any_selector,
+)
 from src.utils.logger import get_logger
+from src.services.scrapper.utils import dismiss_overlays, save_results, safe_filename
 
 # ── ONLY hardcoded URL ───────────────────────────────────────────────────────
 SOURCE_NAME = "deutsche_bank"
@@ -41,53 +46,7 @@ def get_config():
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
-def safe_filename(text: str, max_len: int = 80) -> str:
-    """Generate a filename safe from special characters."""
-    text = re.sub(r"[^\w\s-]", "", text).strip()
-    text = re.sub(r"[\s_-]+", "_", text)
-    return text[:max_len] or "untitled"
 
-
-def save_results(
-    scraped_articles: list,
-    stats: dict,
-    lookback_days: int,
-    output_file: str,
-) -> None:
-    """Save scraped articles to the target JSON output file."""
-    if not scraped_articles:
-        logger.warning("Nothing to save.")
-        return
-
-    output = ScrapeOutput(
-        source=SOURCE_NAME,
-        lookback_days=lookback_days,
-        total_found=stats["total_found"],
-        total_within_window=stats["total_within_window"],
-        total_scraped=len(scraped_articles),
-        articles=scraped_articles,
-    )
-
-    output.save(output_file)
-    logger.info("JSON saved to %s", output_file)
-
-
-async def dismiss_overlays(page) -> None:
-    """Idempotently click accept/cookie buttons to dismiss overlays."""
-    for sel in [
-        "button[id*='accept']",
-        "button[id*='cookie']",
-        "button[aria-label*='Accept']",
-        "button[class*='accept']",
-    ]:
-        try:
-            btn = page.locator(sel).first
-            if await btn.is_visible(timeout=500):
-                await btn.click(timeout=2000)
-                logger.info("  [✓] Overlay dismissed")
-                break
-        except SCRAPER_TRY_EXCEPTIONS:
-            continue
 
 
 # ── Crawler class ─────────────────────────────────────────────────────────────
@@ -128,7 +87,7 @@ class DeutscheBankScraper:
 
         article_dt = parse_date(date_str)
         if article_dt:
-            now_utc = datetime.datetime.now(datetime.timezone.utc)
+            now_utc = datetime.datetime.now(datetime.UTC)
             days_old = (now_utc - article_dt).days
             if not is_within_lookback(article_dt.isoformat(), self.lookback_days):
                 logger.info(
@@ -452,7 +411,11 @@ class DeutscheBankScraper:
         logger.info("Done. Articles scraped: %d", len(self.scraped_articles))
         logger.info("=" * 60)
         save_results(
-            self.scraped_articles, self.stats, self.lookback_days, self.output_file
+            self.scraped_articles,
+            self.stats,
+            self.lookback_days,
+            self.output_file,
+            SOURCE_NAME,
         )
 
 

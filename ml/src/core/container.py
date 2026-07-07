@@ -3,7 +3,8 @@
 Simple DI container for managing service instances and their dependencies.
 """
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 from src.utils.logger import get_logger
 

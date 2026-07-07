@@ -6,13 +6,11 @@ Provides service instances to API routes using FastAPI's Depends.
 from functools import lru_cache
 
 from langchain_openai import ChatOpenAI
-from openai import AsyncOpenAI
-from src.llm.fallback_client import FallbackAsyncOpenAI
 
 from config.settings import settings
 from src.core.container import Container
-from src.core.interfaces import (IChatService, IQueryService, IRAGService,
-                                 ITickerService)
+from src.core.interfaces import IChatService, IQueryService, IRAGService, ITickerService
+from src.llm.fallback_client import FallbackAsyncOpenAI
 from src.services.chat.context_manager import ContextManager
 from src.services.chat.history_service import ChatHistoryService
 from src.services.chat.message_manager import MessageManager
@@ -54,7 +52,7 @@ def _bootstrap_container() -> None:
                 base_url=settings.freellmapi_base_url,
                 stream_options={"include_usage": True},
             )
-            
+
             fallback_llm = ChatOpenAI(
                 model=settings.chatbot_model,
                 temperature=settings.chatbot_temperature,
@@ -62,8 +60,10 @@ def _bootstrap_container() -> None:
                 api_key=settings.openai_api_key,
                 stream_options={"include_usage": True},
             )
-            
-            llm = primary_llm.with_fallbacks([fallback_llm]).bind_tools([{"type": "web_search_preview"}])
+
+            llm = primary_llm.with_fallbacks([fallback_llm]).bind_tools(
+                [{"type": "web_search_preview"}]
+            )
 
             resp_gen = ResponseGenerator(llm)
 

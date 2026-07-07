@@ -14,8 +14,11 @@ Usage:
 """
 
 from camoufox import AsyncNewBrowser
-from crawlee.browsers import (BrowserPool, PlaywrightBrowserController,
-                              PlaywrightBrowserPlugin)
+from crawlee.browsers import (
+    BrowserPool,
+    PlaywrightBrowserController,
+    PlaywrightBrowserPlugin,
+)
 from typing_extensions import override
 
 

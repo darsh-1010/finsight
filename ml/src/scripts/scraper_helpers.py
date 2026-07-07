@@ -77,7 +77,7 @@ def load_config() -> dict:
         dict: The loaded configuration dictionary.
     """
     try:
-        with open(CONFIG_PATH, "r", encoding="utf-8") as file_handle:
+        with open(CONFIG_PATH, encoding="utf-8") as file_handle:
             content = file_handle.read()
             # Expand ${ENV_VAR:-default} syntax
             content = re.sub(

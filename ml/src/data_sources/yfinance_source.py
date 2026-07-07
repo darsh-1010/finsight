@@ -262,7 +262,7 @@ class YFinanceDataSource(BaseDataSource):
         # 5. Flatten & Standardize
         return self._standardize_data(data)
 
-    def _fetch_fast_info(self, stock: yf.Ticker, ticker: str) -> Dict[str, Any]:
+    def _fetch_fast_info(self, stock: yf.Ticker, ticker: str) -> dict[str, Any]:
         """Fetch fast_info attributes."""
         fast_info_dict = {}
         try:
@@ -287,7 +287,7 @@ class YFinanceDataSource(BaseDataSource):
             logger.warning("Failed to fetch fast_info for %s: %s", ticker, e)
         return fast_info_dict
 
-    def _fetch_info(self, stock: yf.Ticker, ticker: str) -> Dict[str, Any]:
+    def _fetch_info(self, stock: yf.Ticker, ticker: str) -> dict[str, Any]:
         """Fetch and clean stock info."""
         try:
             info = stock.info
@@ -336,9 +336,9 @@ class YFinanceDataSource(BaseDataSource):
 
     def _fetch_history(
         self, stock: yf.Ticker, ticker: str, period: str
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Fetch historical data and summary."""
-        result: Dict[str, Any] = {"history": [], "history_summary": {}}
+        result: dict[str, Any] = {"history": [], "history_summary": {}}
         try:
             history = stock.history(period=period)
             if not history.empty:
@@ -366,9 +366,9 @@ class YFinanceDataSource(BaseDataSource):
             logger.warning("Failed to fetch history: ticker=%s error=%s", ticker, e)
         return result
 
-    def _fetch_all_financials(self, stock: yf.Ticker, ticker: str) -> Dict[str, Any]:
+    def _fetch_all_financials(self, stock: yf.Ticker, ticker: str) -> dict[str, Any]:
         """Fetch all financial statements."""
-        result: Dict[str, Any] = {}
+        result: dict[str, Any] = {}
 
         result["income_statement"] = self._fetch_statement(stock, "income_stmt", ticker)
         result["balance_sheet"] = self._fetch_statement(stock, "balance_sheet", ticker)
@@ -384,7 +384,7 @@ class YFinanceDataSource(BaseDataSource):
 
     def _fetch_statement(
         self, stock: yf.Ticker, attr: str, ticker: str
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Fetch single financial statement."""
         try:
             stmt = getattr(stock, attr)
@@ -394,9 +394,9 @@ class YFinanceDataSource(BaseDataSource):
             logger.warning("Failed to fetch %s: ticker=%s error=%s", attr, ticker, e)
         return []
 
-    def _fetch_recommendations(self, stock: yf.Ticker, ticker: str) -> Dict[str, Any]:
+    def _fetch_recommendations(self, stock: yf.Ticker, ticker: str) -> dict[str, Any]:
         """Fetch analyst recommendations."""
-        result: Dict[str, Any] = {
+        result: dict[str, Any] = {
             "recommendations": [],
             "recommendations_summary": None,
         }
@@ -414,7 +414,7 @@ class YFinanceDataSource(BaseDataSource):
             )
         return result
 
-    def _standardize_data(self, data: Dict[str, Any]) -> Dict[str, Any]:
+    def _standardize_data(self, data: dict[str, Any]) -> dict[str, Any]:
         """Flatten and standardize data structure."""
         fast_info = data.get("fast_info", {})
         info = data.get("info", {})
@@ -475,7 +475,7 @@ class YFinanceDataSource(BaseDataSource):
 
         return data
 
-    def _dataframe_to_dict(self, df: pd.DataFrame) -> List[Dict[str, Any]]:
+    def _dataframe_to_dict(self, df: pd.DataFrame) -> list[dict[str, Any]]:
         """Convert DataFrame to list of dictionaries."""
         if df.empty:
             return []
@@ -492,7 +492,7 @@ class YFinanceDataSource(BaseDataSource):
         self,
         ticker: str,
         stmt_type: str,
-        data: List[Dict[str, Any]],
+        data: list[dict[str, Any]],
         currency: str = "$",
     ) -> str:
         """Format financial statement as text."""
@@ -518,7 +518,7 @@ class YFinanceDataSource(BaseDataSource):
             lines.append("")
         return "\n".join(lines)
 
-    def _format_recommendations(self, ticker: str, recs: List[Dict[str, Any]]) -> str:
+    def _format_recommendations(self, ticker: str, recs: list[dict[str, Any]]) -> str:
         """Format recommendations as text."""
         if not recs:
             return "No recent analyst recommendations available."
@@ -540,7 +540,7 @@ class YFinanceDataSource(BaseDataSource):
             logger.error("yFinance connection validation failed: %s", e)
             return False
 
-    async def get_real_time_price(self, ticker: str) -> Dict[str, Any]:
+    async def get_real_time_price(self, ticker: str) -> dict[str, Any]:
         """Get real-time price data."""
         ticker = ticker.upper().strip()
         try:
@@ -560,7 +560,7 @@ class YFinanceDataSource(BaseDataSource):
             logger.error("Failed to fetch real-time price: %s", e)
             raise YFinanceError(f"Failed to fetch real-time price for {ticker}") from e
 
-    def to_documents(self, data: Dict[str, Any]) -> List[Document]:
+    def to_documents(self, data: dict[str, Any]) -> list[Document]:
         """Convert fetched data to documents."""
         ticker = data.get("ticker", "UNKNOWN")
         info = data.get("info", {})

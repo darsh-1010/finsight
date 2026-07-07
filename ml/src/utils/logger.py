@@ -15,7 +15,7 @@ def load_logging_config() -> dict[str, Any]:
     config_path = Path(__file__).parent.parent.parent / "config" / "logging_config.yaml"
 
     if config_path.exists():
-        with open(config_path, "r", encoding="utf-8") as f:
+        with open(config_path, encoding="utf-8") as f:
             return yaml.safe_load(f)
 
     # Default configuration if file not found

@@ -15,7 +15,6 @@ import logging
 import os
 import shutil
 from datetime import timedelta
-from typing import Dict, List
 
 from crawlee._request import Request
 from crawlee._types import ConcurrencySettings
@@ -23,15 +22,20 @@ from crawlee.browsers import BrowserPool
 from crawlee.configuration import Configuration
 from crawlee.crawlers import PlaywrightCrawler, PlaywrightCrawlingContext
 
-from src.services.schema.article_schema import (Article, ArticleMetadata,
-                                                ScrapeOutput,
-                                                load_scraper_config)
+from src.services.schema.article_schema import (
+    Article,
+    ArticleMetadata,
+    ScrapeOutput,
+    load_scraper_config,
+)
 from src.services.scrapper.camoufox_plugin import CamoufoxPlugin
-from src.services.scrapper.resilience import (SCRAPER_TRY_EXCEPTIONS,
-                                              build_playwright_retry_defaults,
-                                              build_retry_decision,
-                                              wait_for_any_selector,
-                                              wait_for_post_action_settle)
+from src.services.scrapper.resilience import (
+    SCRAPER_TRY_EXCEPTIONS,
+    build_playwright_retry_defaults,
+    build_retry_decision,
+    wait_for_any_selector,
+    wait_for_post_action_settle,
+)
 
 from .date_filter import is_within_lookback
 
@@ -89,18 +93,18 @@ class MorganStanleyScraper:
             "cookie_timeout_ms": cfg.get("cookie_timeout_ms", 2000),
         }
 
-        self._articles: List[Article] = []
+        self._articles: list[Article] = []
         self._total_found = 0
 
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
 
-    def scrape(self) -> List[Dict]:
+    def scrape(self) -> list[dict]:
         """Run the full pipeline synchronously."""
         return asyncio.run(self.scrape_async())
 
-    async def scrape_async(self) -> List[Dict]:
+    async def scrape_async(self) -> list[dict]:
         """Crawlee-based async pipeline."""
         self._articles = []
         self._total_found = 0
@@ -476,7 +480,7 @@ class MorganStanleyScraper:
     # ──────────────────────────────────────────────
 
     @staticmethod
-    def _categorize_links(links: List[Dict]):
+    def _categorize_links(links: list[dict]):
         """Split links into topic pages, article pages, and other."""
         topics, articles, others = [], [], []
         for item in links:

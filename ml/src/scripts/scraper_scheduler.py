@@ -19,26 +19,35 @@ import json
 import logging
 import os
 import sys
-from datetime import datetime, timezone
-from typing import Callable, Optional, Union
+from collections.abc import Callable
+from datetime import UTC, datetime, timezone
+from typing import Optional, Union
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from dotenv import load_dotenv
 
-from src.api.routes.scraper_mapping import (WEBSITE_INTERVAL_MAP,
-                                            load_website_id_map)
-from src.scripts.scraper_helpers import (cleanup_memory, collect_scraper_jobs,
-                                         get_max_workers, is_scraper_due,
-                                         load_config, parse_run_time)
-from src.scripts.scraper_ingestion import (_resolve_output_file,
-                                           ingest_to_weaviate_with_report)
+from src.api.routes.scraper_mapping import WEBSITE_INTERVAL_MAP, load_website_id_map
+from src.scripts.scraper_helpers import (
+    cleanup_memory,
+    collect_scraper_jobs,
+    get_max_workers,
+    is_scraper_due,
+    load_config,
+    parse_run_time,
+)
+from src.scripts.scraper_ingestion import (
+    _resolve_output_file,
+    ingest_to_weaviate_with_report,
+)
 from src.scripts.scraper_job_queue import ScraperJobQueue
 from src.scripts.scraper_registry import SCRAPER_MAP
-from src.scripts.scraper_snapshot import (IngestionReport, StoredArticleRecord,
-                                          publish_scheduler_snapshot)
-from src.scripts.scraper_watchdog import (ScraperWatchdog,
-                                          check_and_cleanup_ghosts)
+from src.scripts.scraper_snapshot import (
+    IngestionReport,
+    StoredArticleRecord,
+    publish_scheduler_snapshot,
+)
+from src.scripts.scraper_watchdog import ScraperWatchdog, check_and_cleanup_ghosts
 from src.services.scrapper.resilience import build_retry_decision
 from src.utils.config_updater import update_scraper_intervals
 from src.utils.logger import get_logger
@@ -60,10 +69,10 @@ CAMOUFOX_SCRAPERS = frozenset(
 class WatchdogManager:
     """Holder for the global ScraperWatchdog instance to avoid global statement."""
 
-    _watchdog: Optional[ScraperWatchdog] = None
+    _watchdog: ScraperWatchdog | None = None
 
     @classmethod
-    def get(cls, global_config: Optional[dict] = None) -> ScraperWatchdog:
+    def get(cls, global_config: dict | None = None) -> ScraperWatchdog:
         """Lazy-load and return the global ScraperWatchdog instance."""
         if cls._watchdog is None:
             cfg = global_config or load_config() or {}
@@ -117,7 +126,7 @@ async def _ingest_and_log_results(
 
     if os.path.exists(output_file):
         try:
-            with open(output_file, "r", encoding="utf-8") as f_handle:
+            with open(output_file, encoding="utf-8") as f_handle:
                 data = json.load(f_handle)
                 article_count = len(data.get("articles", []))
         except (json.JSONDecodeError, OSError):
@@ -152,7 +161,7 @@ async def _execute_scraper_loop(
     while attempt <= run_params["max_repair_attempts"]:
         try:
             internal_queue.mark_in_progress(name)
-            start_time = datetime.now(timezone.utc)
+            start_time = datetime.now(UTC)
             if not isinstance(scraper_entry, type):
                 coro = _call_function_scraper(
                     scraper_entry,
@@ -232,7 +241,7 @@ async def run_scraper(
     *,
     is_test: bool = False,
     action_tag: str = "SCRAPER_RUN",
-    job_queue: Optional[ScraperJobQueue] = None,
+    job_queue: ScraperJobQueue | None = None,
 ) -> list[StoredArticleRecord]:
     """Execute a single scraper and optionally ingest its data into Weaviate.
 

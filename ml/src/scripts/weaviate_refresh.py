@@ -6,7 +6,7 @@ with the new canonical schema.
 
 import asyncio
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime, timezone
 from pathlib import Path
 
 from src.scripts.scraper_ingestion import ingest_to_weaviate
@@ -57,7 +57,7 @@ async def refresh_weaviate_schema():
             )
         else:
             total_chunks = 0
-            start_time = datetime.now(timezone.utc)
+            start_time = datetime.now(UTC)
             logger.info(
                 "Re-ingesting %d scraper output files from %s",
                 len(output_files),

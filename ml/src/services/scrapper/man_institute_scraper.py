@@ -12,7 +12,6 @@ import argparse
 import asyncio
 import logging
 from datetime import timedelta
-from typing import Dict, List, Optional
 from urllib.parse import urljoin
 
 from crawlee._request import Request
@@ -20,9 +19,12 @@ from crawlee._types import ConcurrencySettings
 from crawlee.configuration import Configuration
 from crawlee.crawlers import BeautifulSoupCrawler, BeautifulSoupCrawlingContext
 
-from src.services.schema.article_schema import (Article, ArticleMetadata,
-                                                ScrapeOutput,
-                                                load_scraper_config)
+from src.services.schema.article_schema import (
+    Article,
+    ArticleMetadata,
+    ScrapeOutput,
+    load_scraper_config,
+)
 
 from .date_filter import is_within_lookback
 
@@ -52,7 +54,7 @@ class ManInstituteScraper:
         self.output_file = output_file or cfg["output_file"]
         self.max_concurrency = max_concurrency or cfg.get("max_concurrency", 4)
 
-        self._results: List[Article] = []
+        self._results: list[Article] = []
         self._total_found = 0
         self._total_within_window = 0
 
@@ -60,11 +62,11 @@ class ManInstituteScraper:
     # Public API
     # ------------------------------------------------------------------
 
-    def scrape(self) -> List[Dict]:
+    def scrape(self) -> list[dict]:
         """Run the full pipeline synchronously (wraps async internally)."""
         return asyncio.run(self.scrape_async())
 
-    async def scrape_async(self) -> List[Dict]:
+    async def scrape_async(self) -> list[dict]:
         """Crawlee-based async pipeline."""
         self._results = []
         self._total_found = 0
@@ -161,7 +163,7 @@ class ManInstituteScraper:
             )
 
             # Extract article body
-            paragraphs: List[str] = []
+            paragraphs: list[str] = []
             found_heading = False
             for tag in soup.find_all(["h1", "p"]):
                 if tag.name == "h1":
@@ -220,7 +222,7 @@ class ManInstituteScraper:
     # ------------------------------------------------------------------
 
     @staticmethod
-    def _safe_text(element, selector: str) -> Optional[str]:
+    def _safe_text(element, selector: str) -> str | None:
         """Return stripped text of the first match, or None."""
         match = element.select_one(selector)
         return match.get_text(strip=True) if match else None

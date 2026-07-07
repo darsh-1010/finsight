@@ -15,24 +15,31 @@ import os
 import random
 import shutil
 from datetime import timedelta
-from typing import Dict, List
 
 from camoufox import AsyncNewBrowser
 from crawlee._request import Request
 from crawlee._types import ConcurrencySettings
-from crawlee.browsers import (BrowserPool, PlaywrightBrowserController,
-                              PlaywrightBrowserPlugin)
+from crawlee.browsers import (
+    BrowserPool,
+    PlaywrightBrowserController,
+    PlaywrightBrowserPlugin,
+)
 from crawlee.configuration import Configuration
 from crawlee.crawlers import PlaywrightCrawler, PlaywrightCrawlingContext
 from crawlee.errors import SessionError
 from typing_extensions import override
 
-from src.services.schema.article_schema import (Article, ArticleMetadata,
-                                                ScrapeOutput,
-                                                load_scraper_config)
-from src.services.scrapper.resilience import (build_playwright_retry_defaults,
-                                              build_retry_decision,
-                                              wait_for_any_selector)
+from src.services.schema.article_schema import (
+    Article,
+    ArticleMetadata,
+    ScrapeOutput,
+    load_scraper_config,
+)
+from src.services.scrapper.resilience import (
+    build_playwright_retry_defaults,
+    build_retry_decision,
+    wait_for_any_selector,
+)
 
 from .date_filter import is_within_lookback
 
@@ -102,18 +109,18 @@ class SeekingAlphaScraper:
             "max_pages": cfg.get("max_pages", 5),
         }
 
-        self._articles: List[Article] = []
+        self._articles: list[Article] = []
         self._total_found = 0
 
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
 
-    def scrape(self) -> List[Dict]:
+    def scrape(self) -> list[dict]:
         """Run the full pipeline synchronously."""
         return asyncio.run(self.scrape_async())
 
-    async def scrape_async(self) -> List[Dict]:
+    async def scrape_async(self) -> list[dict]:
         """Crawlee-based async pipeline."""
         self._articles = []
         self._total_found = 0

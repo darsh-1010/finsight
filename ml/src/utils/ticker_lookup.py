@@ -147,7 +147,7 @@ def _load() -> tuple[dict, dict]:
 _EXACT_LOOKUP, _PREFIX_LOOKUP = _load()
 
 
-def resolve(name: str) -> Optional[str]:
+def resolve(name: str) -> str | None:
     """Resolve a company name to a ticker using the static JSON lookup.
 
     Returns the ticker string if resolved unambiguously, or None if:

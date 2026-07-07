@@ -6,10 +6,14 @@ classifies them using an LLM across 30 strict topics, and dispatches
 alerts based on user tier entitlements.
 """
 
-from src.services.market_insights.models import (AlertPayload, EventType,
-                                                 InsightCategory,
-                                                 InsightResult, InsightTopic,
-                                                 MarketEvent)
+from src.services.market_insights.models import (
+    AlertPayload,
+    EventType,
+    InsightCategory,
+    InsightResult,
+    InsightTopic,
+    MarketEvent,
+)
 
 __all__ = [
     "AlertPayload",

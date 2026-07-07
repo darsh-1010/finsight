@@ -13,11 +13,14 @@ from langchain_openai import ChatOpenAI
 from config.settings import settings
 from src.core.exceptions import QueryAnalysisError
 from src.core.interfaces import IDataSource, IQueryService, ITickerService
-from src.core.models import (FinancialContext, MultiTickerContext,
-                             QueryEntities, QueryExpansionResult)
+from src.core.models import (
+    FinancialContext,
+    MultiTickerContext,
+    QueryEntities,
+    QueryExpansionResult,
+)
 from src.core.types import JsonDict
-from src.data_sources.yfinance_source import (LIGHTWEIGHT_ENDPOINTS,
-                                              YFinanceDataSource)
+from src.data_sources.yfinance_source import LIGHTWEIGHT_ENDPOINTS, YFinanceDataSource
 from src.llm.prompts import PromptLoader
 from src.services.ticker_service import TickerService
 from src.utils.json_parser import LLMResponseParser
@@ -187,7 +190,6 @@ class QueryService(IQueryService):
     def ticker_service(self) -> ITickerService:
         """Get ticker service (lazy init if not provided)."""
         if self._ticker_service is None:
-
             self._ticker_service = TickerService(
                 llm=self.llm, data_source=self.data_source
             )
@@ -197,7 +199,6 @@ class QueryService(IQueryService):
     def data_source(self) -> IDataSource:
         """Get data source (lazy init if not provided)."""
         if self._data_source is None:
-
             self._data_source = YFinanceDataSource()
         data_source = self._data_source
         if data_source is None:
@@ -205,9 +206,9 @@ class QueryService(IQueryService):
         return data_source
 
     @timed("query.analyze", warn_threshold_s=3.0)
-    async def analyze(self, query: str) -> Dict[str, Any]:
+    async def analyze(self, query: str) -> dict[str, Any]:
         """Analyze query to extract intent, entities and specific requirements."""
-        request_id = hashlib.md5(query.encode()).hexdigest()[:6]
+        request_id = hashlib.md5(query.encode(), usedforsecurity=False).hexdigest()[:6]
         logger.info(
             "[QUERY_ANALYSIS_START] ReqId: %s | Query: %s", request_id, query[:50]
         )
@@ -353,7 +354,7 @@ class QueryService(IQueryService):
         session_ticker: str | None = None,
     ) -> JsonDict:
         """Full pipeline: analyze, resolve tickers, fetch data."""
-        request_id = hashlib.md5(query.encode()).hexdigest()[:6]
+        request_id = hashlib.md5(query.encode(), usedforsecurity=False).hexdigest()[:6]
         logger.info("[PIPELINE_START] ReqId: %s | Query: %s", request_id, query[:50])
 
         try:
@@ -409,7 +410,7 @@ class QueryService(IQueryService):
 
     async def _orchestrate_fetch_step(
         self, tickers: list[str], expansion: QueryExpansionResult, rid: str
-    ) -> Tuple[List[dict], List[str]]:
+    ) -> tuple[list[dict], list[str]]:
         """Run parallel data fetches."""
         fetch_tasks = [
             self._fetch_ticker_context(t, expansion=expansion) for t in tickers
@@ -444,8 +445,8 @@ class QueryService(IQueryService):
     def _finalize_pipeline_result(
         self,
         expansion: QueryExpansionResult,
-        contexts: List[dict],
-        errors: List[str],
+        contexts: list[dict],
+        errors: list[str],
         rid: str,
     ) -> JsonDict:
         """Synthesize final pipeline response."""
@@ -556,7 +557,7 @@ class QueryService(IQueryService):
     def _generate_query_id(self, query: str) -> str:
         """Generate deterministic query identifier."""
         normalized = query.lower().strip()
-        return hashlib.md5(normalized.encode()).hexdigest()[:8]
+        return hashlib.md5(normalized.encode(), usedforsecurity=False).hexdigest()[:8]
 
     def _build_metadata(self, expansion: QueryExpansionResult) -> JsonDict:
         """Build simple metadata dict."""

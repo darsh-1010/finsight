@@ -19,13 +19,14 @@ def _strip_code_blocks(text: str) -> str:
     stripped = re.sub(r"\n{3,}", "\n\n", stripped)
     return stripped.strip()
 
+
 from langchain_core.messages import BaseMessage
 from langchain_openai import ChatOpenAI
 from openai import BadRequestError
-from src.llm.fallback_client import FallbackAsyncOpenAI
 
 from config.settings import settings
 from src.core.exceptions import LLMError, RateLimitError
+from src.llm.fallback_client import FallbackAsyncOpenAI
 from src.llm.prompts import PromptLoader
 from src.utils.perf_utils import timed
 
@@ -359,7 +360,9 @@ class ResponseGenerator:
             role = (
                 "user"
                 if msg.type == "human"
-                else "assistant" if msg.type == "ai" else "system"
+                else "assistant"
+                if msg.type == "ai"
+                else "system"
             )
 
             # OpenAI Responses API requires 'output_text' for assistant role and 'input_text' for others

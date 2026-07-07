@@ -8,6 +8,7 @@ Validates LLM responses before returning to the client:
 """
 
 import re
+from datetime import UTC
 from typing import Any
 
 from src.llm.prompts import PromptLoader
@@ -289,10 +290,12 @@ class ResponsePostprocessor:
             List of formatted source dictionaries
         """
         from datetime import (  # Local import to avoid top-level bloat if not needed
-            datetime, timezone)
+            datetime,
+            timezone,
+        )
 
         sources = []
-        now_iso = datetime.now(timezone.utc).isoformat()
+        now_iso = datetime.now(UTC).isoformat()
 
         for cit in citations:
             raw_source_type = cit.get("source", "web")

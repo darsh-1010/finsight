@@ -22,16 +22,21 @@ from crawlee._types import ConcurrencySettings
 from crawlee.configuration import Configuration
 from crawlee.crawlers import PlaywrightCrawler, PlaywrightCrawlingContext
 
-from src.services.schema.article_schema import (Article, ArticleMetadata,
-                                                ScrapeOutput,
-                                                load_scraper_config)
+from src.services.schema.article_schema import (
+    Article,
+    ArticleMetadata,
+    load_scraper_config,
+)
 from src.services.scrapper.camoufox_plugin import build_camoufox_pool
 from src.services.scrapper.date_filter import is_within_lookback, parse_date
-from src.services.scrapper.resilience import (build_playwright_retry_defaults,
-                                              detect_bot_block,
-                                              wait_for_any_selector,
-                                              wait_for_post_action_settle)
+from src.services.scrapper.resilience import (
+    build_playwright_retry_defaults,
+    detect_bot_block,
+    wait_for_any_selector,
+    wait_for_post_action_settle,
+)
 from src.utils.logger import get_logger
+from src.services.scrapper.utils import save_results, safe_filename
 
 # ── Configuration ─────────────────────────────────────────────────────────────
 SOURCE_NAME = "investing_com"
@@ -46,35 +51,7 @@ def get_config():
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
-def safe_filename(text: str, max_len: int = 80) -> str:
-    """Generate a safe filename from article title."""
-    text = re.sub(r"[^\w\s-]", "", text).strip()
-    text = re.sub(r"[\s_-]+", "_", text)
-    return text[:max_len] or "untitled"
 
-
-def save_results(
-    scraped_articles: list,
-    stats: dict,
-    lookback_days_val: float,
-    output_file: str,
-) -> None:
-    """Save scraped results to JSON file."""
-    if not scraped_articles:
-        logger.warning("Nothing to save.")
-        return
-
-    output = ScrapeOutput(
-        source=SOURCE_NAME,
-        lookback_days=int(lookback_days_val),
-        total_found=stats["total_found"],
-        total_within_window=stats["total_within_window"],
-        total_scraped=len(scraped_articles),
-        articles=scraped_articles,
-    )
-
-    output.save(output_file)
-    logger.info("JSON saved to %s", output_file)
 
 
 async def dismiss_overlays(page) -> None:
@@ -599,7 +576,11 @@ class InvestingComScraper:
         logger.info("=" * 60)
 
         save_results(
-            self._articles, self._stats, float(self.lookback_days), self.output_file
+            self._articles,
+            self._stats,
+            float(self.lookback_days),
+            self.output_file,
+            SOURCE_NAME,
         )
 
 

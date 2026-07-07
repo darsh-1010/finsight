@@ -9,8 +9,7 @@ from dataclasses import asdict, dataclass, field
 
 import requests
 
-from src.api.routes.scraper_mapping import (SCRAPER_KEY_TO_ID,
-                                            load_website_id_map)
+from src.api.routes.scraper_mapping import SCRAPER_KEY_TO_ID, load_website_id_map
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)

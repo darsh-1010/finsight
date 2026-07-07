@@ -93,7 +93,7 @@ class OpenAIClient(BaseLLMClient):
         response = await llm.ainvoke(prompt, **kwargs)
         return str(response.content)
 
-    async def generate_structured(self, prompt: str, schema: Type[T], **kwargs) -> T:
+    async def generate_structured(self, prompt: str, schema: type[T], **kwargs) -> T:
         """Generate a structured response from the LLM.
 
         Args:

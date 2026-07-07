@@ -54,7 +54,7 @@ class WeaviateService:
         await self._add_missing_properties(collection_name, new_props)
 
     async def _add_missing_properties(
-        self, collection_name: str, new_props: List[Any]
+        self, collection_name: str, new_props: list[Any]
     ) -> None:
         """Idempotently add missing properties to an existing collection."""
         client = WeaviateClientManager.get_client()
@@ -70,7 +70,7 @@ class WeaviateService:
         self,
         url: str,
         content: str,
-        metadata: Optional[Dict[str, Any]] = None,
+        metadata: dict[str, Any] | None = None,
         **kwargs: Any,
     ) -> int:
         """Store a document in Weaviate.
@@ -141,10 +141,10 @@ class WeaviateService:
     async def _embed_and_ingest(
         self,
         *,
-        chunks: List[str],
+        chunks: list[str],
         doc_id: str,
         url: str,
-        meta: Dict[str, Any],
+        meta: dict[str, Any],
         collection_name: str,
     ) -> int:
         """Generate embeddings and ingest chunks into Weaviate."""
@@ -170,7 +170,7 @@ class WeaviateService:
         source_type: str,
         chunk_size: int,
         chunk_overlap: int,
-    ) -> Tuple[RecursiveCharacterTextSplitter, int, int]:
+    ) -> tuple[RecursiveCharacterTextSplitter, int, int]:
         """Create a local text splitter with document-type-aware sizes."""
         _chunk_strategy = {
             "pdf": (1500, 200),
@@ -194,11 +194,11 @@ class WeaviateService:
         self,
         *,
         content: str,
-        metadata: Dict[str, Any],
+        metadata: dict[str, Any],
         url: str,
         splitter: RecursiveCharacterTextSplitter,
-        config: Tuple[int, int],
-    ) -> List[str]:
+        config: tuple[int, int],
+    ) -> list[str]:
         """Chunk document content using a caller-provided splitter."""
         csize, coverlap = config
         logger.info("[CHUNKING_START] Source: %s | Length: %d", url, len(content))
@@ -215,9 +215,9 @@ class WeaviateService:
     async def _ingest_chunks_batch(
         self,
         *,
-        chunks: List[str],
-        vectors: List[List[float]],
-        doc_metadata: Dict[str, Any],
+        chunks: list[str],
+        vectors: list[list[float]],
+        doc_metadata: dict[str, Any],
         **kwargs: Any,
     ) -> int:
         """Ingest chunks using explicit batching with insert_many.
@@ -255,10 +255,10 @@ class WeaviateService:
     def _create_data_objects(
         self,
         *,
-        chunks: List[str],
-        vectors: List[List[float]],
-        doc_metadata: Dict[str, Any],
-    ) -> List[Any]:
+        chunks: list[str],
+        vectors: list[list[float]],
+        doc_metadata: dict[str, Any],
+    ) -> list[Any]:
         """Create Weaviate DataObjects from chunks."""
         doc_id = doc_metadata["doc_id"]
         url = doc_metadata["url"]
@@ -286,7 +286,7 @@ class WeaviateService:
     async def _insert_batch_with_retry(
         self,
         collection: Any,
-        batch_objects: List[Any],
+        batch_objects: list[Any],
         batch_idx: int,
         _total_chunks: int,
         max_retries: int,
@@ -324,7 +324,7 @@ class WeaviateService:
         return 0
 
     @staticmethod
-    def _parse_query_response(response: Any) -> List[SearchResult]:
+    def _parse_query_response(response: Any) -> list[SearchResult]:
         """Normalize Weaviate query response objects to a standardized SearchResult list."""
         results = []
         for obj in response.objects:
@@ -353,7 +353,7 @@ class WeaviateService:
     @timed("weaviate.search_similar", warn_threshold_s=1.0)
     async def search_similar(
         self, query: str, limit: int = 10, collection_name: str = COLLECTION_NAME
-    ) -> List[SearchResult]:
+    ) -> list[SearchResult]:
         """
         Search for similar documents using vector similarity.
         """
@@ -402,8 +402,8 @@ class WeaviateService:
         *,
         source_type: str = "pdf",
         collection_name: str = COLLECTION_NAME,
-        pre_computed_vector: Optional[List[float]] = None,
-    ) -> List[SearchResult]:
+        pre_computed_vector: list[float] | None = None,
+    ) -> list[SearchResult]:
         """Search for similar documents, filtered by source_type (e.g. 'pdf' or 'url').
         Args:
             pre_computed_vector: Optional pre-batched embedding. When provided, skips the
@@ -457,11 +457,11 @@ class WeaviateService:
         self,
         query: str,
         limit: int,
-        filters: List[Any],
+        filters: list[Any],
         *,
         collection_name: str = COLLECTION_NAME,
-        pre_computed_vector: Optional[List[float]] = None,
-    ) -> List[SearchResult]:
+        pre_computed_vector: list[float] | None = None,
+    ) -> list[SearchResult]:
         """Search with arbitrary AND filters (used for user-upload scoped retrieval)."""
         await self._ensure_resources(collection_name)
         try:
@@ -501,7 +501,7 @@ class WeaviateService:
 
     async def search_by_url(
         self, url: str, limit: int = 1, collection_name: str = COLLECTION_NAME
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Search for chunks by their source URL."""
         await self._ensure_resources(collection_name)
         collection = self.collection_manager.get_collection(collection_name)
@@ -556,7 +556,7 @@ class WeaviateService:
             return False
 
     async def delete_document_by_metadata(
-        self, filters: Dict[str, Any], collection_name: str = COLLECTION_NAME
+        self, filters: dict[str, Any], collection_name: str = COLLECTION_NAME
     ) -> int:
         """Delete documents matching metadata filters."""
         await self._ensure_resources(collection_name)
@@ -591,7 +591,7 @@ class WeaviateService:
         scraper_name: str,
         cutoff_time: datetime,
         collection_name: str = COLLECTION_NAME,
-    ) -> Tuple[int, List[str]]:
+    ) -> tuple[int, list[str]]:
         """Delete web scraped data for a specific scraper that is older than the cutoff time.
         Args:
             scraper_name: The source name of the scraper (e.g. 'morgan_stanley')
@@ -665,7 +665,7 @@ class WeaviateService:
     async def update_document_metadata(
         self,
         document_id: str,
-        updates: Dict[str, Any],
+        updates: dict[str, Any],
         collection_name: str = COLLECTION_NAME,
     ) -> bool:
         """Update metadata for all chunks of a document."""
@@ -698,7 +698,7 @@ class WeaviateService:
 
     async def get_collection_stats(
         self, collection_name: str = COLLECTION_NAME
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Get collection statistics."""
         await self._ensure_resources(collection_name)
         collection = self.collection_manager.get_collection(collection_name)

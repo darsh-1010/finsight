@@ -11,7 +11,7 @@ import json
 import os
 import re
 from dataclasses import asdict, dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime, timezone
 from typing import Any, Dict, List, Optional
 
 import yaml
@@ -28,12 +28,12 @@ SCRAPER_VERSION = "crawlee-1.0"
 class ArticleMetadata:
     """Secondary metadata for articles."""
 
-    published_date: Optional[str] = None
-    author: Optional[str] = None
-    category: Optional[str] = None
-    tags: List[str] = field(default_factory=list)
+    published_date: str | None = None
+    author: str | None = None
+    category: str | None = None
+    tags: list[str] = field(default_factory=list)
     scraped_at: str = field(
-        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+        default_factory=lambda: datetime.now(UTC).isoformat()
     )
     scraper_version: str = SCRAPER_VERSION
 
@@ -58,7 +58,7 @@ class Article:
         """
         return len(self.content.split()) if self.content else 0
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to a JSON-serialisable dictionary."""
         d = asdict(self)
         # Flatten for backward compatibility in JSON output
@@ -81,12 +81,12 @@ class ScrapeOutput:
     total_found: int  # Articles discovered on the site
     total_within_window: int  # Articles that passed the date filter
     total_scraped: int  # Articles successfully scraped with content
-    articles: List[Article] = field(default_factory=list)
+    articles: list[Article] = field(default_factory=list)
     scraped_at: str = field(
-        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+        default_factory=lambda: datetime.now(UTC).isoformat()
     )
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "scrape_metadata": {
                 "source": self.source,
@@ -134,7 +134,7 @@ def _expand_env_vars(content: str) -> str:
     return pattern.sub(replacer, content)
 
 
-def load_scraper_config(scraper_name: str) -> Dict[str, Any]:
+def load_scraper_config(scraper_name: str) -> dict[str, Any]:
     """Load per-scraper settings from ``config/scraper_config.yaml``.
 
     Falls back to sensible defaults if the file or key is missing.
@@ -149,7 +149,7 @@ def load_scraper_config(scraper_name: str) -> Dict[str, Any]:
         "output_file": f"outputs/{scraper_name}_articles.json",
     }
     try:
-        with open(config_path, "r", encoding="utf-8") as fh:
+        with open(config_path, encoding="utf-8") as fh:
             content = fh.read()
             expanded_content = _expand_env_vars(content)
         cfg = yaml.safe_load(expanded_content) or {}

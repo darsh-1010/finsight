@@ -8,8 +8,7 @@ from __future__ import annotations
 
 import logging
 import re
-from datetime import datetime, timedelta, timezone
-from typing import Optional
+from datetime import UTC, datetime, timedelta
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +53,7 @@ _MONTH_NAMES = {
 }
 
 
-def _parse_regex_dates(date_str: str) -> Optional[datetime]:
+def _parse_regex_dates(date_str: str) -> datetime | None:
     """Parse dates using regex patterns (Month DD YYYY, DD Month YYYY, MM/DD/YYYY)."""
     # Try "Month DD, YYYY" / "Month DD YYYY"
     m = re.match(r"([A-Za-z]+)\s+(\d{1,2}),?\s+(\d{4})", date_str)
@@ -66,7 +65,7 @@ def _parse_regex_dates(date_str: str) -> Optional[datetime]:
                     int(m.group(3)),
                     month,
                     int(m.group(2)),
-                    tzinfo=timezone.utc,
+                    tzinfo=UTC,
                 )
             except ValueError:
                 pass
@@ -81,7 +80,7 @@ def _parse_regex_dates(date_str: str) -> Optional[datetime]:
                     int(m.group(3)),
                     month,
                     int(m.group(1)),
-                    tzinfo=timezone.utc,
+                    tzinfo=UTC,
                 )
             except ValueError:
                 pass
@@ -94,7 +93,7 @@ def _parse_regex_dates(date_str: str) -> Optional[datetime]:
                 int(m.group(3)),
                 int(m.group(1)),
                 int(m.group(2)),
-                tzinfo=timezone.utc,
+                tzinfo=UTC,
             )
         except ValueError:
             pass
@@ -102,7 +101,7 @@ def _parse_regex_dates(date_str: str) -> Optional[datetime]:
     return None
 
 
-def parse_date(date_str: Optional[str]) -> Optional[datetime]:
+def parse_date(date_str: str | None) -> datetime | None:
     """Best-effort parsing of a date string into a timezone-aware datetime.
 
     Tries ISO 8601 first, then falls back to common patterns.
@@ -134,7 +133,7 @@ def parse_date(date_str: Optional[str]) -> Optional[datetime]:
         try:
             dt = datetime.strptime(date_str[: len(datetime.now().strftime(fmt))], fmt)
             if dt.tzinfo is None:
-                dt = dt.replace(tzinfo=timezone.utc)
+                dt = dt.replace(tzinfo=UTC)
             return dt
         except (ValueError, OverflowError):
             continue
@@ -147,7 +146,7 @@ def parse_date(date_str: Optional[str]) -> Optional[datetime]:
     ):
         try:
             dt = datetime.strptime(date_str, fmt)
-            return dt.replace(tzinfo=timezone.utc)
+            return dt.replace(tzinfo=UTC)
         except (ValueError, OverflowError):
             continue
 
@@ -160,7 +159,7 @@ def parse_date(date_str: Optional[str]) -> Optional[datetime]:
 
 
 def is_within_lookback(
-    published_date: Optional[str],
+    published_date: str | None,
     lookback_days: int,
 ) -> bool:
     """Return ``True`` if the article was published within the last *lookback_days*.
@@ -183,5 +182,5 @@ def is_within_lookback(
     if dt is None:
         return True  # Can't parse → keep it (conservative)
 
-    cutoff = datetime.now(timezone.utc) - timedelta(days=lookback_days)
+    cutoff = datetime.now(UTC) - timedelta(days=lookback_days)
     return dt >= cutoff

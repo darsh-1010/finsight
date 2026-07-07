@@ -28,10 +28,10 @@ class RAGService(IRAGService):
     async def retrieve_context(
         self,
         query: str,
-        limit: Optional[int] = None,
-        filters: Optional[List[Any]] = None,
+        limit: int | None = None,
+        filters: list[Any] | None = None,
         **kwargs: Any,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Retrieve relevant documents for a query.
 
         Args:
@@ -88,7 +88,7 @@ class RAGService(IRAGService):
         self,
         query: str,
         **kwargs: Any,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Retrieve relevant research articles.
 
         Args:
@@ -118,7 +118,7 @@ class RAGService(IRAGService):
         self,
         url: str,
         content: str,
-        metadata: Optional[Dict[str, Any]] = None,
+        metadata: dict[str, Any] | None = None,
         replace_existing: bool = True,
         **kwargs: Any,
     ) -> int:
@@ -222,7 +222,8 @@ class RAGService(IRAGService):
             logger.info(f"Deleting document by document_id: {document_id}")
 
             success = await self.vector_service.delete_document(
-                url="", document_id=document_id  # Not used for document_id deletion
+                url="",
+                document_id=document_id,  # Not used for document_id deletion
             )
 
             if success:
@@ -236,7 +237,7 @@ class RAGService(IRAGService):
             logger.error(f"Error deleting document by ID: {str(e)}", exc_info=True)
             raise RAGError(f"RAG deletion failed: {e}") from e
 
-    async def delete_documents_by_metadata(self, filters: Dict[str, Any]) -> int:
+    async def delete_documents_by_metadata(self, filters: dict[str, Any]) -> int:
         """Delete documents matching metadata filters.
 
         Args:
@@ -269,7 +270,7 @@ class RAGService(IRAGService):
             raise
 
     async def update_document_metadata(
-        self, document_id: str, updates: Dict[str, Any]
+        self, document_id: str, updates: dict[str, Any]
     ) -> bool:
         """Update metadata for a document.
 
@@ -308,7 +309,7 @@ class RAGService(IRAGService):
             logger.error(f"Error updating document metadata: {str(e)}", exc_info=True)
             raise
 
-    async def get_document_stats(self) -> Dict[str, Any]:
+    async def get_document_stats(self) -> dict[str, Any]:
         """Get statistics about stored documents.
 
         Returns:

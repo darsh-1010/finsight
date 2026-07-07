@@ -1,6 +1,5 @@
 """Base abstract class for all scraper implementations."""
 
-import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any
@@ -19,11 +18,6 @@ class ScraperResult:
     error: str | None = None
 
 
-def safe_filename(text: str, max_len: int = 80) -> str:
-    """Sanitize string for use as a filename."""
-    text = re.sub(r"[^\w\s-]", "", text).strip()
-    text = re.sub(r"[\s_-]+", "_", text)
-    return text[:max_len] or "untitled"
 
 
 class BaseScraper(ABC):

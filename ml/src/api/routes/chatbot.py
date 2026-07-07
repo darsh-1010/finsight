@@ -3,19 +3,23 @@
 import asyncio
 import json
 import os
-from typing import AsyncGenerator
+from collections.abc import AsyncGenerator
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Header
 from fastapi.responses import JSONResponse, StreamingResponse
-from src.llm.fallback_client import FallbackAsyncOpenAI
 
 from config.settings import settings
 from src.api.dependencies import get_chat_service
 from src.api.health import build_readiness_report
 from src.core.interfaces import IChatService
-from src.core.schemas import (ChatRequest, ChatResponse,
-                              ConversationHistoryResponse, ConversationMessage)
+from src.core.schemas import (
+    ChatRequest,
+    ChatResponse,
+    ConversationHistoryResponse,
+    ConversationMessage,
+)
 from src.core.tier_feature_resolver import resolver
+from src.llm.fallback_client import FallbackAsyncOpenAI
 from src.utils.logger import get_logger
 from src.utils.redis_client import get_async_redis, get_redis
 
