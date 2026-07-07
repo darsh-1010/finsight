@@ -110,7 +110,7 @@ async def test_edge_case_vector_db_timeout_or_dns_failure(mock_weaviate_service_
 
 
 @pytest.mark.anyio
-@patch("src.services.market_insights.llm_engine.AsyncOpenAI")
+@patch("src.services.market_insights.llm_engine.FallbackAsyncOpenAI")
 async def test_edge_case_openai_connection_and_ratelimit_errors(mock_openai_class: MagicMock) -> None:
     """Edge Case: OpenAI API returns direct rate limit or connection drops.
 
