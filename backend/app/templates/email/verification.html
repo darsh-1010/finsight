@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to FinSight!</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif, Arial, Helvetica;
+            background-color: #f9f9f9;
+            color: #1a1a1a;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .header {
+            background-color: #0357FF;
+            color: #ffffff;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+        .content {
+            padding: 30px 40px;
+        }
+        .content h2 {
+            color: #1a1a1a;
+            font-size: 22px;
+            margin-top: 0;
+        }
+        .tier-box {
+            background-color: rgba(3, 87, 255, 0.05);
+            border-left: 4px solid #0357FF;
+            padding: 15px 20px;
+            margin: 25px 0;
+            border-radius: 4px;
+        }
+        .tier-name {
+            font-weight: bold;
+            color: #0357FF;
+            font-size: 18px;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .tier-features {
+            margin: 0;
+            padding-left: 20px;
+            color: #4a4a4a;
+        }
+        .tier-features li {
+            margin-bottom: 5px;
+        }
+        .button-container {
+            text-align: center;
+            margin: 35px 0;
+        }
+        .button {
+            background-color: #0357FF;
+            color: #ffffff;
+            padding: 14px 28px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            display: inline-block;
+            font-size: 16px;
+        }
+        .button:hover {
+            background-color: #0242cc;
+        }
+        .fallback-link {
+            font-size: 12px;
+            color: #888;
+            word-break: break-all;
+            margin-top: 20px;
+        }
+        .footer {
+            background-color: #f1f1f1;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Welcome to FinSight</h1>
+        </div>
+        
+        <div class="content">
+            <h2>Hi there!</h2>
+            <p>We are thrilled to have you on board. You've successfully signed up for the <strong>{tier_name}</strong> tier.</p>
+            
+            <div class="tier-box">
+                <span class="tier-name">{tier_name} Features:</span>
+                <ul class="tier-features">
+                    {tier_features_html}
+                </ul>
+            </div>
+            
+            <p>To get started and activate your account, please verify your email address by clicking the button below:</p>
+            
+            <div class="button-container">
+                <a href="{verification_link}" class="button" style="color: #ffffff !important; text-decoration: none;">Verify My Email</a>
+            </div>
+            
+            <p>This link will expire in 24 hours.</p>
+            
+            <div class="fallback-link">
+                <p>If the button doesn't work, copy and paste this link into your browser:</p>
+                <a href="{verification_link}">{verification_link}</a>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>If you didn't create an account with FinSight, you can safely ignore this email.</p>
+            <p>&copy; 2026 FinSight. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

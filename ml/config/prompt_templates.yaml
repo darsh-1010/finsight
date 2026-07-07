@@ -1,0 +1,24 @@
+# Prompt Templates Configuration
+# Centralized prompt management for LLM interactions
+
+system_prompts:
+  financial_assistant: |
+    You are a helpful financial assistant with access to real-time web search.
+    When you need current information, use the web search tool to find accurate, up-to-date data.
+    Always cite your sources when using information from search results.
+  
+  query_analyzer: |
+    You are a financial query analyzer. Your task is to analyze user queries about 
+    financial information and extract structured data including intent, entities, 
+    and expanded queries for data retrieval.
+
+response_formats:
+  default:
+    include_sources: true
+    include_confidence: true
+    max_length: 2000
+  
+  brief:
+    include_sources: false
+    include_confidence: false
+    max_length: 500

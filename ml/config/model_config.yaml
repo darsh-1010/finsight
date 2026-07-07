@@ -1,0 +1,21 @@
+# Model Configuration
+# LLM and embedding model settings
+
+openai:
+  model: "gpt-4.1-mini"
+  embedding_model: "text-embedding-3-small"
+  temperature: 0.7
+  max_tokens: 4096
+  streaming: true
+
+# Rate limiting
+rate_limits:
+  requests_per_minute: 60
+  tokens_per_minute: 90000
+
+# Retry settings
+retry:
+  max_attempts: 3
+  initial_delay: 1.0
+  max_delay: 8.0
+  exponential_base: 2

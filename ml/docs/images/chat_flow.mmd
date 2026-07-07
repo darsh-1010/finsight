@@ -1,0 +1,35 @@
+sequenceDiagram
+    participant C as Client
+    participant API as FastAPI
+    participant CS as ChatService
+    participant CM as ContextManager
+    participant QS as QueryService
+    participant RS as RAGService
+    participant DB as Weaviate (Vector DB)
+    participant LLM as OpenAI (GPT-4o)
+
+    C->>API: POST /api/v1/chat/
+    API->>CS: chat(message, session_id)
+    
+    rect rgb(240, 240, 240)
+    Note over CS,RS: Context Orchestration
+    CS->>CM: get_context(message)
+    par Parallel Retrieval
+        CM->>QS: analyze_and_fetch(query)
+        CM->>RS: retrieve_context(query)
+    end
+    QS-->>CM: Financial Data
+    
+    RS->>DB: query_vectors(embedding)
+    DB-->>RS: relevant_chunks
+    RS-->>CM: Document Chunks
+    
+    CM-->>CS: Consolidated Context
+    end
+
+    CS->>LLM: generate(prompt + context)
+    LLM-->>CS: Response Text
+    
+    CS->>CS: Post-process (Citations/Charts)
+    CS-->>API: Response Payload
+    API-->>C: JSON Response

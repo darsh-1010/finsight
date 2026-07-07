@@ -1,0 +1,608 @@
+{
+  "finsight_starter_questions": [
+    {
+      "id": "T1-001",
+      "tier": 1,
+      "category": "Core Finance Concepts",
+      "question": "What is compound interest, and how can it help my money grow over time?"
+    },
+    {
+      "id": "T1-002",
+      "tier": 1,
+      "category": "Core Finance Concepts",
+      "question": "What does a Freedom Number mean, and how can I calculate the amount of money I need to live comfortably?"
+    },
+    {
+      "id": "T1-003",
+      "tier": 1,
+      "category": "Core Finance Concepts",
+      "question": "What is the difference between saving money and investing money?"
+    },
+    {
+      "id": "T1-004",
+      "tier": 1,
+      "category": "Core Finance Concepts",
+      "question": "What does diversification mean, and why do people spread their money across different investments?"
+    },
+    {
+      "id": "T1-005",
+      "tier": 1,
+      "category": "Core Finance Concepts",
+      "question": "What is cash flow, and why is managing money coming in and going out so important?"
+    },
+    {
+      "id": "T1-006",
+      "tier": 1,
+      "category": "Investment Vocabulary",
+      "question": "What is a stock, and what does it mean when I buy shares in a company?"
+    },
+    {
+      "id": "T1-007",
+      "tier": 1,
+      "category": "Investment Vocabulary",
+      "question": "What is a bond, and how is it different from owning company shares?"
+    },
+    {
+      "id": "T1-008",
+      "tier": 1,
+      "category": "Investment Vocabulary",
+      "question": "What is an ETF, and why do many beginners invest in it?"
+    },
+    {
+      "id": "T1-009",
+      "tier": 1,
+      "category": "Investment Vocabulary",
+      "question": "What is a dividend, and how do companies pay money to investors?"
+    },
+    {
+      "id": "T1-010",
+      "tier": 1,
+      "category": "Investment Vocabulary",
+      "question": "What do people mean by a bull market and a bear market?"
+    },
+    {
+      "id": "T1-011",
+      "tier": 1,
+      "category": "Wealth Mindset & Principles",
+      "question": "What are the most common money mistakes people make in their 20s and 30s?"
+    },
+    {
+      "id": "T1-012",
+      "tier": 1,
+      "category": "Wealth Mindset & Principles",
+      "question": "What does paying yourself first mean, and how can I start doing it?"
+    },
+    {
+      "id": "T1-013",
+      "tier": 1,
+      "category": "Wealth Mindset & Principles",
+      "question": "What is the difference between an asset and a liability in simple everyday terms?"
+    },
+    {
+      "id": "T1-014",
+      "tier": 1,
+      "category": "Wealth Mindset & Principles",
+      "question": "What is inflation, and why does money lose value over time?"
+    },
+    {
+      "id": "T1-015",
+      "tier": 1,
+      "category": "Wealth Mindset & Principles",
+      "question": "Why do experts say staying invested for a long time is better than trying to predict the market?"
+    },
+    {
+      "id": "T1-016",
+      "tier": 1,
+      "category": "Getting Started",
+      "question": "What is an emergency fund, and how much money should I keep for emergencies?"
+    },
+    {
+      "id": "T1-017",
+      "tier": 1,
+      "category": "Getting Started",
+      "question": "What is the difference between a Cash ISA and a Stocks and Shares ISA?"
+    },
+    {
+      "id": "T1-018",
+      "tier": 1,
+      "category": "Getting Started",
+      "question": "What does net worth mean, and how can I calculate my total financial value?"
+    },
+    {
+      "id": "T1-019",
+      "tier": 1,
+      "category": "Getting Started",
+      "question": "What is a pension, and how is it different from regular savings?"
+    },
+    {
+      "id": "T1-020",
+      "tier": 1,
+      "category": "Getting Started",
+      "question": "What is dollar-cost averaging, and why do beginners invest this way?"
+    },
+
+    {
+      "id": "T2-001",
+      "tier": 2,
+      "category": "ETFs, Funds & Comparisons",
+      "question": "What is the difference between an ETF and an index fund, and which one is better for beginners?"
+    },
+    {
+      "id": "T2-002",
+      "tier": 2,
+      "category": "ETFs, Funds & Comparisons",
+      "question": "How are actively managed funds different from passive ETFs when it comes to fees and long-term growth?"
+    },
+    {
+      "id": "T2-003",
+      "tier": 2,
+      "category": "ETFs, Funds & Comparisons",
+      "question": "What is a global equity ETF, and how does it let me invest in companies around the world?"
+    },
+    {
+      "id": "T2-004",
+      "tier": 2,
+      "category": "ETFs, Funds & Comparisons",
+      "question": "What is the difference between accumulation and distribution funds?"
+    },
+    {
+      "id": "T2-005",
+      "tier": 2,
+      "category": "ETFs, Funds & Comparisons",
+      "question": "What is an expense ratio, and why can small fees make a big difference over many years?"
+    },
+    {
+      "id": "T2-006",
+      "tier": 2,
+      "category": "Risk & Return Basics",
+      "question": "Why do investments with higher returns usually come with higher risk?"
+    },
+    {
+      "id": "T2-007",
+      "tier": 2,
+      "category": "Risk & Return Basics",
+      "question": "Why do bond prices usually fall when interest rates go up?"
+    },
+    {
+      "id": "T2-008",
+      "tier": 2,
+      "category": "Risk & Return Basics",
+      "question": "What does volatility mean in investing, and should new investors worry about it?"
+    },
+    {
+      "id": "T2-009",
+      "tier": 2,
+      "category": "Risk & Return Basics",
+      "question": "How do people's emotions and market news affect stock prices in the short term?"
+    },
+    {
+      "id": "T2-010",
+      "tier": 2,
+      "category": "Risk & Return Basics",
+      "question": "What is a market drawdown, and how do markets usually recover after a big fall?"
+    },
+    {
+      "id": "T2-011",
+      "tier": 2,
+      "category": "Portfolio Construction Basics",
+      "question": "What does a simple beginner investment portfolio look like for someone investing carefully for the long term?"
+    },
+    {
+      "id": "T2-012",
+      "tier": 2,
+      "category": "Portfolio Construction Basics",
+      "question": "What is asset allocation, and why is dividing money between different investments important?"
+    },
+    {
+      "id": "T2-013",
+      "tier": 2,
+      "category": "Portfolio Construction Basics",
+      "question": "What is portfolio rebalancing, and how often should I adjust my investments?"
+    },
+    {
+      "id": "T2-014",
+      "tier": 2,
+      "category": "Portfolio Construction Basics",
+      "question": "How do bonds help protect a portfolio when stock markets become unstable?"
+    },
+    {
+      "id": "T2-015",
+      "tier": 2,
+      "category": "Macro & Scenario Walkthroughs",
+      "question": "What usually happens to stock markets when central banks increase interest rates?"
+    },
+    {
+      "id": "T2-016",
+      "tier": 2,
+      "category": "Macro & Scenario Walkthroughs",
+      "question": "How does inflation affect investments like stocks, bonds, and real estate?"
+    },
+    {
+      "id": "T2-017",
+      "tier": 2,
+      "category": "Macro & Scenario Walkthroughs",
+      "question": "What is a recession, and what usually happens to the stock market during one?"
+    },
+    {
+      "id": "T2-018",
+      "tier": 2,
+      "category": "Macro & Scenario Walkthroughs",
+      "question": "How does the value of the US dollar affect prices of things like gold and oil?"
+    },
+    {
+      "id": "T2-019",
+      "tier": 2,
+      "category": "Macro & Scenario Walkthroughs",
+      "question": "What are the most common beginner investing mistakes, and how can I avoid them?"
+    },
+    {
+      "id": "T2-020",
+      "tier": 2,
+      "category": "Macro & Scenario Walkthroughs",
+      "question": "What is the yield curve, and why do investors use it to understand the economy?"
+    },
+
+    {
+      "id": "T3-001",
+      "tier": 3,
+      "category": "Risk & Diversification Analysis",
+      "question": "Can you analyse the diversification benefits of combining global equities with investment-grade bonds right now?"
+    },
+    {
+      "id": "T3-002",
+      "tier": 3,
+      "category": "Risk & Diversification Analysis",
+      "question": "What are the key risk factors to understand when building a multi-asset portfolio in the current macro environment?"
+    },
+    {
+      "id": "T3-003",
+      "tier": 3,
+      "category": "Risk & Diversification Analysis",
+      "question": "How should I think about concentration risk, and what signals suggest a portfolio is over-concentrated?"
+    },
+    {
+      "id": "T3-004",
+      "tier": 3,
+      "category": "Risk & Diversification Analysis",
+      "question": "What is correlation in a portfolio context and how do different asset classes move relative to each other?"
+    },
+    {
+      "id": "T3-005",
+      "tier": 3,
+      "category": "Risk & Diversification Analysis",
+      "question": "Walk me through what a stress scenario like a 30% equity drawdown would imply for a typical 60/40 portfolio."
+    },
+    {
+      "id": "T3-006",
+      "tier": 3,
+      "category": "Multi-Source Market Synthesis",
+      "question": "What are the key macro themes that Morgan Stanley and BofA are currently highlighting for equity investors?"
+    },
+    {
+      "id": "T3-007",
+      "tier": 3,
+      "category": "Multi-Source Market Synthesis",
+      "question": "What is the current consensus view on global inflation trajectory and how is it shaping asset allocation thinking?"
+    },
+    {
+      "id": "T3-008",
+      "tier": 3,
+      "category": "Multi-Source Market Synthesis",
+      "question": "Synthesise the latest views on sector rotation — which sectors are institutions currently favouring and why?"
+    },
+    {
+      "id": "T3-009",
+      "tier": 3,
+      "category": "Multi-Source Market Synthesis",
+      "question": "What do current research sources say about the outlook for emerging market equities versus developed markets?"
+    },
+    {
+      "id": "T3-010",
+      "tier": 3,
+      "category": "Multi-Source Market Synthesis",
+      "question": "What are the main tail risks that institutional researchers are flagging for markets in the next 12 months?"
+    },
+    {
+      "id": "T3-011",
+      "tier": 3,
+      "category": "Strategy Comparisons & Scenario Planning",
+      "question": "Compare a growth-oriented strategy versus a value-oriented strategy — what are the trade-offs in the current environment?"
+    },
+    {
+      "id": "T3-012",
+      "tier": 3,
+      "category": "Strategy Comparisons & Scenario Planning",
+      "question": "Build me a scenario framework: what happens to my portfolio if rates stay higher for longer versus if they fall sharply?"
+    },
+    {
+      "id": "T3-013",
+      "tier": 3,
+      "category": "Strategy Comparisons & Scenario Planning",
+      "question": "Can you compare dividend-income investing versus total-return investing as wealth-building approaches?"
+    },
+    {
+      "id": "T3-014",
+      "tier": 3,
+      "category": "Strategy Comparisons & Scenario Planning",
+      "question": "What are the trade-offs between holding cash, short-duration bonds, and money market funds in a high-rate environment?"
+    },
+    {
+      "id": "T3-015",
+      "tier": 3,
+      "category": "Document & Deep Analysis",
+      "question": "I have uploaded a fund factsheet — can you explain the key metrics I should focus on and what they mean?"
+    },
+    {
+      "id": "T3-016",
+      "tier": 3,
+      "category": "Document & Deep Analysis",
+      "question": "Walk me through how to read an annual report for a company — what sections matter most for an investor?"
+    },
+    {
+      "id": "T3-017",
+      "tier": 3,
+      "category": "Document & Deep Analysis",
+      "question": "What is factor investing and what does the research say about the long-term evidence for factors like value, momentum, and quality?"
+    },
+    {
+      "id": "T3-018",
+      "tier": 3,
+      "category": "Document & Deep Analysis",
+      "question": "Explain the concept of sequence-of-returns risk and how it changes the way a wealth-builder should think about drawdowns near retirement."
+    },
+    {
+      "id": "T3-019",
+      "tier": 3,
+      "category": "Document & Deep Analysis",
+      "question": "What frameworks do professional investors use to evaluate whether a market is overvalued, fairly valued, or undervalued?"
+    },
+    {
+      "id": "T3-020",
+      "tier": 3,
+      "category": "Document & Deep Analysis",
+      "question": "What is alternative asset allocation — what role do assets like infrastructure, private equity, and commodities play in institutional portfolios?"
+    },
+
+    {
+      "id": "T4-001",
+      "tier": 4,
+      "category": "Live Market Context (Educational)",
+      "question": "Pull the current S&P 500 level and walk me through where it sits relative to historical valuation ranges like P/E and CAPE."
+    },
+    {
+      "id": "T4-002",
+      "tier": 4,
+      "category": "Live Market Context (Educational)",
+      "question": "What is the current 10-year US Treasury yield and what does that level imply for equity risk premium?"
+    },
+    {
+      "id": "T4-003",
+      "tier": 4,
+      "category": "Live Market Context (Educational)",
+      "question": "Show me the current price context for gold and explain how it has behaved relative to real yields historically."
+    },
+    {
+      "id": "T4-004",
+      "tier": 4,
+      "category": "Live Market Context (Educational)",
+      "question": "Pull current data on the VIX and explain what the current reading tells us about market-implied volatility expectations."
+    },
+    {
+      "id": "T4-005",
+      "tier": 4,
+      "category": "Live Market Context (Educational)",
+      "question": "What does the current spread between investment-grade and high-yield credit tell us about risk appetite in markets right now?"
+    },
+    {
+      "id": "T4-006",
+      "tier": 4,
+      "category": "Quantitative Educational Context",
+      "question": "Explain Value at Risk (VaR) using a real portfolio example and current market data — what would a 95% VaR tell me?"
+    },
+    {
+      "id": "T4-007",
+      "tier": 4,
+      "category": "Quantitative Educational Context",
+      "question": "Walk me through CVaR (Conditional Value at Risk) and how it differs from VaR as a risk measure."
+    },
+    {
+      "id": "T4-008",
+      "tier": 4,
+      "category": "Quantitative Educational Context",
+      "question": "Use current sector ETF data to illustrate how correlations between sectors have shifted in a rising-rate environment."
+    },
+    {
+      "id": "T4-009",
+      "tier": 4,
+      "category": "Quantitative Educational Context",
+      "question": "Explain the Sharpe ratio with a live-data example — how do I use it to compare two investment strategies?"
+    },
+    {
+      "id": "T4-010",
+      "tier": 4,
+      "category": "Quantitative Educational Context",
+      "question": "Using current price context, walk me through how beta works and what a high-beta versus low-beta portfolio looks like in practice."
+    },
+    {
+      "id": "T4-011",
+      "tier": 4,
+      "category": "Research-Grade Analysis with Reasoning",
+      "question": "Give me a deep-dive on the current macro backdrop for global equities — synthesise all available sources and show your reasoning."
+    },
+    {
+      "id": "T4-012",
+      "tier": 4,
+      "category": "Research-Grade Analysis with Reasoning",
+      "question": "What is the current institutional consensus on Fed policy trajectory and how is it priced into rate-sensitive assets?"
+    },
+    {
+      "id": "T4-013",
+      "tier": 4,
+      "category": "Research-Grade Analysis with Reasoning",
+      "question": "Analyse the current relationship between the dollar index (DXY) and emerging market equity performance using live data context."
+    },
+    {
+      "id": "T4-014",
+      "tier": 4,
+      "category": "Research-Grade Analysis with Reasoning",
+      "question": "Walk me through sector rotation signals right now — which sectors show relative strength and what macro drivers explain it?"
+    },
+    {
+      "id": "T4-015",
+      "tier": 4,
+      "category": "Document + Market Data Enrichment",
+      "question": "I have uploaded an earnings report — can you analyse it alongside current price context and explain what the market reaction implies?"
+    },
+    {
+      "id": "T4-016",
+      "tier": 4,
+      "category": "Document + Market Data Enrichment",
+      "question": "I have uploaded a portfolio statement — use current price data to contextualise the asset classes I am holding without making specific recommendations."
+    },
+    {
+      "id": "T4-017",
+      "tier": 4,
+      "category": "Document + Market Data Enrichment",
+      "question": "Using hybrid RAG and live data, explain what current earnings season results imply for forward market expectations."
+    },
+    {
+      "id": "T4-018",
+      "tier": 4,
+      "category": "Document + Market Data Enrichment",
+      "question": "Show me your chain-of-thought as you analyse the relationship between current oil prices and energy sector equity performance."
+    },
+    {
+      "id": "T4-019",
+      "tier": 4,
+      "category": "Document + Market Data Enrichment",
+      "question": "What are the key leading indicators I should be monitoring right now and what does their current state suggest about the economic cycle?"
+    },
+    {
+      "id": "T4-020",
+      "tier": 4,
+      "category": "Document + Market Data Enrichment",
+      "question": "Walk me through how to interpret a yield curve inversion using current bond market data — what has it historically preceded?"
+    },
+
+    {
+      "id": "T5-001",
+      "tier": 5,
+      "category": "Institutional-Depth Research",
+      "question": "Conduct a full institutional-grade analysis of the current global macro environment across equities, fixed income, FX, and commodities — generate a structured PDF briefing."
+    },
+    {
+      "id": "T5-002",
+      "tier": 5,
+      "category": "Institutional-Depth Research",
+      "question": "Build a comprehensive scenario matrix for my strategy call: base case, bull case, and bear case for global markets over the next 12 months with supporting data."
+    },
+    {
+      "id": "T5-003",
+      "tier": 5,
+      "category": "Institutional-Depth Research",
+      "question": "What is the current state of global monetary policy divergence and how should a sophisticated multi-asset investor think about its implications?"
+    },
+    {
+      "id": "T5-004",
+      "tier": 5,
+      "category": "Institutional-Depth Research",
+      "question": "Synthesise all available research on private equity versus public equity return expectations in the current rate environment — full reasoning, full sourcing."
+    },
+    {
+      "id": "T5-005",
+      "tier": 5,
+      "category": "Institutional-Depth Research",
+      "question": "Prepare a structured pre-call brief for my upcoming strategy session: summarise my key questions, the relevant macro context, and the decision points we need to address."
+    },
+    {
+      "id": "T5-006",
+      "tier": 5,
+      "category": "Stress Testing & Risk Illustration",
+      "question": "Run a full stress scenario analysis using 2008 GFC, COVID March 2020, and the 2022 rate-shock — how would each have affected a diversified multi-asset allocation?"
+    },
+    {
+      "id": "T5-007",
+      "tier": 5,
+      "category": "Stress Testing & Risk Illustration",
+      "question": "Illustrate the tail-risk implications of a simultaneous equity and bond drawdown (correlation breakdown) — what happened in 2022 and what can I learn from it?"
+    },
+    {
+      "id": "T5-008",
+      "tier": 5,
+      "category": "Stress Testing & Risk Illustration",
+      "question": "Build a comprehensive risk factor map across my key areas of interest — geopolitical, macro, sector-specific, and liquidity risks — with current market context."
+    },
+    {
+      "id": "T5-009",
+      "tier": 5,
+      "category": "Stress Testing & Risk Illustration",
+      "question": "What does a rate-shock scenario (rapid 200bps rise) imply across equities, bonds, property, and alternative assets — give me the full analytical framework?"
+    },
+    {
+      "id": "T5-010",
+      "tier": 5,
+      "category": "Wealth Structuring & Advanced Strategy",
+      "question": "What are the key considerations for an HNW investor when thinking about portfolio liquidity, lock-up periods, and private versus public allocation splits?"
+    },
+    {
+      "id": "T5-011",
+      "tier": 5,
+      "category": "Wealth Structuring & Advanced Strategy",
+      "question": "Give me an institutional-grade breakdown of the role of real assets (infrastructure, real estate, commodities) in a long-term wealth preservation mandate."
+    },
+    {
+      "id": "T5-012",
+      "tier": 5,
+      "category": "Wealth Structuring & Advanced Strategy",
+      "question": "What does the research say about the optimal allocation to alternatives for a long-horizon wealth-builder — what frameworks do family offices and endowments use?"
+    },
+    {
+      "id": "T5-013",
+      "tier": 5,
+      "category": "Wealth Structuring & Advanced Strategy",
+      "question": "Analyse the current opportunity set in fixed income across investment-grade, high-yield, and emerging market debt — full sourcing, full reasoning, exportable briefing."
+    },
+    {
+      "id": "T5-014",
+      "tier": 5,
+      "category": "Advisory Integration",
+      "question": "Translate the feedback from my last advisor session into plain English and map it to specific educational areas I should deepen before the next call."
+    },
+    {
+      "id": "T5-015",
+      "tier": 5,
+      "category": "Advisory Integration",
+      "question": "Prepare a structured written brief summarising my current questions, macro context, and thinking — format it as a clean PDF I can share before my strategy session."
+    },
+    {
+      "id": "T5-016",
+      "tier": 5,
+      "category": "Advisory Integration",
+      "question": "What questions should I bring to my next advisor call based on the current macro environment and the themes we have been working through?"
+    },
+    {
+      "id": "T5-017",
+      "tier": 5,
+      "category": "Advisory Integration",
+      "question": "Generate a full research digest across all available sources on the topic I am focused on this quarter — unlimited depth, structured PDF output."
+    },
+    {
+      "id": "T5-018",
+      "tier": 5,
+      "category": "Advisory Integration",
+      "question": "Walk me through the institutional decision-making framework for evaluating a major allocation shift — what process do sophisticated investors follow before acting?"
+    },
+    {
+      "id": "T5-019",
+      "tier": 5,
+      "category": "Advisory Integration",
+      "question": "Using all available corpus sources and live data, give me the most complete picture possible of where we are in the current market cycle — full Opus reasoning, exportable report."
+    },
+    {
+      "id": "T5-020",
+      "tier": 5,
+      "category": "Advisory Integration",
+      "question": "Build a long-form educational briefing on the topic of my choice using every available data source — no token cap, full parallel RAG, structured for my strategy archive."
+    }
+  ]
+}

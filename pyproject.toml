@@ -1,0 +1,39 @@
+[tool.ruff]
+# Target Python version
+target-version = "py311"
+
+# Standard PEP 8 line length limit
+line-length = 88
+
+# Exclude standard directories
+exclude = [
+    ".git",
+    ".venv",
+    "venv",
+    "__pycache__",
+    "build",
+    "dist",
+]
+
+[tool.ruff.lint]
+# Enable standard rule groups
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes (unused imports, variables, etc.)
+    "I",   # isort (import sorting order)
+    "B",   # flake8-bugbear (common design issues/bugs)
+    "C4",  # flake8-comprehensions (optimizes list/dict comprehensions)
+    "UP",  # pyupgrade (upgrades syntax to modern Python)
+]
+
+# Rule exclusions
+ignore = [
+    "E501",  # Line too long (let the formatter wrap it or ignore if intentional)
+    "B008",  # Do not perform function calls in argument defaults (standard for FastAPI Depends)
+]
+
+[tool.ruff.lint.isort]
+# Treat backend/app and ml/src as local first-party imports for clean grouping
+known-first-party = ["app", "src", "config"]
+combine-as-imports = true

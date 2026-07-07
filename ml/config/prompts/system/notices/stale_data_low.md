@@ -1,0 +1,1 @@
+{ticker}: current_price ({price}) < 52-week low ({low_52}) by >10% — data may be stale

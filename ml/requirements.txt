@@ -1,0 +1,64 @@
+# Core Backend Framework
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+
+# LangChain / LangGraph
+langchain>=0.2.0
+langchain-core>=0.2.0
+langchain-openai>=0.1.0
+langchain-community>=0.2.0
+langchain-text-splitters>=0.2.0
+langgraph>=0.1.0
+langgraph-checkpoint>=1.0.0
+
+# Web Scraping
+playwright==1.49.1
+crawlee[beautifulsoup,playwright]>=1.4.0
+camoufox>=0.4.0
+
+# Financial / Data Processing
+yfinance>=0.2.36
+curl_cffi>=0.10.0
+pandas>=2.1.0
+
+# PDF & Document Processing
+pypdf>=4.0.0
+pdfplumber>=0.10.0
+pytesseract>=0.3.10
+pdf2image>=1.17.0
+Pillow>=10.0.0
+pymupdf>=1.24.0
+
+# Vector Database
+weaviate-client>=4.4.0
+
+# Session / Caching
+redis>=5.0.0
+
+# HTTP / Utilities
+httpx>=0.26.0
+litellm>=1.30.0
+tenacity>=8.2.0
+python-dotenv>=1.0.0
+python-multipart>=0.0.7
+structlog>=24.1.0
+apscheduler>=3.10.0
+PyYAML>=6.0.0
+boto3>=1.34.0
+
+# Development / Testing
+pytest>=7.4.0
+pytest-asyncio>=0.23.0
+pytest-cov>=4.1.0
+
+# Code Quality (Dev Only)
+black>=24.1.0
+isort>=5.13.0
+pylint>=3.0.0
+mypy>=1.8.0
+
+# Type Stubs
+types-redis>=4.6.0
+types-PyYAML>=6.0.0

@@ -1,0 +1,141 @@
+settings:
+  run_time: "${ML_SCRAPER_RUN_TIME:-04:30 PM}"
+  max_workers: ${ML_SCRAPER_MAX_WORKERS:-1}
+  # Watchdog circuit breaker settings
+  watchdog_zero_streak_threshold: 3
+  watchdog_cooldown_hours: 24
+  ghost_cleanup_buffer_seconds: 300
+
+scrapers:
+  man_institute:
+    enabled: true
+    max_articles: ${ML_SCRAPER_MAN_INST_MAX_ARTICLES:-50}
+    lookback_days: ${ML_SCRAPER_MAN_INST_LOOKBACK_DAYS:-1}
+    interval_days: ${ML_SCRAPER_MAN_INST_INTERVAL_DAYS:-1}
+    max_concurrency: 4
+    output_file: "outputs/man_institute_articles.json"
+    request_timeout_sec: 30
+    min_paragraph_length: 40
+    low_word_threshold: 50
+    max_runtime_seconds: 600
+
+  jefferies:
+    enabled: true
+    max_articles: ${ML_SCRAPER_JEFFERIES_MAX_ARTICLES:-100}
+    lookback_days: ${ML_SCRAPER_JEFFERIES_LOOKBACK_DAYS:-1}
+    interval_days: ${ML_SCRAPER_JEFFERIES_INTERVAL_DAYS:-1}
+    max_concurrency: 2
+    output_file: "outputs/jefferies_articles.json"
+    request_timeout_sec: 60
+    navigation_timeout_ms: 60000
+    page_settle_delay_ms: 3000
+    max_runtime_seconds: 1200
+
+  morgan_stanley:
+    enabled: true
+    max_articles: ${ML_SCRAPER_MORGAN_STANLEY_MAX_ARTICLES:-200}
+    lookback_days: ${ML_SCRAPER_MORGAN_STANLEY_LOOKBACK_DAYS:-1}
+    interval_days: ${ML_SCRAPER_MORGAN_STANLEY_INTERVAL_DAYS:-1}
+    max_concurrency: 2
+    output_file: "outputs/morgan_stanley_articles.json"
+    request_timeout_sec: 120
+    content_settle_delay_ms: 3000
+    load_more_delay_ms: 2000
+    max_load_more_clicks: 30
+    selector_timeout_ms: 30000
+    cookie_timeout_ms: 2000
+    max_runtime_seconds: 1200
+
+  schwab:
+    enabled: true
+    max_articles: ${ML_SCRAPER_SCHWAB_MAX_ARTICLES:-50}
+    lookback_days: ${ML_SCRAPER_SCHWAB_LOOKBACK_DAYS:-1}
+    interval_days: ${ML_SCRAPER_SCHWAB_INTERVAL_DAYS:-1}
+    max_concurrency: 2
+    output_file: "outputs/schwab_articles.json"
+    request_timeout_sec: 120
+    hydration_delay_ms: 10000
+    article_settle_delay_ms: 3000
+    tile_timeout_ms: 20000
+    max_runtime_seconds: 1200
+
+  seeking_alpha:
+    enabled: false
+    max_articles: ${ML_SCRAPER_SEEKING_ALPHA_MAX_ARTICLES:-100}
+    lookback_days: ${ML_SCRAPER_SEEKING_ALPHA_LOOKBACK_DAYS:-1}
+    interval_days: ${ML_SCRAPER_SEEKING_ALPHA_INTERVAL_DAYS:-1}
+    max_concurrency: 2
+    output_file: "outputs/seeking_alpha_articles.json"
+    request_timeout_sec: 120
+    page_settle_delay_ms: 5000
+    max_pages: 5
+    max_runtime_seconds: 1500
+
+  economic_times:
+    enabled: true
+    max_articles: ${ML_SCRAPER_ECONOMIC_TIMES_MAX_ARTICLES:-100}
+    lookback_days: ${ML_SCRAPER_ECONOMIC_TIMES_LOOKBACK_DAYS:-1}
+    interval_days: ${ML_SCRAPER_ECONOMIC_TIMES_INTERVAL_DAYS:-1}
+    max_concurrency: 4
+    output_file: "outputs/economic_times_articles.json"
+    request_timeout_sec: 30
+    max_pages: 3
+    max_runtime_seconds: 600
+
+  bofa_private_bank:
+    enabled: true
+    max_articles: ${ML_SCRAPER_BOFA_MAX_ARTICLES:-50}
+    lookback_days: ${ML_SCRAPER_BOFA_LOOKBACK_DAYS:-1}
+    interval_days: ${ML_SCRAPER_BOFA_INTERVAL_DAYS:-1}
+    max_concurrency: 3
+    output_file: "outputs/bofa_private_bank_articles.json"
+    request_timeout_sec: 90
+    hydration_delay_ms: 12000
+    article_settle_delay_ms: 3000
+    selector_timeout_ms: 20000
+    load_more_delay_ms: 3000
+    max_load_more_clicks: 10
+    retire_after_pages: 5
+    scrape_pdf: true
+    max_runtime_seconds: 1200
+    max_repair_attempts: 3
+
+  investing_com:
+    enabled: true
+    max_articles: ${ML_SCRAPER_INVESTING_COM_MAX_ARTICLES:-50}
+    lookback_days: ${ML_SCRAPER_INVESTING_COM_LOOKBACK_DAYS:-1}
+    interval_days: ${ML_SCRAPER_INVESTING_COM_INTERVAL_DAYS:-1}
+    output_file: "outputs/investing_com_articles.json"
+    max_runtime_seconds: 1200
+    max_repair_attempts: 3
+
+  barrons:
+    enabled: false
+    max_articles: ${ML_SCRAPER_BARRONS_MAX_ARTICLES:-50}
+    lookback_days: ${ML_SCRAPER_BARRONS_LOOKBACK_DAYS:-1}
+    interval_days: ${ML_SCRAPER_BARRONS_INTERVAL_DAYS:-1}
+    output_file: "outputs/barrons_articles.json"
+
+  deutsche_bank:
+    enabled: true
+    max_articles: ${ML_SCRAPER_DEUTSCHE_BANK_MAX_ARTICLES:-50}
+    lookback_days: ${ML_SCRAPER_DEUTSCHE_BANK_LOOKBACK_DAYS:-1}
+    interval_days: ${ML_SCRAPER_DEUTSCHE_BANK_INTERVAL_DAYS:-1}
+    output_file: "outputs/deutsche_bank_articles.json"
+
+  goldmansachs:
+    enabled: true
+    max_articles: ${ML_SCRAPER_GOLDMANSACHS_MAX_ARTICLES:-50}
+    lookback_days: ${ML_SCRAPER_GOLDMANSACHS_LOOKBACK_DAYS:-1}
+    interval_days: ${ML_SCRAPER_GOLDMANSACHS_INTERVAL_DAYS:-1}
+    output_file: "outputs/goldmansachs_articles.json"
+    max_runtime_seconds: 1200
+    max_repair_attempts: 3
+
+  wealth_deutsche_bank:
+    enabled: true
+    max_articles: ${ML_SCRAPER_WEALTH_DB_MAX_ARTICLES:-50}
+    lookback_days: ${ML_SCRAPER_WEALTH_DB_LOOKBACK_DAYS:-1}
+    interval_days: ${ML_SCRAPER_WEALTH_DB_INTERVAL_DAYS:-1}
+    output_file: "outputs/wealth_deutsche_bank_articles.json"
+

@@ -1,0 +1,189 @@
+services:
+  # FastAPI Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aim-chatbot-app
+    env_file: .env
+    ports:
+      - "8002:8000"
+    environment:
+      # OpenAI Configuration
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_MODEL: gpt-4.1-mini
+      OPENAI_EMBEDDING_MODEL: text-embedding-3-small
+
+      # Weaviate Configuration (use container name for Docker networking)
+      WEAVIATE_URL: http://weaviate:8080
+      WEAVIATE_GRPC_URL: weaviate:50051
+      WEAVIATE_API_KEY: ${WEAVIATE_API_KEY:-}
+
+      # Redis Configuration (use container name for Docker networking)
+      REDIS_URL: redis://redis:6379/0
+      SESSION_TTL_SECONDS: 3600
+
+      # Application Settings
+      DEBUG: 'false'
+
+      # RAG Configuration
+      EMBEDDING_MODEL: text-embedding-3-small
+      TOP_K_RETRIEVAL: 10
+      RERANK_TOP_K: 5
+      CHUNK_SIZE: 1000
+      CHUNK_OVERLAP: 200
+
+      # PDF Scraper Configuration
+      PDF_SCRAPER_TIMEOUT: 30
+      PDF_MIN_CONTENT_LENGTH: 300
+    depends_on:
+      weaviate:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - aim-chatbot-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/health/ready" ]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 40s
+    volumes:
+      - ./src:/app/src
+      - ./config:/app/config
+      - ./logs:/app/logs
+      - ./outputs:/app/outputs
+
+  # Scraper Scheduler (runs continuously and fires scrapers at configured times)
+  scraper:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aim-scraper-scheduler
+    env_file: .env
+    # Override the default CMD so this container runs the scheduler, not the API
+    command: ["python", "-m", "src.scripts.scraper_scheduler"]
+    restart: unless-stopped
+    environment:
+      # OpenAI (needed for Weaviate embedding after ingestion)
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_MODEL: gpt-4.1-mini
+      OPENAI_EMBEDDING_MODEL: text-embedding-3-small
+
+      # Weaviate (use container name for Docker networking)
+      WEAVIATE_URL: http://weaviate:8080
+      WEAVIATE_GRPC_URL: weaviate:50051
+      WEAVIATE_API_KEY: ${WEAVIATE_API_KEY:-}
+
+      # Redis (use container name for Docker networking)
+      REDIS_URL: redis://redis:6379/0
+
+      # Scraper Schedule
+      SCRAPER_RUN_TIME: ${SCRAPER_RUN_TIME:-04:30 AM}
+      SCRAPER_MAX_WORKERS: ${SCRAPER_MAX_WORKERS:-2}
+
+      # RAG Configuration
+      EMBEDDING_MODEL: text-embedding-3-small
+      CHUNK_SIZE: 1000
+      CHUNK_OVERLAP: 200
+
+      # PDF Scraper
+      PDF_SCRAPER_TIMEOUT: 30
+      PDF_MIN_CONTENT_LENGTH: 300
+
+      # Environment
+      PYTHONPATH: /app
+      # Timezone — set this to match your local timezone so cron times are correct
+      TZ: ${SCRAPER_TIMEZONE:-Asia/Kolkata}
+      SCRAPER_TIMEZONE: ${SCRAPER_TIMEZONE:-Asia/Kolkata}
+
+      # Explicit memory limit for Crawlee (in MB)
+      # 6GB = 6144MB
+      CRAWLEE_MEMORY_MBYTES: 6144
+
+      # Backend API Integration for local development
+      ML_DATA_TRANSFER_BASE_URL: ${ML_DATA_TRANSFER_BASE_URL:-http://host.docker.internal:8001}
+    init: true
+    # Firefox/Camoufox IPC requires >256MB of shared memory; Docker defaults to 64MB
+    # which causes BrowserType.launch crashes. 1GB eliminates this risk entirely.
+    shm_size: '1gb'
+    # Allows containerized scrapers to reach services running on the host machine
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    deploy:
+      resources:
+        limits:
+          memory: 6G
+    depends_on:
+      weaviate:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - aim-chatbot-network
+    healthcheck:
+      disable: true
+    volumes:
+      - ./src:/app/src
+      - ./config:/app/config
+      - ./logs:/app/logs
+      - ./outputs:/app/outputs
+
+  # Weaviate Vector Database
+  weaviate:
+    image: semitechnologies/weaviate:1.27.6
+    container_name: aim-chatbot-weaviate
+    ports:
+      - "8080:8080"
+      - "50051:50051"
+    environment:
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
+      PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
+      DEFAULT_VECTORIZER_MODULE: 'text2vec-openai'
+      ENABLE_MODULES: 'text2vec-openai'
+      CLUSTER_HOSTNAME: 'node1'
+      # OpenAI configuration for embeddings
+      OPENAI_APIKEY: ${OPENAI_API_KEY}
+      # Performance Tuning (Disabled async for stability)
+      ASYNC_INDEXING: 'false'
+      WRITE_TIMEOUT: '600s'
+      READ_TIMEOUT: '600s'
+    volumes:
+      - weaviate_data_v2:/var/lib/weaviate
+    networks:
+      - aim-chatbot-network
+    healthcheck:
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/v1/.well-known/ready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: aim-chatbot-redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - aim-chatbot-network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    command: redis-server --appendonly yes
+
+volumes:
+  weaviate_data_v2:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  aim-chatbot-network:
+    driver: bridge

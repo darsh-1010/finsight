@@ -1,0 +1,96 @@
+name: Deploy Frontend
+
+on:
+  workflow_dispatch:
+
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  ECR_REPOSITORY: finsight-frontend
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # -----------------------------
+      # Checkout
+      # -----------------------------
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # -----------------------------
+      # AWS Credentials
+      # -----------------------------
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # -----------------------------
+      # Login to ECR
+      # -----------------------------
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # -----------------------------
+      # Get AWS Account ID
+      # -----------------------------
+      - name: Get AWS Account ID
+        run: |
+          AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          echo "AWS_ACCOUNT_ID=$AWS_ACCOUNT_ID" >> $GITHUB_ENV
+
+      # -----------------------------
+      # Build & Push Frontend Image
+      # -----------------------------
+      - name: Build and push frontend image
+        run: |
+          set -e
+
+          IMAGE_URI="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY"
+
+          docker build \
+            --build-arg VITE_API_BASE_URL=${{ secrets.VITE_API_URL }} \
+            -t $IMAGE_URI:$GITHUB_SHA \
+            -t $IMAGE_URI:latest \
+            .
+
+          docker push $IMAGE_URI:$GITHUB_SHA
+          docker push $IMAGE_URI:latest
+
+      # -----------------------------
+      # Deploy on EC2
+      # -----------------------------
+      - name: Deploy to EC2
+        env:
+          HOSTNAME: ${{ secrets.EC2_HOST }}
+          USER_NAME: ${{ secrets.EC2_USER }}
+          PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+        run: |
+          echo "$PRIVATE_KEY" > key.pem
+          chmod 400 key.pem
+
+          ssh -o StrictHostKeyChecking=no -i key.pem ${USER_NAME}@${HOSTNAME} "
+            set -e
+
+            IMAGE_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY
+
+            aws ecr get-login-password --region $AWS_REGION | \
+              sudo docker login --username AWS --password-stdin \
+              $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+
+            sudo docker pull \$IMAGE_URI:latest
+
+            sudo docker stop finsight-frontend || true
+            sudo docker rm finsight-frontend || true
+
+            sudo docker run -d \
+              --name finsight-frontend \
+              -p 3000:80 \
+              --restart unless-stopped \
+              \$IMAGE_URI:latest
+
+            sudo docker image prune -f
+          "

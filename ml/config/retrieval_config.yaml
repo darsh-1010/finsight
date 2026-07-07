@@ -1,0 +1,11 @@
+# Minimum relevance score for retrieving scraped article chunks from vector database
+# Balances recall (not missing relevant articles) vs precision (filtering noise)
+min_article_relevance_score: 0.45
+
+# Minimum relevance score for retrieving standard document chunks (PDFs, etc.)
+# Higher threshold for more precise but potentially fewer results
+min_document_relevance_score: 0.40
+
+# Maximum number of top documents to retrieve before filtering by relevance score
+rerank_top_k: 5
+

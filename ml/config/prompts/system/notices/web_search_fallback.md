@@ -1,0 +1,1 @@
+Financial context unavailable — using web search fallback

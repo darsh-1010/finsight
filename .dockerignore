@@ -1,0 +1,30 @@
+# Exclude frontend node_modules and builds
+frontend/node_modules/
+frontend/dist/
+frontend/.svelte-kit/
+frontend/.next/
+
+# Exclude backend dependencies
+backend/.venv/
+backend/venv/
+backend/__pycache__/
+backend/app/__pycache__/
+backend/.pytest_cache/
+
+# Exclude ML dependencies
+ml/.venv/
+ml/venv/
+ml/__pycache__/
+ml/.pytest_cache/
+
+# Exclude OS/IDE files
+.git/
+.github/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Docker files
+docker-compose.override.yml
+*.log

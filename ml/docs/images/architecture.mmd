@@ -1,0 +1,74 @@
+flowchart TD
+    %% Styling
+    classDef api fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
+    classDef service fill:#fff3e0,stroke:#e65100,stroke-width:2px;
+    classDef intelligence fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px;
+    classDef data fill:#f3e5f5,stroke:#4a148c,stroke-width:2px;
+    classDef external fill:#eeeeee,stroke:#616161,stroke-width:1px,stroke-dasharray: 5 5;
+
+    subgraph API_LAYER ["API Layer"]
+        direction TB
+        MAIN[main.py]:::api
+        CHAT_ROUTE[Chat Endpoints]:::api
+        SCRAPER_ROUTE[Scraper Endpoints]:::api
+        MAIN --> CHAT_ROUTE
+        MAIN --> SCRAPER_ROUTE
+    end
+
+    subgraph ORCHESTRATION ["Service Layer (Orchestration)"]
+        direction TB
+        CHAT_SVC[ChatService]:::service
+        SCRAPER_SVC[ScraperService]:::service
+        MSG_MGR[MessageManager]:::service
+        CTX_MGR[ContextManager]:::service
+        RESP_GEN[ResponseGenerator]:::service
+    end
+
+    subgraph INTELLIGENCE ["Intelligence Layer"]
+        direction TB
+        QUERY_SVC[QueryService]:::intelligence
+        RAG_SVC[RAGService]:::intelligence
+        TICKER_SVC[TickerService]:::intelligence
+    end
+
+    subgraph DATA_INFRA ["Data & Infrastructure"]
+        direction TB
+        WEAVIATE_SVC[WeaviateService]:::data
+        SESSION_SVC[SessionService]:::data
+        REDIS_CLIENT[RedisClient]:::data
+        SOURCE[YFinanceDataSource]:::data
+    end
+
+    subgraph EXTERNAL ["External Providers"]
+        OPENAI[OpenAI API]:::external
+    end
+
+    %% API to Orchestration
+    CHAT_ROUTE --> CHAT_SVC
+    SCRAPER_ROUTE --> SCRAPER_SVC
+    SCRAPER_ROUTE --> RAG_SVC
+
+    %% Chat Service internals
+    CHAT_SVC --> MSG_MGR
+    CHAT_SVC --> CTX_MGR
+    CHAT_SVC --> RESP_GEN
+    MSG_MGR --> SESSION_SVC
+
+    %% Context Manager flow
+    CTX_MGR --> QUERY_SVC
+    CTX_MGR --> RAG_SVC
+
+    %% Intelligence to Data
+    QUERY_SVC --> TICKER_SVC
+    QUERY_SVC --> SOURCE
+    TICKER_SVC --> SOURCE
+    RAG_SVC --> WEAVIATE_SVC
+
+    %% Data internals
+    SESSION_SVC --> REDIS_CLIENT
+
+    %% External Connections
+    RESP_GEN -.-> OPENAI
+    RAG_SVC -.-> OPENAI
+    QUERY_SVC -.-> OPENAI
+    TICKER_SVC -.-> OPENAI

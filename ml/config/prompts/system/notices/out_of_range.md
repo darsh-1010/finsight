@@ -1,0 +1,1 @@
+Questionable {field} for {ticker}: {value} (expected range: {low}-{high})

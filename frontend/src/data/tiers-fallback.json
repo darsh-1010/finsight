@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "level": 1,
+    "name": "Starter",
+    "description": "Start Understanding how investing really works.",
+    "price_amount": 0,
+    "price_amount_yearly": 0,
+    "currency": "usd",
+    "price_id": "price_1SuudHP4Kb8d5IExjJpZZwKK",
+    "yearly_price_id": null,
+    "highlights": [
+      "8-10 foundational lessons (basics of investing)",
+      "Worksheets and learning frameworks",
+      "FinSight in read-only / explain mode",
+      "Core concepts explained clearly",
+      "No asset-specific guidance"
+    ],
+    "is_popular": false,
+    "icon": "book"
+  },
+  {
+    "id": 2,
+    "level": 2,
+    "name": "Growth",
+    "description": "Build the mindset professionals use.",
+    "price_amount": 2900,
+    "price_amount_yearly": 31320,
+    "currency": "usd",
+    "price_id": "price_1SuuAIP4Kb8d5IExjPXwUkjR",
+    "yearly_price_id": "price_1SxLxyP4Kb8d5IExDDiAmNTX",
+    "highlights": [
+      "Full Build Your Wealth curriculum",
+      "Investor psychology & market cycles",
+      "Risk-thinking frameworks",
+      "FinSight Q&A mode (education + concepts)",
+      "Market explainers (no signals, no calls)"
+    ],
+    "is_popular": false,
+    "icon": "brain"
+  },
+  {
+    "id": 3,
+    "level": 3,
+    "name": "Premium",
+    "description": "Think in systems. Understand context.",
+    "price_amount": 7900,
+    "price_amount_yearly": 85320,
+    "currency": "usd",
+    "price_id": "price_1SuuAJP4Kb8d5IExJVOJDYVC",
+    "yearly_price_id": "price_1SxLxzP4Kb8d5IExt0rX2H2J",
+    "highlights": [
+      "Everything in Investor Mindset",
+      "FinSight interactive intelligence",
+      "Scenario analysis & macro context",
+      "Risk framework explanations",
+      "Portfolio logic (non-personalised)"
+    ],
+    "is_popular": true,
+    "icon": "star"
+  },
+  {
+    "id": 4,
+    "level": 4,
+    "name": "Enterprise",
+    "description": "Interpret markets like professionals do.",
+    "price_amount": 14900,
+    "price_amount_yearly": 160920,
+    "currency": "usd",
+    "price_id": "price_1SuuAKP4Kb8d5IEx6dv7Tah8",
+    "yearly_price_id": "price_1SxLxzP4Kb8d5IExfRu4ox6y",
+    "highlights": [
+      "Everything in FinSight Intelligence",
+      "FinSight signals-aware intelligence",
+      "Explanation of what models are indicating",
+      "How professionals interpret data",
+      "Priority FinSight compute & faster responses"
+    ],
+    "is_popular": false,
+    "icon": "energy"
+  }
+]

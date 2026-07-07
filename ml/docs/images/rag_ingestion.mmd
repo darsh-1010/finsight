@@ -1,0 +1,5 @@
+flowchart LR
+    INPUT[PDF Document] --> SCRAPE[Scraper Service]
+    SCRAPE --> SPLIT[Recursive Text Splitter]
+    SPLIT --> EMBED[OpenAI Embeddings]
+    EMBED --> WEAVIATE[(Weaviate Vector DB)]

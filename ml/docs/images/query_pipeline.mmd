@@ -1,0 +1,13 @@
+flowchart TD
+    START([User Query]) --> ANALYSIS[LLM Analysis: Intent & Entity Extraction]
+    ANALYSIS --> TICKER{Ticker Found?}
+    
+    TICKER -- No --> RESOLVE[TickerService: Resolve Company Names]
+    RESOLVE --> VALIDATE{Validated?}
+    
+    TICKER -- Yes --> FETCH
+    VALIDATE -- Yes --> FETCH[Parallel Data Fetch: yFinance]
+    VALIDATE -- No --> ERROR[Return Partial/Greeting Response]
+    
+    FETCH --> CONTEXT[Context Assembly & Reasoning]
+    CONTEXT --> END([Final Context String])

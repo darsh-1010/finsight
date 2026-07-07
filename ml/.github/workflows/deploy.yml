@@ -1,0 +1,108 @@
+name: Deploy ML
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to deploy'
+        required: true
+        default: 'dev'
+
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  ECR_REPOSITORY: finsight-ml
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ----------------------------------------
+      # Checkout selected branch
+      # ----------------------------------------
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+
+      # ----------------------------------------
+      # AWS Auth
+      # ----------------------------------------
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # ----------------------------------------
+      # Login ECR
+      # ----------------------------------------
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # ----------------------------------------
+      # Generate image tag
+      # ----------------------------------------
+      - name: Generate image tag
+        run: |
+          AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          IMAGE_URI="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY"
+
+          VERSION_TAG="V$(date +%s)"
+
+          echo "AWS_ACCOUNT_ID=$AWS_ACCOUNT_ID" >> $GITHUB_ENV
+          echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
+          echo "VERSION_TAG=$VERSION_TAG" >> $GITHUB_ENV
+
+      # ----------------------------------------
+      # Build & Push Docker Image
+      # ----------------------------------------
+      - name: Build and push ML image
+        run: |
+          docker build \
+            -t $IMAGE_URI:$VERSION_TAG \
+            -t $IMAGE_URI:latest \
+            .
+
+          docker push $IMAGE_URI:$VERSION_TAG
+          docker push $IMAGE_URI:latest
+
+      # ----------------------------------------
+      # Deploy on EC2
+      # ----------------------------------------
+      - name: Deploy to EC2
+        env:
+          HOSTNAME: ${{ secrets.EC2_HOST }}
+          USER_NAME: ${{ secrets.EC2_USER }}
+          PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+        run: |
+          echo "$PRIVATE_KEY" > key.pem
+          chmod 400 key.pem
+      
+          ssh -o StrictHostKeyChecking=no -i key.pem ${USER_NAME}@${HOSTNAME} "
+            set -e
+      
+            echo 'Logging into ECR...'
+      
+            aws ecr get-login-password --region $AWS_REGION | \
+            sudo docker login --username AWS --password-stdin \
+            $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+      
+            echo 'Changing to compose directory...'
+            cd /home/ubuntu/finsight/finsight-ml
+      
+            echo 'Pulling latest images...'
+            sudo docker-compose pull
+      
+            echo 'Stopping existing containers...'
+            sudo docker-compose down
+      
+            echo 'Starting containers...'
+            sudo docker-compose up -d
+      
+            echo 'Cleaning up old images...'
+            sudo docker image prune -af
+      
+            echo 'Deployment completed successfully.'
+          "

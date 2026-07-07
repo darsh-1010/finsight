@@ -1,0 +1,60 @@
+# ── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env.local
+
+# ── Python type / lint caches ─────────────────────────────────────────────────
+.mypy_cache/
+.pyre/
+.pytype/
+.ruff_cache/
+
+# ── Test / coverage ───────────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# ── ML scraper storage (large, generated at runtime) ─────────────────────────
+ml/storage_*/
+ml/graphify-out/
+ml/logs/
+ml/outputs/
+ml/financial-perf-audit/
+
+# ── Node / Frontend ───────────────────────────────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# ── Environment files (never commit real secrets) ─────────────────────────────
+.env
+backend/.env
+ml/.env
+
+# ── Docker volumes (runtime) ─────────────────────────────────────────────────
+*.log
+
+# ── IDE ───────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Agents ────────────────────────────────────────────────────────────────────
+.agents/
