@@ -1,15 +1,8 @@
 from datetime import datetime
-
-from fastapi import HTTPException
 from sqlalchemy.orm import Session
+from fastapi import HTTPException
 
-from app.models.subscriptions import (
-    ChangeSource,
-    ChangeType,
-    Subscription,
-    SubscriptionChange,
-    SubscriptionStatus,
-)
+from app.models.subscriptions import Subscription,SubscriptionChange, SubscriptionStatus, ChangeType, ChangeSource
 from app.models.tiers import Tier
 from app.models.users import User
 from app.services.token_service import TokenService
@@ -23,10 +16,10 @@ class TierService:
     # Helpers
 
     @staticmethod
-    def _get_tier_by_level(db: Session, level: int) -> Tier:
+    def _get_tier_by_level(db:Session,level:int) -> Tier:
         tier = db.query(Tier).filter(Tier.level == level).first()
         if not tier:
-            raise HTTPException(status_code=400, detail="Invalid tier level")
+            raise HTTPException(status_code=400, detail = "Invalid tier level")
         return tier
 
     @staticmethod
@@ -35,7 +28,9 @@ class TierService:
             return user.subscription
 
         subscription = Subscription(
-            user_id=user.id, status=SubscriptionStatus.ACTIVE, source="free"
+            user_id=user.id,
+            status=SubscriptionStatus.ACTIVE,
+            source="free"
         )
 
         db.add(subscription)
@@ -51,9 +46,8 @@ class TierService:
             db.query(SubscriptionChange)
             .filter(
                 SubscriptionChange.user_id == user_id,
-                SubscriptionChange.effective_to.is_(None),
-            )
-            .first()
+                SubscriptionChange.effective_to.is_(None)
+            ).first()
         )
 
         if active:
@@ -71,17 +65,15 @@ class TierService:
         subscription.source = "free"
         subscription.started_at = datetime.utcnow()
 
-        db.add(
-            SubscriptionChange(
-                user_id=user.id,
-                previous_tier_id=None,
-                new_tier_id=tier.id,
-                change_type=ChangeType.SIGNUP,
-                source=ChangeSource.SYSTEM,
-                effective_from=datetime.utcnow(),
-                effective_to=None,
-            )
-        )
+        db.add(SubscriptionChange(
+            user_id=user.id,
+            previous_tier_id=None,
+            new_tier_id=tier.id,
+            change_type=ChangeType.SIGNUP,
+            source=ChangeSource.SYSTEM,
+            effective_from=datetime.utcnow(),
+            effective_to=None
+        ))
 
         db.commit()
         return subscription

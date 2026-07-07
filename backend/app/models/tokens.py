@@ -1,14 +1,14 @@
 from sqlalchemy import (
-    JSON,
-    BigInteger,
     Column,
-    Date,
-    DateTime,
-    ForeignKey,
     Integer,
     String,
+    DateTime,
+    Date,
+    ForeignKey,
     Text,
+    BigInteger,
     UniqueConstraint,
+    JSON,
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func

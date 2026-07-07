@@ -29,6 +29,7 @@ from app.core.database import SESSION_LOCAL
 from app.services.cron_service import CronService
 from app.services.insights_sync_service import sync_insights
 
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(levelname)s [%(name)s] %(message)s",
@@ -46,14 +47,11 @@ async def run_test_sync(mode: str) -> None:
         db.commit()
         logger.info(
             "=== TEST COMPLETE: %s sync saved %d insight(s) to the database. ===",
-            mode.upper(),
-            count,
+            mode.upper(), count,
         )
     except Exception:
         db.rollback()
-        logger.exception(
-            "=== TEST FAILED: %s insights sync raised an exception. ===", mode.upper()
-        )
+        logger.exception("=== TEST FAILED: %s insights sync raised an exception. ===", mode.upper())
     finally:
         db.close()
 

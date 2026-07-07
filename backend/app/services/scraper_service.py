@@ -70,7 +70,9 @@ async def sync_active_jobs(db: Session) -> None:
                 continue
 
             valid_url = (
-                db.query(ScrapingURL).filter(ScrapingURL.id == website_id).first()
+                db.query(ScrapingURL)
+                .filter(ScrapingURL.id == website_id)
+                .first()
             )
 
             if not valid_url:
@@ -123,7 +125,11 @@ async def trigger_scraper_job(doc_id: str, s3_url: str) -> bool:
     ml_api_url = settings.ML_API_URL.rstrip("/")
     endpoint = f"{ml_api_url}/api/v1/scraper/scrape"
 
-    payload = {"doc_id": doc_id, "s3_url": s3_url, "store_in_vector_db": True}
+    payload = {
+        "doc_id": doc_id,
+        "s3_url": s3_url,
+        "store_in_vector_db": True
+    }
 
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
@@ -139,9 +145,7 @@ async def trigger_scraper_job(doc_id: str, s3_url: str) -> bool:
         logger.error("Failed to trigger ML scraper for doc_id %s: %s", doc_id, exc)
         return False
     except Exception as exc:
-        logger.error(
-            "Unexpected error triggering ML scraper for doc_id %s: %s", doc_id, exc
-        )
+        logger.error("Unexpected error triggering ML scraper for doc_id %s: %s", doc_id, exc)
         return False
 
 
@@ -161,19 +165,11 @@ async def delete_document_from_ml(document_id: str) -> bool:
             print(f"ML Delete Response Status: {response.status_code}")
             print(f"ML Delete Response Body: {response.text}")
             response.raise_for_status()
-            logger.info(
-                "Successfully deleted document from ML for document_id: %s", document_id
-            )
+            logger.info("Successfully deleted document from ML for document_id: %s", document_id)
             return True
     except httpx.HTTPError as exc:
-        logger.error(
-            "Failed to delete document from ML for document_id %s: %s", document_id, exc
-        )
+        logger.error("Failed to delete document from ML for document_id %s: %s", document_id, exc)
         return False
     except Exception as exc:
-        logger.error(
-            "Unexpected error deleting document from ML for document_id %s: %s",
-            document_id,
-            exc,
-        )
+        logger.error("Unexpected error deleting document from ML for document_id %s: %s", document_id, exc)
         return False

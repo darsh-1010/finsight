@@ -1,13 +1,12 @@
-from sqlalchemy import (
-    JSON,
-    Boolean,
+from sqlalchemy import (func, 
     Column,
-    ForeignKey,
     Integer,
     String,
+    ForeignKey,
+    Boolean,
+    JSON,
 )
 from sqlalchemy.orm import relationship
-
 from app.core.database import Base
 
 
@@ -27,6 +26,7 @@ class Tier(Base):
     currency = Column(String, default="inr")
 
     # Stripe mapping
+
 
     # UI / catalog metadata
     highlights = Column(JSON, nullable=True)

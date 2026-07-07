@@ -1,15 +1,17 @@
 from sqlalchemy.orm import Session
-
 from app.models.subscriptions import Subscription
-from app.models.tiers import Entitlements, Tier, TierEntitlement
-
+from app.models.tiers import Tier, TierEntitlement, Entitlements
 
 class EntitlementService:
+
     @staticmethod
     def get_user_entitlements(db: Session, user_id: int) -> set[str]:
         subscription = (
             db.query(Subscription)
-            .filter(Subscription.user_id == user_id, Subscription.status == "active")
+            .filter(
+                Subscription.user_id == user_id,
+                Subscription.status == "active"
+            )
             .first()
         )
 

@@ -1,7 +1,6 @@
 import enum
 import uuid
-
-from sqlalchemy import UUID, Column, DateTime, Enum, ForeignKey, Integer, String, Text
+from sqlalchemy import Column, Integer, String, ForeignKey, Enum, DateTime, Text, UUID
 from sqlalchemy.orm import relationship
 
 from app.core.database import Base
@@ -33,15 +32,17 @@ class ScrapingURL(Base):
     name = Column(String, nullable=False)
     url = Column(String, nullable=False)
     frequency_for_scrapping = Column(
-        Enum(ScrapingFrequency), nullable=False, default=ScrapingFrequency.WEEKLY
+        Enum(ScrapingFrequency),
+        nullable=False,
+        default=ScrapingFrequency.WEEKLY
     )
     content_deletion = Column(
-        Enum(ScrapingFrequency), nullable=False, default=ScrapingFrequency.MONTHLY
+        Enum(ScrapingFrequency),
+        nullable=False,
+        default=ScrapingFrequency.MONTHLY
     )
     # Relationship
-    sub_urls = relationship(
-        "ScrapingSubURL", back_populates="scraping_url", cascade="all, delete-orphan"
-    )
+    sub_urls = relationship("ScrapingSubURL", back_populates="scraping_url", cascade="all, delete-orphan")
 
 
 class ScrapingSubURL(Base):
@@ -56,7 +57,7 @@ class ScrapingSubURL(Base):
     published_date = Column(DateTime, nullable=True)
     scraped_at = Column(DateTime, nullable=True)
     scraper_version = Column(String, nullable=True)
-    document_id = Column(UUID(as_uuid=True), unique=True, nullable=False)
+    document_id = Column(UUID(as_uuid=True),unique=True, nullable=False)
 
     # Relationship
     scraping_url = relationship("ScrapingURL", back_populates="sub_urls")
@@ -79,11 +80,18 @@ class ScrapingJobHistory(Base):
 
     job_id = Column(String, unique=True, nullable=False, index=True)
 
-    website_id = Column(Integer, ForeignKey("scrapping_url.id"), nullable=False)
+    website_id = Column(
+        Integer,
+        ForeignKey("scrapping_url.id"),
+        nullable=False
+    )
 
     name = Column(String, nullable=False)
 
-    status = Column(Enum(ScrapingStatus), nullable=False)
+    status = Column(
+        Enum(ScrapingStatus),
+        nullable=False
+    )
 
     queued_at = Column(DateTime, nullable=True)
     started_at = Column(DateTime, nullable=True)
@@ -93,3 +101,4 @@ class ScrapingJobHistory(Base):
     error = Column(Text, nullable=True)
 
     scraping_url = relationship("ScrapingURL")
+    

@@ -1,21 +1,21 @@
 import enum
 from datetime import datetime
 
-from sqlalchemy import (
-    Boolean,
+from sqlalchemy import (func, 
     Column,
-    DateTime,
-    Enum,
-    ForeignKey,
     Integer,
     String,
+    Enum,
+    DateTime,
+    ForeignKey,
+    Boolean,
 )
 from sqlalchemy.orm import relationship
 
 from app.core.database import Base
 
-# ---------------- ENUMS ---------------- #
 
+# ---------------- ENUMS ---------------- #
 
 class UserRole(str, enum.Enum):
     ADMIN = "admin"
@@ -49,7 +49,6 @@ def enum_values(enum_cls):
 
 
 # ---------------- MODELS ---------------- #
-
 
 class Role(Base):
     __tablename__ = "roles"
@@ -104,15 +103,9 @@ class User(Base):
     onboarding_answers = relationship("UserOnboardingAnswer", back_populates="user")
     usage_counters = relationship("UsageCounter", back_populates="user")
     chat_sessions = relationship("ChatSession", back_populates="user")
-    ingested_pdfs = relationship(
-        "IngestedPDF", back_populates="user", cascade="all, delete-orphan"
-    )
-    verification_tokens = relationship(
-        "UserVerificationToken", back_populates="user", cascade="all, delete-orphan"
-    )
-    attachments = relationship(
-        "Attachment", back_populates="user", cascade="all, delete-orphan"
-    )
+    ingested_pdfs = relationship("IngestedPDF", back_populates="user", cascade="all, delete-orphan")
+    verification_tokens = relationship("UserVerificationToken", back_populates="user", cascade="all, delete-orphan")
+    attachments = relationship("Attachment", back_populates="user", cascade="all, delete-orphan")
     token_wallet = relationship(
         "UserTokenWallets",
         back_populates="user",
@@ -203,3 +196,4 @@ class VisitingUser(Base):
         default=datetime.utcnow,
         onupdate=datetime.utcnow,
     )
+

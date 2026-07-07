@@ -2,8 +2,8 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app.core.database import SESSION_LOCAL
 from app.models.compliance import (
-    ComplianceDisclosure,
     ComplianceGroup,
+    ComplianceDisclosure,
     DisclosureType,
 )
 
@@ -13,7 +13,11 @@ def seed_compliance():
     try:
         key = "dashboard_onboarding"
 
-        group = db.query(ComplianceGroup).filter(ComplianceGroup.key == key).first()
+        group = (
+            db.query(ComplianceGroup)
+            .filter(ComplianceGroup.key == key)
+            .first()
+        )
 
         if not group:
             print(f"Creating group: {key}")

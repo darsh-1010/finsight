@@ -1,24 +1,22 @@
-from datetime import datetime
-
+from typing import Optional
 from pydantic import BaseModel, EmailStr, Field
+from datetime import datetime
 
 
 class UserCreate(BaseModel):
     email: EmailStr
-    password: str
-    role_id: int
+    password:str
+    role_id:int
 
     # optional tier intent
-    tier_level: int | None = 1  # default = free tier
-
+    tier_level: Optional[int] = 1 # default = free tier
 
 class UserLogin(BaseModel):
     email: EmailStr
-    password: str
-
+    password:str
 
 class UserOut(BaseModel):
-    id: int
+    id:int
     email: EmailStr
     role: str
     tier_level: int
@@ -26,8 +24,8 @@ class UserOut(BaseModel):
     entitlements: list[str] = []
     is_onboarded: bool = False
     is_verified: bool = False
-    experience_level: str | None = ""
-    risk_level: str | None = ""
+    experience_level: Optional[str] = ""
+    risk_level: Optional[str]= ""
     updated_at: datetime
 
     class Config:
@@ -64,8 +62,8 @@ class VisitingUserOut(BaseModel):
     id: int
     email: EmailStr
     chat_count: int
-    created_at: datetime | None = None
-    updated_at: datetime | None = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True

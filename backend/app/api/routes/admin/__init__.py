@@ -1,6 +1,5 @@
 from fastapi import APIRouter
-
-from . import brokers, compliance, insights, onboarding, scraping, signals, tiers
+from . import compliance, signals, insights, brokers, tiers, onboarding, scraping
 
 router = APIRouter(prefix="/api/v1/admin")
 

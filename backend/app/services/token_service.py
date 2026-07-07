@@ -35,7 +35,9 @@ class TokenService:
     @staticmethod
     def _get_tier_token_limits(db: Session, tier: Tier) -> TierTokenLimits:
         config = (
-            db.query(TierTokenConfig).filter(TierTokenConfig.tier_id == tier.id).first()
+            db.query(TierTokenConfig)
+            .filter(TierTokenConfig.tier_id == tier.id)
+            .first()
         )
         if config:
             return TierTokenLimits(
@@ -98,9 +100,7 @@ class TokenService:
         if not tier:
             tier = db.query(Tier).filter(Tier.level == 1).first()
             if not tier:
-                raise HTTPException(
-                    status_code=500, detail="Default tier not configured"
-                )
+                raise HTTPException(status_code=500, detail="Default tier not configured")
 
         return TokenService.create_wallet_for_user(db, user, tier)
 
@@ -168,9 +168,7 @@ class TokenService:
         balance_before = wallet.available_tokens
         wallet.available_tokens = limits.weekly_tokens
         wallet.last_refill_at = now
-        wallet.next_refill_at = TokenService._next_refill_at(
-            now, limits.refill_frequency
-        )
+        wallet.next_refill_at = TokenService._next_refill_at(now, limits.refill_frequency)
 
         TokenService._record_transaction(
             db,
@@ -222,9 +220,7 @@ class TokenService:
         return wallet
 
     @staticmethod
-    def get_daily_usage(
-        db: Session, user_id: int, usage_date: date | None = None
-    ) -> DailyTokenUsage:
+    def get_daily_usage(db: Session, user_id: int, usage_date: date | None = None) -> DailyTokenUsage:
         usage_date = usage_date or date.today()
         usage = (
             db.query(DailyTokenUsage)
@@ -249,9 +245,7 @@ class TokenService:
     @staticmethod
     def get_usage(db: Session, user: User) -> dict:
         if not user.subscription or not user.subscription.tier:
-            raise HTTPException(
-                status_code=400, detail="User has no active subscription tier"
-            )
+            raise HTTPException(status_code=400, detail="User has no active subscription tier")
 
         tier = user.subscription.tier
         wallet = TokenService.get_or_create_wallet(db, user)

@@ -1,7 +1,8 @@
 from datetime import datetime
+from typing import List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user, require_role
@@ -174,7 +175,7 @@ def update_question(
 # -------------------------
 
 
-@router.get("/questions", response_model=list[OnboardingQuestionResponse])
+@router.get("/questions", response_model=List[OnboardingQuestionResponse])
 def get_all_questions(
     _: None = Depends(require_role("admin")),
     db: Session = Depends(get_db),
@@ -188,9 +189,9 @@ def get_all_questions(
 
 
 class MappingUpdate(BaseModel):
-    order: int | None = None
-    depends_on_question_id: int | None = None
-    depends_on_value: str | None = None
+    order: Optional[int] = None
+    depends_on_question_id: Optional[int] = None
+    depends_on_value: Optional[str] = None
 
 
 @router.put("/tiers/{tier_id}/questions/{question_id}/mapping")
@@ -255,7 +256,7 @@ def delete_question(
 # -------------------------
 
 
-@router.get("/answers", response_model=list[AnswerResponse])
+@router.get("/answers", response_model=List[AnswerResponse])
 def get_user_answers(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),

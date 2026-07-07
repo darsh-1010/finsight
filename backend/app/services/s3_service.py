@@ -1,10 +1,8 @@
-import logging
 import mimetypes
-
+import logging
 import boto3
 from botocore.exceptions import ClientError
-from fastapi import HTTPException, UploadFile
-
+from fastapi import UploadFile, HTTPException, status
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
@@ -29,9 +27,7 @@ class S3Service:
 
         content_type = file.content_type
         if not content_type:
-            content_type = (
-                mimetypes.guess_type(object_name)[0] or "application/octet-stream"
-            )
+            content_type = mimetypes.guess_type(object_name)[0] or "application/octet-stream"
 
         try:
             self.s3_client.upload_fileobj(
@@ -52,16 +48,12 @@ class S3Service:
                 detail="Failed to upload file to S3",
             ) from e
 
-    async def upload_fileobj(
-        self, fileobj, object_name: str, content_type: str = None
-    ) -> str:
+    async def upload_fileobj(self, fileobj, object_name: str, content_type: str = None) -> str:
         """
         Uploads a file-like object to an S3 bucket and returns the file URL.
         """
         if not content_type:
-            content_type = (
-                mimetypes.guess_type(object_name)[0] or "application/octet-stream"
-            )
+            content_type = mimetypes.guess_type(object_name)[0] or "application/octet-stream"
 
         try:
             self.s3_client.upload_fileobj(
@@ -103,7 +95,7 @@ class S3Service:
 
             if content_type:
                 params["ResponseContentType"] = content_type
-
+            
             if inline:
                 params["ResponseContentDisposition"] = "inline"
             else:
@@ -129,7 +121,9 @@ class S3Service:
         Deletes a file from an S3 bucket.
         """
         try:
-            self.s3_client.delete_object(Bucket=self.bucket_name, Key=object_name)
+            self.s3_client.delete_object(
+                Bucket=self.bucket_name, Key=object_name
+            )
             return True
 
         except ClientError as e:

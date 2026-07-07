@@ -5,8 +5,9 @@ from sqlalchemy.orm.attributes import flag_modified
 from app.api.deps import get_db, require_role
 from app.models.tiers import Tier
 from app.models.users import User
-from app.schemas.tiers import TierResponse, TierUpdate
+from app.schemas.tiers import TierUpdate, TierResponse
 from app.services.stripe_service import StripeService, stripe
+
 
 router = APIRouter(prefix="/tiers", tags=["Admin Tiers"])
 
@@ -76,7 +77,10 @@ def _update_yearly_price(db_tier: Tier, update_data: dict) -> None:
         return
 
     new_yearly_price = update_data["price_amount_yearly"]
-    if new_yearly_price == db_tier.price_amount_yearly or not db_tier.stripe_product_id:
+    if (
+        new_yearly_price == db_tier.price_amount_yearly
+        or not db_tier.stripe_product_id
+    ):
         return
 
     if db_tier.stripe_yearly_price_id:

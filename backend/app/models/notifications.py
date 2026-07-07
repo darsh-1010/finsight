@@ -1,19 +1,18 @@
 import enum
-
 from sqlalchemy import (
-    BigInteger,
-    Boolean,
+    func,
     Column,
-    DateTime,
-    Enum,
-    ForeignKey,
+    BigInteger,
+    Integer,
     String,
     Text,
+    Boolean,
+    DateTime,
+    ForeignKey,
     UniqueConstraint,
-    func,
+    Enum,
 )
 from sqlalchemy.orm import relationship
-
 from app.core.database import Base
 
 
@@ -39,30 +38,20 @@ class Notification(Base):
     notification_type = Column(String, nullable=False)
     entity_type = Column(String, nullable=True)
     entity_id = Column(String, nullable=True)
-
+    
     priority = Column(
         Enum(NotificationPriority, name="notificationpriority"),
         default=NotificationPriority.MEDIUM,
         nullable=False,
     )
-
+    
     action_url = Column(String, nullable=True)
     created_by = Column(String, nullable=False)
-    created_at = Column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
-    )
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     expires_at = Column(DateTime(timezone=True), nullable=True)
 
-    audiences = relationship(
-        "NotificationAudience",
-        back_populates="notification",
-        cascade="all, delete-orphan",
-    )
-    reads = relationship(
-        "UserNotificationRead",
-        back_populates="notification",
-        cascade="all, delete-orphan",
-    )
+    audiences = relationship("NotificationAudience", back_populates="notification", cascade="all, delete-orphan")
+    reads = relationship("UserNotificationRead", back_populates="notification", cascade="all, delete-orphan")
 
 
 class NotificationAudience(Base):
@@ -73,14 +62,14 @@ class NotificationAudience(Base):
         BigInteger,
         ForeignKey("notifications.id", ondelete="CASCADE"),
         nullable=False,
-        index=True,
+        index=True
     )
-
+    
     audience_type = Column(
         Enum(AudienceType, name="audiencetype"),
         nullable=False,
     )
-
+    
     audience_id = Column(String, nullable=True)
 
     notification = relationship("Notification", back_populates="audiences")
@@ -95,28 +84,39 @@ class UserNotificationRead(Base):
         BigInteger,
         ForeignKey("notifications.id", ondelete="CASCADE"),
         nullable=False,
-        index=True,
+        index=True
     )
 
     user_id = Column(
         BigInteger,
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
-        index=True,
+        index=True
     )
 
-    is_read = Column(Boolean, nullable=False, default=False)
+    is_read = Column(
+        Boolean,
+        nullable=False,
+        default=False
+    )
 
-    read_at = Column(DateTime(timezone=True), nullable=True)
+    read_at = Column(
+        DateTime(timezone=True),
+        nullable=True
+    )
 
     created_at = Column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False
     )
 
     notification = relationship("Notification", back_populates="reads")
 
     __table_args__ = (
         UniqueConstraint(
-            "notification_id", "user_id", name="uq_notification_user_read"
+            "notification_id",
+            "user_id",
+            name="uq_notification_user_read"
         ),
     )

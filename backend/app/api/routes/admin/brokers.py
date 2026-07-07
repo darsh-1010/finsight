@@ -1,5 +1,6 @@
 import csv
 import io
+from typing import List
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from sqlalchemy.orm import Session
@@ -31,7 +32,7 @@ async def create_broker(
         entity_type="broker",
         action="create",
         entity_id=new_broker.id,
-        metadata={"name": new_broker.name, "redirect_url": new_broker.redirect_url},
+        metadata={"name": new_broker.name, "redirect_url": new_broker.redirect_url}
     )
 
     return new_broker
@@ -100,7 +101,7 @@ async def upload_brokers_csv(
             event_type="brokers_csv_uploaded",
             entity_type="broker",
             action="bulk_create",
-            metadata={"added_count": len(brokers_to_add)},
+            metadata={"added_count": len(brokers_to_add)}
         )
 
     return {
@@ -109,7 +110,7 @@ async def upload_brokers_csv(
     }
 
 
-@router.get("/", response_model=list[BrokerResponse])
+@router.get("/", response_model=List[BrokerResponse])
 async def get_brokers(
     db: Session = Depends(get_db),
     _: None = Depends(require_role("admin")),
@@ -124,7 +125,11 @@ async def update_broker(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_role("admin")),
 ):
-    db_broker = db.query(Broker).filter(Broker.id == broker_id).first()
+    db_broker = (
+        db.query(Broker)
+        .filter(Broker.id == broker_id)
+        .first()
+    )
     if not db_broker:
         raise HTTPException(status_code=404, detail="Broker not found")
 
@@ -142,7 +147,7 @@ async def update_broker(
         entity_type="broker",
         action="update",
         entity_id=db_broker.id,
-        metadata=update_data,
+        metadata=update_data
     )
 
     return db_broker
@@ -154,7 +159,11 @@ async def delete_broker(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_role("admin")),
 ):
-    db_broker = db.query(Broker).filter(Broker.id == broker_id).first()
+    db_broker = (
+        db.query(Broker)
+        .filter(Broker.id == broker_id)
+        .first()
+    )
     if not db_broker:
         raise HTTPException(status_code=404, detail="Broker not found")
 
@@ -169,7 +178,7 @@ async def delete_broker(
         entity_type="broker",
         action="delete",
         entity_id=broker_id,
-        metadata={"name": broker_name},
+        metadata={"name": broker_name}
     )
 
     return {"message": "Broker deleted successfully"}

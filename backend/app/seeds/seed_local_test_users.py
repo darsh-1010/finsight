@@ -6,32 +6,32 @@ if "POSTGRES_SERVER" not in os.environ and "DATABASE_URL" not in os.environ:
     os.environ["DATABASE_URL"] = "sqlite:///./test.db"
 sys.path.append("backend")
 
-from app.core.database import SESSION_LOCAL, Base, engine
+from app.core.database import Base, engine, SESSION_LOCAL
+from app.models.users import User, Role, UserRole, UserStatus
+from app.models.tiers import Tier, Entitlements, TierEntitlement
+from app.models.subscriptions import Subscription, SubscriptionStatus, SubscriptionSource
 from app.core.security import hash_password
-from app.models.subscriptions import (
-    Subscription,
-    SubscriptionSource,
-    SubscriptionStatus,
-)
-from app.models.tiers import Entitlements, Tier, TierEntitlement
-from app.models.users import Role, User, UserRole, UserStatus
 
 # Entitlements
 ENTITLEMENTS = [
     ("CHAT_ACCESS_BASIC", "Basic chat access"),
     ("CHAT_ACCESS_EXTENDED", "Extended chat with memory"),
     ("CHAT_ACCESS_PRIORITY", "Priority chat responses"),
+
     ("MEMORY_NONE", "No conversation memory"),
     ("MEMORY_SHORT", "Session-based memory"),
     ("MEMORY_LONG", "Long-term memory"),
+
     ("INSIGHTS_NONE", "No insights"),
     ("INSIGHTS_BASIC", "Basic educational insights"),
     ("INSIGHTS_PORTFOLIO", "Portfolio & macro insights"),
     ("INSIGHTS_PRO", "AI-powered insights"),
+
     ("SIGNALS_NONE", "No signals"),
     ("SIGNALS_EDUCATIONAL", "Illustrative signals"),
     ("SIGNALS_AI", "AI-detected patterns"),
     ("BRIEFINGS_WEEKLY", "Weekly intelligence briefings"),
+
     ("ADVISORY_DISABLED", "No advisory access"),
     ("ADVISORY_INTAKE", "Advisory intake & explanation"),
     ("ADVISORY_HUMAN", "Human advisor access"),
@@ -99,23 +99,14 @@ TIER_CATALOG = [
 ]
 
 TIER_ENTITLEMENTS = {
-    1: [
-        "CHAT_ACCESS_BASIC",
-        "MEMORY_NONE",
-        "INSIGHTS_NONE",
-        "SIGNALS_NONE",
-        "ADVISORY_DISABLED",
-    ],
-    2: [
-        "CHAT_ACCESS_EXTENDED",
-        "MEMORY_SHORT",
-        "INSIGHTS_BASIC",
-        "SIGNALS_EDUCATIONAL",
-    ],
+    1: ["CHAT_ACCESS_BASIC", "MEMORY_NONE", "INSIGHTS_NONE",
+        "SIGNALS_NONE", "ADVISORY_DISABLED"],
+    2: ["CHAT_ACCESS_EXTENDED", "MEMORY_SHORT", "INSIGHTS_BASIC",
+        "SIGNALS_EDUCATIONAL"],
     3: ["MEMORY_LONG", "INSIGHTS_PORTFOLIO"],
-    4: ["CHAT_ACCESS_PRIORITY", "INSIGHTS_PRO", "SIGNALS_AI", "BRIEFINGS_WEEKLY"],
+    4: ["CHAT_ACCESS_PRIORITY", "INSIGHTS_PRO", "SIGNALS_AI",
+        "BRIEFINGS_WEEKLY"],
 }
-
 
 def seed_database():
     # Make sure all tables are created
@@ -175,15 +166,12 @@ def seed_database():
             tier = tier_map[level]
             for code in codes:
                 entitlement = ent_map[code]
-                exists = (
-                    db.query(TierEntitlement)
-                    .filter_by(tier_id=tier.id, entitlement_id=entitlement.id)
-                    .first()
-                )
+                exists = db.query(TierEntitlement).filter_by(
+                    tier_id=tier.id,
+                    entitlement_id=entitlement.id
+                ).first()
                 if not exists:
-                    db.add(
-                        TierEntitlement(tier_id=tier.id, entitlement_id=entitlement.id)
-                    )
+                    db.add(TierEntitlement(tier_id=tier.id, entitlement_id=entitlement.id))
 
         db.flush()
 
@@ -208,7 +196,7 @@ def seed_database():
                     password_hash=hashed,
                     is_verified=True,
                     status=UserStatus.ACTIVE,
-                    role_id=role_user.id,
+                    role_id=role_user.id
                 )
                 db.add(user)
                 db.flush()
@@ -220,7 +208,7 @@ def seed_database():
                     user_id=user.id,
                     tier_id=tier_map[tier_level].id,
                     status=SubscriptionStatus.ACTIVE,
-                    source=SubscriptionSource.FREE,
+                    source=SubscriptionSource.FREE
                 )
                 db.add(sub)
             else:
@@ -236,7 +224,7 @@ def seed_database():
                 password_hash=hashed,
                 is_verified=True,
                 status=UserStatus.ACTIVE,
-                role_id=role_admin.id,
+                role_id=role_admin.id
             )
             db.add(admin_user)
             db.flush()
@@ -248,7 +236,7 @@ def seed_database():
                 user_id=admin_user.id,
                 tier_id=tier_map[4].id,
                 status=SubscriptionStatus.ACTIVE,
-                source=SubscriptionSource.ADMIN,
+                source=SubscriptionSource.ADMIN
             )
             db.add(admin_sub)
 
@@ -266,7 +254,6 @@ def seed_database():
         raise
     finally:
         db.close()
-
 
 if __name__ == "__main__":
     seed_database()

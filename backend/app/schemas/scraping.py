@@ -1,22 +1,19 @@
 from datetime import datetime
+from typing import Optional
 from uuid import UUID
-
 from pydantic import BaseModel
-
 from app.models.scraping import ScrapingFrequency
 
 
 class ScrapingURLUpdate(BaseModel):
-    frequency_for_scrapping: ScrapingFrequency | None = None
-    content_deletion: ScrapingFrequency | None = None
-
+    frequency_for_scrapping: Optional[ScrapingFrequency] = None
+    content_deletion: Optional[ScrapingFrequency] = None
 
 class ScrapingURLCreate(BaseModel):
     name: str
     url: str
-    frequency_for_scrapping: ScrapingFrequency | None = ScrapingFrequency.WEEKLY
-    content_deletion: ScrapingFrequency | None = ScrapingFrequency.MONTHLY
-
+    frequency_for_scrapping: Optional[ScrapingFrequency] = ScrapingFrequency.WEEKLY
+    content_deletion: Optional[ScrapingFrequency] = ScrapingFrequency.MONTHLY
 
 class BulkScrapingURLCreate(BaseModel):
     urls: list[ScrapingURLCreate]
@@ -27,11 +24,11 @@ class ScrapingSubURLCreate(BaseModel):
     source: str
     url: str
     title: str
-    summary: str | None = None
-    published_date: datetime | None = None
-    scraped_at: datetime | None = None
-    scraper_version: str | None = None
-    document_id: UUID | None = None
+    summary: Optional[str] = None
+    published_date: Optional[datetime] = None
+    scraped_at: Optional[datetime] = None
+    scraper_version: Optional[str] = None
+    document_id: Optional[UUID] = None
 
 
 class DeleteDocumentsRequest(BaseModel):
@@ -44,11 +41,11 @@ class ScrapingSubURLResponse(BaseModel):
     source: str
     url: str
     title: str
-    summary: str | None = None
-    published_date: datetime | None = None
-    scraped_at: datetime | None = None
-    scraper_version: str | None = None
-    document_id: UUID | None = None
+    summary: Optional[str] = None
+    published_date: Optional[datetime] = None
+    scraped_at: Optional[datetime] = None
+    scraper_version: Optional[str] = None
+    document_id: Optional[UUID] = None
 
     class Config:
         from_attributes = True
@@ -61,8 +58,8 @@ class ScrapingURLResponse(BaseModel):
     frequency_for_scrapping: ScrapingFrequency
     content_deletion: ScrapingFrequency
     sub_urls: list[ScrapingSubURLResponse] = []
-    status: str | None = None
-    job_id: str | None = None
+    status: Optional[str] = None
+    job_id: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -95,11 +92,11 @@ class ScrapingJobHistoryResponse(BaseModel):
     website_id: int
     name: str
     status: str
-    queued_at: datetime | None = None
-    started_at: datetime | None = None
-    in_progress_at: datetime | None = None
-    completed_at: datetime | None = None
-    error: str | None = None
+    queued_at: Optional[datetime] = None
+    started_at: Optional[datetime] = None
+    in_progress_at: Optional[datetime] = None
+    completed_at: Optional[datetime] = None
+    error: Optional[str] = None
 
     class Config:
         from_attributes = True

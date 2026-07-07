@@ -1,6 +1,6 @@
-from app.seeds.seed_cip_questions import seed_cip_questions
-from app.seeds.seed_compliance import seed_compliance
 from app.seeds.seed_roles import seed_roles
+from app.seeds.seed_compliance import seed_compliance
+from app.seeds.seed_cip_questions import seed_cip_questions
 from app.seeds.seed_tiers import seed_tiers
 
 

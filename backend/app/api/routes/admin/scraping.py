@@ -19,20 +19,17 @@ from app.models.scraping import (
 )
 from app.models.users import User
 from app.schemas.scraping import (
+    ScrapingSubURLCreate,
     BulkScrapingURLCreate,
     IngestedPDFMetadata,
     ScrapingJobHistoryResponse,
-    ScrapingSubURLCreate,
     ScrapingSubURLResponse,
     ScrapingURLResponse,
     ScrapingURLUpdate,
 )
+from app.core.config import settings
 from app.services.s3_service import s3_service
-from app.services.scraper_service import (
-    delete_document_from_ml,
-    sync_active_jobs,
-    trigger_scraper_job,
-)
+from app.services.scraper_service import sync_active_jobs, trigger_scraper_job, delete_document_from_ml
 
 router = APIRouter(prefix="/scraping", tags=["Admin Scraping"])
 
@@ -64,9 +61,7 @@ async def download_pdf_from_url(url_str: str) -> bytes:
         )
 
     content_type = response.headers.get("content-type", "")
-    if "application/pdf" not in content_type.lower() and not url_str.lower().endswith(
-        ".pdf"
-    ):
+    if "application/pdf" not in content_type.lower() and not url_str.lower().endswith(".pdf"):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="The provided URL does not appear to be a PDF file.",
@@ -126,9 +121,7 @@ async def upload_pdf(
         db.commit()
         db.refresh(ingested_pdf)
 
-        presigned_url = await s3_service.get_presigned_url(
-            object_name, content_type="application/pdf", inline=False
-        )
+        presigned_url = await s3_service.get_presigned_url(object_name, content_type="application/pdf", inline=False)
 
         # Trigger ML Scraper job
         await trigger_scraper_job(doc_id=str(ingested_pdf.id), s3_url=presigned_url)
@@ -180,9 +173,7 @@ async def scrape_url(
         db.commit()
         db.refresh(ingested_pdf)
 
-        presigned_url = await s3_service.get_presigned_url(
-            object_name, content_type="application/pdf", inline=False
-        )
+        presigned_url = await s3_service.get_presigned_url(object_name, content_type="application/pdf", inline=False)
 
         # Trigger ML Scraper job
         await trigger_scraper_job(doc_id=str(ingested_pdf.id), s3_url=presigned_url)
@@ -221,9 +212,7 @@ async def ingested_pdf_list(
     for pdf in ingested_pdfs:
         if pdf.url and not pdf.url.startswith(("http://", "https://")):
             try:
-                pdf.url = await s3_service.get_presigned_url(
-                    pdf.url, content_type="application/pdf"
-                )
+                pdf.url = await s3_service.get_presigned_url(pdf.url, content_type="application/pdf")
             except HTTPException:
                 continue
 
@@ -248,8 +237,8 @@ async def list_scraping_urls(
             .first()
         )
 
-        url.status = latest_job.status if latest_job else None
-        url.job_id = latest_job.job_id if latest_job else None
+        setattr(url, "status", latest_job.status if latest_job else None)
+        setattr(url, "job_id", latest_job.job_id if latest_job else None)
 
     return urls
 
@@ -368,11 +357,7 @@ async def bulk_ingest_scraping_sub_urls(
     try:
         unique_url_ids = {item.scraping_url_id for item in request}
         if unique_url_ids:
-            valid_urls = (
-                db.query(ScrapingURL.id)
-                .filter(ScrapingURL.id.in_(unique_url_ids))
-                .all()
-            )
+            valid_urls = db.query(ScrapingURL.id).filter(ScrapingURL.id.in_(unique_url_ids)).all()
             valid_url_ids = {url.id for url in valid_urls}
             invalid_ids = unique_url_ids - valid_url_ids
             if invalid_ids:
@@ -427,6 +412,7 @@ async def bulk_ingest_scraping_sub_urls(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Database bulk operation for sub-URLs failed",
         ) from exc
+
 
 
 @router.delete("/ingested-pdf/{pdf_id}", status_code=status.HTTP_200_OK)

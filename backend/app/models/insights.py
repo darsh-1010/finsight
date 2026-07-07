@@ -2,17 +2,18 @@ import enum
 import uuid
 
 from sqlalchemy import (
-    ARRAY,
-    UUID,
+    func, 
     Column,
-    DateTime,
-    Enum,
-    Float,
-    ForeignKey,
     Integer,
     String,
+    DateTime,
+    ForeignKey,
+    Boolean,
     Text,
-    func,
+    UUID,
+    Float,
+    ARRAY,
+    Enum,
 )
 from sqlalchemy.orm import relationship
 
@@ -76,25 +77,15 @@ class Insight(Base):
     )
 
     tier = relationship("Tier")
-    reviews = relationship(
-        "MarketInsightReview",
-        back_populates="market_insight",
-        cascade="all, delete-orphan",
-    )
+    reviews = relationship("MarketInsightReview", back_populates="market_insight", cascade="all, delete-orphan")
 
 
 class MarketInsightReview(Base):
     __tablename__ = "market_insight_reviews"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
-    market_insight_id = Column(
-        UUID(as_uuid=True),
-        ForeignKey("insights.id", ondelete="CASCADE"),
-        nullable=False,
-    )
-    reviewer_id = Column(
-        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
-    )
+    market_insight_id = Column(UUID(as_uuid=True), ForeignKey("insights.id", ondelete="CASCADE"), nullable=False)
+    reviewer_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     review_status = Column(String, nullable=False)
     review_notes = Column(Text, nullable=True)
     reviewed_at = Column(DateTime, nullable=True)

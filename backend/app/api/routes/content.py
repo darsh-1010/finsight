@@ -1,3 +1,4 @@
+from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -13,7 +14,7 @@ from app.schemas.content import InsightResponse, SignalResponse
 router = APIRouter(prefix="/api/v1/content", tags=["Content"])
 
 
-@router.get("/insights", response_model=list[InsightResponse])
+@router.get("/insights", response_model=List[InsightResponse])
 async def get_approved_insights(
     db: Session = Depends(get_db),
     _: User = Depends(get_current_user),  # keep auth, avoid unused warning
@@ -29,7 +30,7 @@ async def get_approved_insights(
     )
 
 
-@router.get("/signals", response_model=list[SignalResponse])
+@router.get("/signals", response_model=List[SignalResponse])
 async def get_approved_signals(
     db: Session = Depends(get_db),
     _: User = Depends(get_current_user),  # keep auth, avoid unused warning
@@ -42,13 +43,16 @@ async def get_approved_signals(
 
 # Public APIs
 
-
 @router.get("/compliance/groups/{key}", response_model=ComplianceGroupResponse)
 async def get_compliance_group(
     key: str,
     db: Session = Depends(get_db),
 ):
-    group = db.query(ComplianceGroup).filter(ComplianceGroup.key == key).first()
+    group = (
+        db.query(ComplianceGroup)
+        .filter(ComplianceGroup.key == key)
+        .first()
+    )
 
     if not group:
         raise HTTPException(

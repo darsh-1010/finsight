@@ -1,23 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
-from .api.routes import (
-    admin,
-    auth,
-    chat,
-    content,
-    market,
-    ml_data_transfer,
-    notifications,
-    onboarding,
-    payments,
-    scraping,
-    tiers,
-    tokens,
-    websockets,
-)
 from .core.config import settings
-from .core.database import Base, engine
+from .core.database import engine, Base
+
+from .api.routes import auth, tiers, payments, admin, content, onboarding, chat, websockets, scraping, ml_data_transfer, market, tokens, notifications
 
 Base.metadata.create_all(bind=engine)
 
@@ -44,6 +30,28 @@ app.include_router(ml_data_transfer.router)
 app.include_router(market.router)
 app.include_router(tokens.router)
 app.include_router(notifications.router)
+
+from .services.cron import cron_service
+
+
+@app.on_event("startup")
+async def _startup_event() -> None:
+    try:
+        await cron_service.start()
+    except Exception:
+        import logging
+
+        logging.getLogger("cron").exception("Failed to start cron service")
+
+
+@app.on_event("shutdown")
+async def _shutdown_event() -> None:
+    try:
+        await cron_service.stop()
+    except Exception:
+        import logging
+
+        logging.getLogger("cron").exception("Failed to stop cron service")
 
 
 @app.get("/")

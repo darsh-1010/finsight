@@ -1,22 +1,18 @@
-import json
-import uuid
 from datetime import datetime, timedelta
+import uuid
+from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-
 from app.api.deps import get_db, require_role
-from app.api.routes.websockets import manager
-from app.models.insights import Insight, InsightStatus, MarketInsightReview
-from app.models.notifications import (
-    AudienceType,
-    Notification,
-    NotificationAudience,
-    NotificationPriority,
-)
 from app.models.users import User
-from app.schemas.admin import InsightStatusUpdateRequest
+from app.models.insights import Insight, InsightStatus, MarketInsightReview
+from app.models.notifications import Notification, NotificationAudience, AudienceType, NotificationPriority
+from app.schemas.admin import ApprovalRequest, InsightStatusUpdateRequest
 from app.schemas.content import InsightResponse
+import json
+from app.api.routes.websockets import manager
+
 
 router = APIRouter(prefix="/insights", tags=["Admin Insights"])
 
@@ -25,9 +21,7 @@ def _parse_insight_uuid(entity_id: int | str) -> uuid.UUID:
     try:
         return uuid.UUID(str(entity_id))
     except ValueError as exc:
-        raise HTTPException(
-            status_code=400, detail="Invalid insight UUID format"
-        ) from exc
+        raise HTTPException(status_code=400, detail="Invalid insight UUID format") from exc
 
 
 def _apply_status_update(
@@ -35,7 +29,7 @@ def _apply_status_update(
     request: InsightStatusUpdateRequest,
     current_user: User,
     db: Session,
-) -> Notification | None:
+) -> Optional[Notification]:
     item.status = request.status
     created_notification = None
 
@@ -46,12 +40,8 @@ def _apply_status_update(
 
         tab = item.trend_type.value if item.trend_type else "daily"
         action_url = f"/market_insights?tab={tab}&insightId={item.id}"
-
-        notification_title = (
-            item.alert_message
-            if item.alert_message
-            else "New Market Insight Available"
-        )
+        
+        notification_title = item.alert_message if item.alert_message else f"New Market Insight Available"
         notification = Notification(
             title=notification_title,
             message=item.summary or "A new market insight has been published.",
@@ -65,7 +55,7 @@ def _apply_status_update(
         audience = NotificationAudience(
             notification=notification,
             audience_type=AudienceType.TIER,
-            audience_id=str(item.tier_required),
+            audience_id=str(item.tier_required)
         )
         # audience_admin = NotificationAudience(
         #     notification=notification,
@@ -94,7 +84,7 @@ def _apply_status_update(
 
 @router.get("", response_model=list[InsightResponse])
 async def list_insights(
-    status: InsightStatus | None = Query(default=None),
+    status: Optional[InsightStatus] = Query(default=None),
     db: Session = Depends(get_db),
     _current_user: User = Depends(require_role("admin")),
 ):
@@ -126,24 +116,20 @@ async def update_insight_status(
     if not item:
         raise HTTPException(status_code=404, detail="Insight not found")
 
-    notification = _apply_status_update(
-        item=item, request=request, current_user=current_user, db=db
-    )
+    notification = _apply_status_update(item=item, request=request, current_user=current_user, db=db)
     db.commit()
     db.refresh(item)
 
     if notification:
         db.refresh(notification)
-        payload = json.dumps(
-            {
-                "type": "NEW_NOTIFICATION",
-                "data": {
-                    "id": notification.id,
-                    "title": notification.title,
-                    "message": notification.message,
-                },
+        payload = json.dumps({
+            "type": "NEW_NOTIFICATION",
+            "data": {
+                "id": notification.id,
+                "title": notification.title,
+                "message": notification.message
             }
-        )
+        })
         await manager.broadcast(payload)
 
     return item
@@ -160,18 +146,17 @@ async def trigger_insights_sync(
     Path: /api/v1/admin/insights/sync
     """
     if mode not in ["daily", "weekly"]:
-        raise HTTPException(
-            status_code=400, detail="Invalid sync mode. Must be 'daily' or 'weekly'"
-        )
-
+        raise HTTPException(status_code=400, detail="Invalid sync mode. Must be 'daily' or 'weekly'")
+    
     try:
         from app.services.insights_sync_service import sync_insights
-
         count = await sync_insights(db, mode=mode)
         db.commit()
         return {"message": f"Successfully synced {count} insights for mode {mode}"}
     except Exception as exc:
         db.rollback()
         raise HTTPException(
-            status_code=500, detail=f"Failed to sync insights: {str(exc)}"
+            status_code=500,
+            detail=f"Failed to sync insights: {str(exc)}"
         ) from exc
+
