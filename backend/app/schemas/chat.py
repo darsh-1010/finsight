@@ -1,6 +1,7 @@
-from datetime import datetime, date
-from typing import Any, Dict, List, Optional
+from datetime import date, datetime
+from typing import Any
 from uuid import UUID
+
 from pydantic import BaseModel, ConfigDict
 
 
@@ -9,27 +10,31 @@ class ChatMessageBase(BaseModel):
     role: str  # 'user' or 'bot' align with frontend
     non_substantive: bool = False
 
+
 class ChatMessageCreate(ChatMessageBase):
-    model: Optional[str] = "standard"
-    attachment_ids: Optional[List[UUID]] = []
+    model: str | None = "standard"
+    attachment_ids: list[UUID] | None = []
+
 
 class AttachmentRead(BaseModel):
     id: UUID
     file_name: str
-    file_type: Optional[str]
-    file_size: Optional[int]
-    storage_url: Optional[str]
+    file_type: str | None
+    file_size: int | None
+    storage_url: str | None
     status: str
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
+
 
 class ChatMessage(ChatMessageBase):
     id: int
     session_id: int
     created_at: datetime
-    suggested_follow_ups: Optional[List[str]] = []
-    attachments: List[AttachmentRead] = []
+    suggested_follow_ups: list[str] | None = []
+    attachments: list[AttachmentRead] = []
     model_config = ConfigDict(from_attributes=True)
+
 
 class MLChatMessage(BaseModel):
     created_at: datetime
@@ -37,20 +42,24 @@ class MLChatMessage(BaseModel):
     role: str
     model_config = ConfigDict(from_attributes=True)
 
+
 class ChatSessionBase(BaseModel):
-    title: Optional[str] = None
+    title: str | None = None
     model: str = "standard"
 
+
 class ChatSessionCreate(ChatSessionBase):
-    first_message: Optional[str] = None
+    first_message: str | None = None
+
 
 class ChatSession(ChatSessionBase):
     id: int
     user_id: int
     session_id: UUID
     started_at: datetime
-    messages: List[ChatMessage] = []
+    messages: list[ChatMessage] = []
     model_config = ConfigDict(from_attributes=True)
+
 
 class ChatUsage(BaseModel):
     user_id: int
@@ -61,16 +70,19 @@ class ChatUsage(BaseModel):
 
 # ---------- Attachment Upload ---------- #
 
+
 class AttachmentResult(BaseModel):
     """Per-file upload result."""
-    id: Optional[UUID] = None
+
+    id: UUID | None = None
     filename: str
     attached: bool
     message: str
-    ml_response: Optional[Dict[str, Any]] = None
+    ml_response: dict[str, Any] | None = None
 
 
 class AttachmentUploadResponse(BaseModel):
     """Overall response for the attachment upload endpoint."""
+
     session_id: str
-    results: List[AttachmentResult]
+    results: list[AttachmentResult]

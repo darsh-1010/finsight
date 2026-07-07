@@ -17,3 +17,6 @@ python-multipart
 bcrypt==3.2.2
 redis
 tradingview-ta
+yfinance==0.2.36
+pandas==2.2.0
+jinja2

@@ -5,17 +5,17 @@ Revises: 600e34347c56
 Create Date: 2026-03-16 14:41:00.000000
 
 """
-from typing import Sequence, Union
 
-from alembic import op
+from collections.abc import Sequence
+
 import sqlalchemy as sa
-
+from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = 'a1b2c3d4e5f6'
-down_revision: Union[str, Sequence[str], None] = '600e34347c56'
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+revision: str = "a1b2c3d4e5f6"
+down_revision: str | Sequence[str] | None = "600e34347c56"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -28,19 +28,22 @@ def upgrade() -> None:
     """
 
     # 1. Create course_versions table
-    op.create_table('course_versions',
-        sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('course_id', sa.Integer(), nullable=False),
-        sa.Column('version', sa.Integer(), nullable=False),
-        sa.Column('title', sa.String(length=255), nullable=False),
-        sa.Column('subtitle', sa.String(length=255), nullable=True),
-        sa.Column('description', sa.Text(), nullable=True),
-        sa.Column('published', sa.Boolean(), default=False),
-        sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=True),
-        sa.Column('course_image', sa.String(), nullable=True),
-        sa.Column('estimated_duration', sa.Integer(), nullable=True),
-        sa.ForeignKeyConstraint(['course_id'], ['courses.id'], ondelete='CASCADE'),
-        sa.PrimaryKeyConstraint('id')
+    op.create_table(
+        "course_versions",
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("course_id", sa.Integer(), nullable=False),
+        sa.Column("version", sa.Integer(), nullable=False),
+        sa.Column("title", sa.String(length=255), nullable=False),
+        sa.Column("subtitle", sa.String(length=255), nullable=True),
+        sa.Column("description", sa.Text(), nullable=True),
+        sa.Column("published", sa.Boolean(), default=False),
+        sa.Column(
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
+        ),
+        sa.Column("course_image", sa.String(), nullable=True),
+        sa.Column("estimated_duration", sa.Integer(), nullable=True),
+        sa.ForeignKeyConstraint(["course_id"], ["courses.id"], ondelete="CASCADE"),
+        sa.PrimaryKeyConstraint("id"),
     )
 
     # 2. Migrate existing course data into course_versions (if course_versions is empty, seed from courses)
@@ -60,11 +63,15 @@ def upgrade() -> None:
     """)
 
     # 3. Add course_version_id FK column to modules
-    op.add_column('modules', sa.Column('course_version_id', sa.Integer(), nullable=True))
+    op.add_column(
+        "modules", sa.Column("course_version_id", sa.Integer(), nullable=True)
+    )
     op.create_foreign_key(
-        'fk_modules_course_version_id',
-        'modules', 'course_versions',
-        ['course_version_id'], ['id']
+        "fk_modules_course_version_id",
+        "modules",
+        "course_versions",
+        ["course_version_id"],
+        ["id"],
     )
 
     # 4. Populate course_version_id on existing modules using their course_id -> version 1
@@ -77,20 +84,22 @@ def upgrade() -> None:
     """)
 
     # 5. Drop old columns from courses (now live in course_versions)
-    op.drop_column('courses', 'title')
-    op.drop_column('courses', 'description')
-    op.drop_column('courses', 'course_image')
-    op.drop_column('courses', 'estimated_duration')
+    op.drop_column("courses", "title")
+    op.drop_column("courses", "description")
+    op.drop_column("courses", "course_image")
+    op.drop_column("courses", "estimated_duration")
 
 
 def downgrade() -> None:
     """Downgrade schema - reverse course versioning."""
 
     # Re-add columns to courses
-    op.add_column('courses', sa.Column('title', sa.String(), nullable=True))
-    op.add_column('courses', sa.Column('description', sa.Text(), nullable=True))
-    op.add_column('courses', sa.Column('course_image', sa.String(), nullable=True))
-    op.add_column('courses', sa.Column('estimated_duration', sa.Integer(), nullable=True))
+    op.add_column("courses", sa.Column("title", sa.String(), nullable=True))
+    op.add_column("courses", sa.Column("description", sa.Text(), nullable=True))
+    op.add_column("courses", sa.Column("course_image", sa.String(), nullable=True))
+    op.add_column(
+        "courses", sa.Column("estimated_duration", sa.Integer(), nullable=True)
+    )
 
     # Restore course data from version 1
     op.execute("""
@@ -104,8 +113,8 @@ def downgrade() -> None:
     """)
 
     # Drop course_version_id from modules
-    op.drop_constraint('fk_modules_course_version_id', 'modules', type_='foreignkey')
-    op.drop_column('modules', 'course_version_id')
+    op.drop_constraint("fk_modules_course_version_id", "modules", type_="foreignkey")
+    op.drop_column("modules", "course_version_id")
 
     # Drop course_versions table entirely
-    op.drop_table('course_versions')
+    op.drop_table("course_versions")

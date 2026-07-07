@@ -1,3 +1,4 @@
+import secrets
 from datetime import datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
@@ -14,22 +15,27 @@ from app.core.security import (
     hash_password,
     verify_password,
 )
-import secrets
 from app.models.tiers import Tier
-from app.models.users import Role, User, UserSession, UserVerificationToken, VisitingUser
+from app.models.users import (
+    Role,
+    User,
+    UserSession,
+    UserVerificationToken,
+    VisitingUser,
+)
 from app.schemas.users import (
-    UserCreate,
-    UserLogin,
-    UserOut,
     ChangePasswordRequest,
     ForgotPasswordRequest,
     ResetPasswordRequest,
+    UserCreate,
+    UserLogin,
+    UserOut,
     VisitingUserChatCountUpdate,
     VisitingUserCreate,
     VisitingUserOut,
 )
-from app.services.ses_service import ses_service
 from app.services.entitlement_service import EntitlementService
+from app.services.ses_service import ses_service
 from app.services.stripe_service import StripeService
 from app.services.tier_service import TierService
 from app.services.token_service import TokenService
@@ -50,9 +56,7 @@ def create_visiting_user(
         )
 
     existing_visiting_user = (
-        db.query(VisitingUser)
-        .filter(VisitingUser.email == data.email)
-        .first()
+        db.query(VisitingUser).filter(VisitingUser.email == data.email).first()
     )
     if existing_visiting_user:
         response.status_code = 200
@@ -85,9 +89,7 @@ def update_visiting_user_chat_count(
     db: Session = Depends(get_db),
 ):
     visiting_user = (
-        db.query(VisitingUser)
-        .filter(VisitingUser.id == visiting_user_id)
-        .first()
+        db.query(VisitingUser).filter(VisitingUser.id == visiting_user_id).first()
     )
 
     if not visiting_user:
@@ -173,9 +175,7 @@ def signup(data: UserCreate, response: Response, db: Session = Depends(get_db)):
     tier_features = ["Access to basic features", "Community support"]
 
     if data.tier_level and data.tier_level > 1:
-        requested_tier = (
-            db.query(Tier).filter(Tier.level == data.tier_level).first()
-        )
+        requested_tier = db.query(Tier).filter(Tier.level == data.tier_level).first()
 
         if not requested_tier:
             raise HTTPException(status_code=400, detail="Invalid tier selected")
@@ -218,10 +218,10 @@ def signup(data: UserCreate, response: Response, db: Session = Depends(get_db)):
     # Send verification email immediately for all tiers
     try:
         ses_service.send_verification_email(
-            user.email, 
+            user.email,
             verification_token,
             tier_name=tier_name,
-            tier_features=tier_features
+            tier_features=tier_features,
         )
     except Exception as e:
         # Log error but don't fail signup
@@ -257,11 +257,15 @@ def login(data: UserLogin, response: Response, db: Session = Depends(get_db)):
         raise HTTPException(401, "Invalid credentials")
 
     if not user.is_verified:
-        active_token = db.query(UserVerificationToken).filter(
-            UserVerificationToken.user_id == user.id,
-            UserVerificationToken.token_type == "verification",
-            UserVerificationToken.expires_at > datetime.utcnow()
-        ).first()
+        active_token = (
+            db.query(UserVerificationToken)
+            .filter(
+                UserVerificationToken.user_id == user.id,
+                UserVerificationToken.token_type == "verification",
+                UserVerificationToken.expires_at > datetime.utcnow(),
+            )
+            .first()
+        )
 
         if not active_token:
             verification_token = secrets.token_urlsafe(32)
@@ -284,10 +288,10 @@ def login(data: UserLogin, response: Response, db: Session = Depends(get_db)):
 
             try:
                 ses_service.send_verification_email(
-                    user_email=user.email, 
+                    user_email=user.email,
                     token=verification_token,
                     tier_name=tier_name,
-                    tier_features=tier_features
+                    tier_features=tier_features,
                 )
             except Exception as e:
                 print(f"Failed to send automated verification email on login: {e}")
@@ -400,7 +404,7 @@ def me(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
         "is_verified": user.is_verified,
         "experience_level": getattr(user.profile, "experience_level", "") or "",
         "risk_level": getattr(user.profile, "risk_bucket", "") or "",
-        "updated_at":user.updated_at
+        "updated_at": user.updated_at,
     }
 
 
@@ -424,9 +428,9 @@ def logout(request: Request, response: Response, db: Session = Depends(get_db)):
     token = request.cookies.get("refresh_token")
 
     if token:
-        db.query(UserSession).filter(
-            UserSession.token_hash == token
-        ).update({"revoked": True})
+        db.query(UserSession).filter(UserSession.token_hash == token).update(
+            {"revoked": True}
+        )
         db.commit()
 
     response.delete_cookie("access_token")
@@ -440,12 +444,14 @@ def forgot_password(data: ForgotPasswordRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == data.email).first()
     if not user:
         # Don't reveal if user exists or not for security
-        return {"message": "If an account exists with this email, a reset link has been sent."}
+        return {
+            "message": "If an account exists with this email, a reset link has been sent."
+        }
 
     # Revoke old reset tokens
     db.query(UserVerificationToken).filter(
         UserVerificationToken.user_id == user.id,
-        UserVerificationToken.token_type == "password_reset"
+        UserVerificationToken.token_type == "password_reset",
     ).delete()
 
     reset_token = secrets.token_urlsafe(32)
@@ -464,7 +470,9 @@ def forgot_password(data: ForgotPasswordRequest, db: Session = Depends(get_db)):
     except Exception as e:
         print(f"Failed to send reset email: {e}")
 
-    return {"message": "If an account exists with this email, a reset link has been sent."}
+    return {
+        "message": "If an account exists with this email, a reset link has been sent."
+    }
 
 
 @router.post("/reset-password")
@@ -487,7 +495,7 @@ def reset_password(data: ResetPasswordRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="User not found")
 
     user.password_hash = hash_password(data.new_password)
-    
+
     # Revoke the used token
     db.delete(token_record)
     db.commit()
@@ -496,7 +504,9 @@ def reset_password(data: ResetPasswordRequest, db: Session = Depends(get_db)):
 
 
 @router.get("/verify-email")
-def verify_email(token: str, request: Request, response: Response, db: Session = Depends(get_db)):
+def verify_email(
+    token: str, request: Request, response: Response, db: Session = Depends(get_db)
+):
     token_record = (
         db.query(UserVerificationToken)
         .filter(
@@ -508,14 +518,16 @@ def verify_email(token: str, request: Request, response: Response, db: Session =
     )
 
     if not token_record:
-        raise HTTPException(status_code=400, detail="Invalid or expired verification token")
+        raise HTTPException(
+            status_code=400, detail="Invalid or expired verification token"
+        )
 
     user = db.query(User).filter(User.id == token_record.user_id).first()
     if not user:
         raise HTTPException(status_code=400, detail="User not found")
 
     user.is_verified = True
-    
+
     # Revoke the used token
     db.delete(token_record)
 
@@ -546,7 +558,9 @@ def verify_email(token: str, request: Request, response: Response, db: Session =
 
     # Auto-login: issue new tokens only if they don't have a valid session
     if not has_valid_session:
-        access = create_access_token({"sub": str(user.id), "role": user.role.role.value})
+        access = create_access_token(
+            {"sub": str(user.id), "role": user.role.role.value}
+        )
         refresh = create_refresh_token({"sub": str(user.id)})
 
         db.add(
@@ -579,14 +593,16 @@ def verify_email(token: str, request: Request, response: Response, db: Session =
 
 
 @router.post("/resend-verification")
-def resend_verification(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+def resend_verification(
+    user: User = Depends(get_current_user), db: Session = Depends(get_db)
+):
     if user.is_verified:
         raise HTTPException(status_code=400, detail="Email is already verified")
 
     # Revoke old verification tokens
     db.query(UserVerificationToken).filter(
         UserVerificationToken.user_id == user.id,
-        UserVerificationToken.token_type == "verification"
+        UserVerificationToken.token_type == "verification",
     ).delete()
 
     verification_token = secrets.token_urlsafe(32)
@@ -609,10 +625,10 @@ def resend_verification(user: User = Depends(get_current_user), db: Session = De
 
     try:
         ses_service.send_verification_email(
-            user_email=user.email, 
+            user_email=user.email,
             token=verification_token,
             tier_name=tier_name,
-            tier_features=tier_features
+            tier_features=tier_features,
         )
     except Exception as e:
         print(f"Failed to send verification email: {e}")

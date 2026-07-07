@@ -1,18 +1,18 @@
 import uuid
 
-from sqlalchemy import (func, 
+from sqlalchemy import (
+    UUID,
+    BigInteger,
+    Boolean,
     Column,
+    Date,
+    DateTime,
+    ForeignKey,
     Integer,
     String,
-    DateTime,
-    Date,
-    ForeignKey,
-    Boolean,
     Text,
-    UUID,
+    func,
     text,
-    BigInteger,
-    JSON,
 )
 from sqlalchemy.orm import relationship
 
@@ -70,10 +70,7 @@ class ChatSession(Base):
         "ChatMessage",
         back_populates="session",
         cascade="all, delete-orphan",
-        order_by=(
-            "ChatMessage.created_at, "
-            "ChatMessage.role.desc()"
-        ),
+        order_by=("ChatMessage.created_at, ChatMessage.role.desc()"),
     )
 
 
@@ -103,8 +100,12 @@ class ChatMessage(Base):
     )
 
     has_attachments = Column(Boolean, default=False, nullable=False)
-    message_attachment_links = relationship("MessageAttachment", back_populates="message", cascade="all, delete-orphan")
-    attachments = relationship("Attachment", secondary="message_attachments", viewonly=True)
+    message_attachment_links = relationship(
+        "MessageAttachment", back_populates="message", cascade="all, delete-orphan"
+    )
+    attachments = relationship(
+        "Attachment", secondary="message_attachments", viewonly=True
+    )
 
 
 class Attachment(Base):
@@ -113,16 +114,18 @@ class Attachment(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     file_name = Column(String(255), nullable=False)
-    file_type = Column(String(50))         # pdf, image, docx
+    file_type = Column(String(50))  # pdf, image, docx
     file_size = Column(BigInteger)
-    storage_url = Column(Text)              # S3/GCS URL
+    storage_url = Column(Text)  # S3/GCS URL
     storage_provider = Column(String(50))  # s3, gcs
-    checksum = Column(String(255))         # for deduplication
-    status = Column(String(50))            # uploaded, processing, ready, failed
+    checksum = Column(String(255))  # for deduplication
+    status = Column(String(50))  # uploaded, processing, ready, failed
     created_at = Column(DateTime, server_default=func.now())
 
     user = relationship("User", back_populates="attachments")
-    messages = relationship("MessageAttachment", back_populates="attachment", cascade="all, delete-orphan")
+    messages = relationship(
+        "MessageAttachment", back_populates="attachment", cascade="all, delete-orphan"
+    )
 
 
 class MessageAttachment(Base):
@@ -130,7 +133,9 @@ class MessageAttachment(Base):
 
     id = Column(BigInteger, primary_key=True, index=True)
     message_id = Column(Integer, ForeignKey("chat_messages.id"), nullable=False)
-    attachment_id = Column(UUID(as_uuid=True), ForeignKey("attachments.id"), nullable=False)
+    attachment_id = Column(
+        UUID(as_uuid=True), ForeignKey("attachments.id"), nullable=False
+    )
     created_at = Column(DateTime, server_default=func.now())
 
     message = relationship("ChatMessage", back_populates="message_attachment_links")

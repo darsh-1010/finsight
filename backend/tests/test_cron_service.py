@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 
-from sqlalchemy import event
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -11,11 +10,11 @@ from app.models.tokens import TierTokenConfig, TokenTransactions, UserTokenWalle
 from app.models.users import User
 from app.services.cron_service import refill_due_token_wallets
 
-
 SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
 
 
 def test_refill_due_token_wallets_resets_balance_and_records_transaction():

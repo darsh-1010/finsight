@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session
 from app.models.onboarding_questioner import (
     OnboardingQuestion,
     QuestionType,
-    UserOnboardingAnswer,
     TierOnboardingQuestion,
+    UserOnboardingAnswer,
 )
 from app.models.users import RiskBucket, User, UserProfile
 from app.schemas.onboarding import AnswerCreate
@@ -74,9 +74,7 @@ def save_single_answer(db: Session, user_id: int, ans: AnswerCreate, saved_list:
         raise HTTPException(400, f"Question ID {ans.question_id} not found")
 
     # Validate & coerce answer
-    ans.answer_value = _coerce_answer_by_type(
-        question.question_type, ans.answer_value
-    )
+    ans.answer_value = _coerce_answer_by_type(question.question_type, ans.answer_value)
 
     existing = (
         db.query(UserOnboardingAnswer)
@@ -258,11 +256,7 @@ def update_risk_bucket_from_cip(db: Session, user_id: int) -> None:
         answer_map[cip_questions[2].id],
     )
 
-    user_profile = (
-        db.query(UserProfile)
-        .filter(UserProfile.user_id == user_id)
-        .first()
-    )
+    user_profile = db.query(UserProfile).filter(UserProfile.user_id == user_id).first()
 
     if user_profile:
         user_profile.risk_bucket = risk_bucket

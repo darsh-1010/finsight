@@ -1,17 +1,20 @@
-from typing import Any, Optional
+from typing import Any
+
 from sqlalchemy.orm import Session
+
 from app.models.audit_logs import AuditLog
+
 
 class AuditService:
     @staticmethod
     def log_event(
         db: Session,
-        user_id: Optional[int],
+        user_id: int | None,
         event_type: str,
         entity_type: str,
         action: str,
         *,
-        entity_id: Optional[Any] = None,
+        entity_id: Any | None = None,
         **extra: Any,
     ) -> AuditLog:
         """

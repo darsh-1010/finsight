@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, event
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.core.database import Base
@@ -9,9 +9,10 @@ from app.models.users import User
 from app.services.chat_service import ChatService
 from app.services.token_service import TokenService
 
-
 SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
@@ -71,6 +72,9 @@ def test_deduct_tokens_for_chat_updates_wallet_daily_usage_and_transaction():
 def test_extract_total_tokens_from_stream_payload_shapes():
     assert ChatService._extract_total_tokens({"total_tokens": 12}) == 12
     assert ChatService._extract_total_tokens({"data": {"total_tokens": "34"}}) == 34
-    assert ChatService._extract_total_tokens({"data": {"usage": {"total_tokens": 56}}}) == 56
+    assert (
+        ChatService._extract_total_tokens({"data": {"usage": {"total_tokens": 56}}})
+        == 56
+    )
     assert ChatService._extract_total_tokens({"usage": {"total_tokens": 78}}) == 78
     assert ChatService._extract_total_tokens({"data": {"content": "hello"}}) is None

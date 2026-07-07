@@ -1,10 +1,10 @@
-from sqlalchemy import (func, 
+from sqlalchemy import (
     Column,
+    DateTime,
+    ForeignKey,
     Integer,
     String,
-    ForeignKey,
-    DateTime,
-    text,
+    func,
 )
 from sqlalchemy.orm import relationship
 

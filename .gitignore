@@ -23,6 +23,7 @@ env/
 .ruff_cache/
 
 # ── Test / coverage ───────────────────────────────────────────────────────────
+*.db
 .pytest_cache/
 .coverage
 htmlcov/

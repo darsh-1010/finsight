@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel
 
@@ -9,15 +8,15 @@ from app.models.notifications import AudienceType, NotificationPriority
 class NotificationResponse(BaseModel):
     id: int
     title: str
-    message: Optional[str]
+    message: str | None
     notification_type: str
-    entity_type: Optional[str]
-    entity_id: Optional[str]
+    entity_type: str | None
+    entity_id: str | None
     priority: NotificationPriority
-    action_url: Optional[str]
+    action_url: str | None
     created_by: str
     created_at: datetime
-    expires_at: Optional[datetime]
+    expires_at: datetime | None
     is_read: bool
     audience_types: list[AudienceType]
 

@@ -5,17 +5,17 @@ Revises: 831c518cf608
 Create Date: 2026-03-12 15:49:36.179809
 
 """
-from typing import Sequence, Union
 
-from alembic import op
+from collections.abc import Sequence
+
 import sqlalchemy as sa
-
+from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = '6c1425d1206b'
-down_revision: Union[str, Sequence[str], None] = '831c518cf608'
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+revision: str = "6c1425d1206b"
+down_revision: str | Sequence[str] | None = "831c518cf608"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -27,84 +27,127 @@ def upgrade() -> None:
     op.execute("DROP TABLE IF EXISTS ingested_pdf CASCADE")
 
     # Add missing tables
-    op.create_table('ingested_pdfs',
-        sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-        sa.Column('name', sa.String(), nullable=False),
-        sa.Column('url', sa.String(), nullable=False),
-        sa.Column('user_id', sa.Integer(), nullable=False),
-        sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
-        sa.PrimaryKeyConstraint('id')
+    op.create_table(
+        "ingested_pdfs",
+        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
+        sa.Column("name", sa.String(), nullable=False),
+        sa.Column("url", sa.String(), nullable=False),
+        sa.Column("user_id", sa.Integer(), nullable=False),
+        sa.ForeignKeyConstraint(
+            ["user_id"],
+            ["users.id"],
+        ),
+        sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(op.f('ix_ingested_pdfs_id'), 'ingested_pdfs', ['id'], unique=False)
+    op.create_index(op.f("ix_ingested_pdfs_id"), "ingested_pdfs", ["id"], unique=False)
 
-    op.create_table('scrapping_url',
-        sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-        sa.Column('name', sa.String(), nullable=False),
-        sa.Column('url', sa.String(), nullable=False),
-        sa.Column('user_id', sa.Integer(), nullable=False),
-        sa.Column('frequency_for_scrapping', sa.String(), nullable=False, server_default='WEEKLY'),
-        sa.Column('content_deletion', sa.String(), nullable=False, server_default='MONTHLY'),
-        sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
-        sa.PrimaryKeyConstraint('id')
+    op.create_table(
+        "scrapping_url",
+        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
+        sa.Column("name", sa.String(), nullable=False),
+        sa.Column("url", sa.String(), nullable=False),
+        sa.Column("user_id", sa.Integer(), nullable=False),
+        sa.Column(
+            "frequency_for_scrapping",
+            sa.String(),
+            nullable=False,
+            server_default="WEEKLY",
+        ),
+        sa.Column(
+            "content_deletion", sa.String(), nullable=False, server_default="MONTHLY"
+        ),
+        sa.ForeignKeyConstraint(
+            ["user_id"],
+            ["users.id"],
+        ),
+        sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(op.f('ix_scrapping_url_id'), 'scrapping_url', ['id'], unique=False)
+    op.create_index(op.f("ix_scrapping_url_id"), "scrapping_url", ["id"], unique=False)
 
-    op.create_table('scraping_sub_url',
-        sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-        sa.Column('scraping_url_id', sa.Integer(), nullable=False),
-        sa.Column('source', sa.String(), nullable=False),
-        sa.Column('url', sa.String(), nullable=False),
-        sa.Column('title', sa.String(), nullable=False),
-        sa.Column('summary', sa.String(), nullable=True),
-        sa.Column('published_date', sa.DateTime(), nullable=True),
-        sa.Column('scraped_at', sa.DateTime(), nullable=True),
-        sa.Column('scraper_version', sa.String(), nullable=True),
-        sa.ForeignKeyConstraint(['scraping_url_id'], ['scrapping_url.id'], ),
-        sa.PrimaryKeyConstraint('id')
+    op.create_table(
+        "scraping_sub_url",
+        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
+        sa.Column("scraping_url_id", sa.Integer(), nullable=False),
+        sa.Column("source", sa.String(), nullable=False),
+        sa.Column("url", sa.String(), nullable=False),
+        sa.Column("title", sa.String(), nullable=False),
+        sa.Column("summary", sa.String(), nullable=True),
+        sa.Column("published_date", sa.DateTime(), nullable=True),
+        sa.Column("scraped_at", sa.DateTime(), nullable=True),
+        sa.Column("scraper_version", sa.String(), nullable=True),
+        sa.ForeignKeyConstraint(
+            ["scraping_url_id"],
+            ["scrapping_url.id"],
+        ),
+        sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(op.f('ix_scraping_sub_url_id'), 'scraping_sub_url', ['id'], unique=False)
+    op.create_index(
+        op.f("ix_scraping_sub_url_id"), "scraping_sub_url", ["id"], unique=False
+    )
 
-    op.create_table('scraping_job_history',
-        sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-        sa.Column('run_id', sa.String(), nullable=False),
-        sa.Column('job_id', sa.String(), nullable=False),
-        sa.Column('website_id', sa.Integer(), nullable=False),
-        sa.Column('name', sa.String(), nullable=False),
-        sa.Column('status', sa.String(), nullable=False),
-        sa.Column('queued_at', sa.DateTime(), nullable=True),
-        sa.Column('started_at', sa.DateTime(), nullable=True),
-        sa.Column('in_progress_at', sa.DateTime(), nullable=True),
-        sa.Column('completed_at', sa.DateTime(), nullable=True),
-        sa.Column('error', sa.Text(), nullable=True),
-        sa.ForeignKeyConstraint(['website_id'], ['scrapping_url.id'], ),
-        sa.PrimaryKeyConstraint('id'),
-        sa.UniqueConstraint('job_id')
+    op.create_table(
+        "scraping_job_history",
+        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
+        sa.Column("run_id", sa.String(), nullable=False),
+        sa.Column("job_id", sa.String(), nullable=False),
+        sa.Column("website_id", sa.Integer(), nullable=False),
+        sa.Column("name", sa.String(), nullable=False),
+        sa.Column("status", sa.String(), nullable=False),
+        sa.Column("queued_at", sa.DateTime(), nullable=True),
+        sa.Column("started_at", sa.DateTime(), nullable=True),
+        sa.Column("in_progress_at", sa.DateTime(), nullable=True),
+        sa.Column("completed_at", sa.DateTime(), nullable=True),
+        sa.Column("error", sa.Text(), nullable=True),
+        sa.ForeignKeyConstraint(
+            ["website_id"],
+            ["scrapping_url.id"],
+        ),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("job_id"),
     )
-    op.create_index(op.f('ix_scraping_job_history_run_id'), 'scraping_job_history', ['run_id'], unique=False)
-    op.create_index(op.f('ix_scraping_job_history_job_id'), 'scraping_job_history', ['job_id'], unique=False)
-    op.create_index(op.f('ix_scraping_job_history_id'), 'scraping_job_history', ['id'], unique=False)
+    op.create_index(
+        op.f("ix_scraping_job_history_run_id"),
+        "scraping_job_history",
+        ["run_id"],
+        unique=False,
+    )
+    op.create_index(
+        op.f("ix_scraping_job_history_job_id"),
+        "scraping_job_history",
+        ["job_id"],
+        unique=False,
+    )
+    op.create_index(
+        op.f("ix_scraping_job_history_id"), "scraping_job_history", ["id"], unique=False
+    )
     # ### end Alembic commands ###
 
 
 def downgrade() -> None:
     """Downgrade schema."""
     # ### commands auto generated by Alembic - please adjust! ###
-    op.create_table('ingested_pdf',
-    sa.Column('id', sa.INTEGER(), autoincrement=True, nullable=False),
-    sa.Column('name', sa.VARCHAR(), autoincrement=False, nullable=False),
-    sa.Column('url', sa.VARCHAR(), autoincrement=False, nullable=False),
-    sa.Column('user_id', sa.INTEGER(), autoincrement=False, nullable=False),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], name=op.f('ingested_pdf_user_id_fkey')),
-    sa.PrimaryKeyConstraint('id', name=op.f('ingested_pdf_pkey'))
+    op.create_table(
+        "ingested_pdf",
+        sa.Column("id", sa.INTEGER(), autoincrement=True, nullable=False),
+        sa.Column("name", sa.VARCHAR(), autoincrement=False, nullable=False),
+        sa.Column("url", sa.VARCHAR(), autoincrement=False, nullable=False),
+        sa.Column("user_id", sa.INTEGER(), autoincrement=False, nullable=False),
+        sa.ForeignKeyConstraint(
+            ["user_id"], ["users.id"], name=op.f("ingested_pdf_user_id_fkey")
+        ),
+        sa.PrimaryKeyConstraint("id", name=op.f("ingested_pdf_pkey")),
     )
-    op.create_index(op.f('ix_ingested_pdf_id'), 'ingested_pdf', ['id'], unique=False)
-    op.create_table('scrapings',
-    sa.Column('id', sa.INTEGER(), autoincrement=True, nullable=False),
-    sa.Column('name', sa.VARCHAR(), autoincrement=False, nullable=False),
-    sa.Column('url', sa.VARCHAR(), autoincrement=False, nullable=False),
-    sa.Column('user_id', sa.INTEGER(), autoincrement=False, nullable=False),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], name=op.f('scrapings_user_id_fkey')),
-    sa.PrimaryKeyConstraint('id', name=op.f('scrapings_pkey'))
+    op.create_index(op.f("ix_ingested_pdf_id"), "ingested_pdf", ["id"], unique=False)
+    op.create_table(
+        "scrapings",
+        sa.Column("id", sa.INTEGER(), autoincrement=True, nullable=False),
+        sa.Column("name", sa.VARCHAR(), autoincrement=False, nullable=False),
+        sa.Column("url", sa.VARCHAR(), autoincrement=False, nullable=False),
+        sa.Column("user_id", sa.INTEGER(), autoincrement=False, nullable=False),
+        sa.ForeignKeyConstraint(
+            ["user_id"], ["users.id"], name=op.f("scrapings_user_id_fkey")
+        ),
+        sa.PrimaryKeyConstraint("id", name=op.f("scrapings_pkey")),
     )
-    op.create_index(op.f('ix_scrapings_id'), 'scrapings', ['id'], unique=False)
+    op.create_index(op.f("ix_scrapings_id"), "scrapings", ["id"], unique=False)
     # ### end Alembic commands ###

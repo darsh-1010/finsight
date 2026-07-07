@@ -5,26 +5,30 @@ Revises: a1b2c3d4e5f6
 Create Date: 2026-03-16 15:10:00.000000
 
 """
-from typing import Sequence, Union
 
-from alembic import op
+from collections.abc import Sequence
+
 import sqlalchemy as sa
-
+from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = 'b2c3d4e5f6g7'
-down_revision: Union[str, Sequence[str], None] = 'a1b2c3d4e5f6'
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+revision: str = "b2c3d4e5f6g7"
+down_revision: str | Sequence[str] | None = "a1b2c3d4e5f6"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
     # 1. Add current_version_id column
-    op.add_column('courses', sa.Column('current_version_id', sa.Integer(), nullable=True))
+    op.add_column(
+        "courses", sa.Column("current_version_id", sa.Integer(), nullable=True)
+    )
     op.create_foreign_key(
-        'fk_courses_current_version_id',
-        'courses', 'course_versions',
-        ['current_version_id'], ['id']
+        "fk_courses_current_version_id",
+        "courses",
+        "course_versions",
+        ["current_version_id"],
+        ["id"],
     )
 
     # 2. Populate current_version_id for existing courses (use the latest version)
@@ -41,5 +45,5 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.drop_constraint('fk_courses_current_version_id', 'courses', type_='foreignkey')
-    op.drop_column('courses', 'current_version_id')
+    op.drop_constraint("fk_courses_current_version_id", "courses", type_="foreignkey")
+    op.drop_column("courses", "current_version_id")

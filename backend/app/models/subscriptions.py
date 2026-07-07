@@ -1,12 +1,12 @@
 import enum
 
-from sqlalchemy import func, Column, Integer, String, DateTime, Enum, ForeignKey, text
+from sqlalchemy import Column, DateTime, Enum, ForeignKey, Integer, func
 from sqlalchemy.orm import relationship
 
 from app.core.database import Base
 
-
 # ---------------- ENUMS ---------------- #
+
 
 class SubscriptionStatus(str, enum.Enum):
     ACTIVE = "active"
@@ -41,6 +41,7 @@ def enum_values(enum_cls):
 
 
 # ---------------- MODELS ---------------- #
+
 
 class Subscription(Base):
     __tablename__ = "subscriptions"
@@ -95,8 +96,6 @@ class Subscription(Base):
         server_default=func.now(),
         server_onupdate=func.now(),
     )
-
-
 
     pending_tier_id = Column(Integer, nullable=True)
     pending_started_at = Column(DateTime, nullable=True)

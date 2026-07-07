@@ -1,4 +1,3 @@
-from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -27,9 +26,7 @@ async def create_compliance_group(
 ):
     """Create a new compliance group."""
     existing_group = (
-        db.query(ComplianceGroup)
-        .filter(ComplianceGroup.key == group.key)
-        .first()
+        db.query(ComplianceGroup).filter(ComplianceGroup.key == group.key).first()
     )
     if existing_group:
         raise HTTPException(
@@ -44,7 +41,7 @@ async def create_compliance_group(
     return new_group
 
 
-@router.get("/groups", response_model=List[ComplianceGroupResponse])
+@router.get("/groups", response_model=list[ComplianceGroupResponse])
 async def get_compliance_groups(
     db: Session = Depends(get_db),
     _: None = Depends(require_role("admin")),
@@ -60,11 +57,7 @@ async def delete_compliance_group(
     _: None = Depends(require_role("admin")),
 ):
     """Delete a compliance group and its disclosures."""
-    db_group = (
-        db.query(ComplianceGroup)
-        .filter(ComplianceGroup.id == group_id)
-        .first()
-    )
+    db_group = db.query(ComplianceGroup).filter(ComplianceGroup.id == group_id).first()
     if not db_group:
         raise HTTPException(status_code=404, detail="Group not found")
 

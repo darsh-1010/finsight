@@ -1,16 +1,15 @@
 import pytest
+from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from app.core.database import Base
-from app.models.subscriptions import Subscription, SubscriptionChange
-from app.models.users import User, Role, UserRole, UserSession, UserProfile
-from app.models.tiers import Tier, Entitlements, TierEntitlement
-from app.services.tier_service import TierService
-from app.main import app
-from fastapi.testclient import TestClient
-from app.api.deps import get_db
 from sqlalchemy.pool import StaticPool
+
+from app.api.deps import get_db
 from app.core.config import settings
+from app.core.database import Base
+from app.main import app
+from app.models.tiers import Tier
+from app.models.users import Role, User, UserRole
 
 settings.COOKIE_SECURE = False
 
@@ -23,12 +22,10 @@ engine = create_engine(
 )
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+
 @pytest.fixture
 def db():
     # Force registration by importing all models
-    from app.models.users import User, Role, UserSession, UserProfile
-    from app.models.tiers import Tier, Entitlements, TierEntitlement
-    from app.models.subscriptions import Subscription, SubscriptionChange
 
     Base.metadata.create_all(bind=engine)
     db = TestingSessionLocal()
@@ -38,13 +35,16 @@ def db():
     admin_role = Role(id=2, role=UserRole.ADMIN)
     db.add_all([user_role, admin_role])
 
-    tier1 = Tier(id=1, name="Foundation", level=1, description="Free tier", price_amount=0)
+    tier1 = Tier(
+        id=1, name="Foundation", level=1, description="Free tier", price_amount=0
+    )
     db.add(tier1)
 
     db.commit()
     yield db
     db.close()
     Base.metadata.drop_all(bind=engine)
+
 
 @pytest.fixture
 def client(db):
@@ -53,15 +53,17 @@ def client(db):
             yield db
         finally:
             pass
+
     app.dependency_overrides[get_db] = override_get_db
     with TestClient(app) as c:
         yield c
     app.dependency_overrides.clear()
 
+
 def test_signup_success(client, db):
     response = client.post(
         "/api/v1/auth/signup",
-        json={"email": "test@example.com", "password": "password123", "role_id": 1}
+        json={"email": "test@example.com", "password": "password123", "role_id": 1},
     )
     assert response.status_code == 200
     data = response.json()
@@ -73,32 +75,34 @@ def test_signup_success(client, db):
     assert user.subscription is not None
     assert user.subscription.tier_id == 1
 
+
 def test_login_success(client, db):
     # Create user first
     client.post(
         "/api/v1/auth/signup",
-        json={"email": "test@example.com", "password": "password123", "role_id": 1}
+        json={"email": "test@example.com", "password": "password123", "role_id": 1},
     )
 
     # Try login
     response = client.post(
         "/api/v1/auth/login",
-        json={"email": "test@example.com", "password": "password123"}
+        json={"email": "test@example.com", "password": "password123"},
     )
     assert response.status_code == 200
     assert response.json()["message"] == "Login successful"
     assert "access_token" in client.cookies
     assert "refresh_token" in client.cookies
 
+
 def test_me_endpoint(client, db):
     # Signup and login
     client.post(
         "/api/v1/auth/signup",
-        json={"email": "test@example.com", "password": "password123", "role_id": 1}
+        json={"email": "test@example.com", "password": "password123", "role_id": 1},
     )
     client.post(
         "/api/v1/auth/login",
-        json={"email": "test@example.com", "password": "password123"}
+        json={"email": "test@example.com", "password": "password123"},
     )
 
     response = client.get("/api/v1/auth/me")
@@ -109,15 +113,16 @@ def test_me_endpoint(client, db):
     assert data["email"] == "test@example.com"
     assert data["role"] == "user"
 
+
 def test_logout(client, db):
     # Signup and login
     client.post(
         "/api/v1/auth/signup",
-        json={"email": "test@example.com", "password": "password123", "role_id": 1}
+        json={"email": "test@example.com", "password": "password123", "role_id": 1},
     )
     client.post(
         "/api/v1/auth/login",
-        json={"email": "test@example.com", "password": "password123"}
+        json={"email": "test@example.com", "password": "password123"},
     )
 
     response = client.get("/api/v1/auth/logout")
