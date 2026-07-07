@@ -1075,8 +1075,8 @@
     "semantic_hash": ""
   },
   "frontend/src/components/dashboard/Sidebar.tsx": {
-    "mtime": 1783336856.1933806,
-    "ast_hash": "8bb390380fe2b530db2d5477597da07d",
+    "mtime": 1783429353.714562,
+    "ast_hash": "8664f0e8575ea7b8e9fd0106c2767069",
     "semantic_hash": ""
   },
   "frontend/src/components/dashboard/TradingViewCalendar.tsx": {
@@ -1240,8 +1240,8 @@
     "semantic_hash": ""
   },
   "frontend/src/components/profile/SecurityPreferences.tsx": {
-    "mtime": 1782911124.803294,
-    "ast_hash": "7bf4a6b49c554156227cffbc7d086c7f",
+    "mtime": 1783429421.9929836,
+    "ast_hash": "9007342b91f964fd64f8a975e5fef7e8",
     "semantic_hash": ""
   },
   "frontend/src/components/profile/TokenUsage.tsx": {
@@ -1510,8 +1510,8 @@
     "semantic_hash": ""
   },
   "frontend/src/routes/AppRoutes.tsx": {
-    "mtime": 1782963552.1277971,
-    "ast_hash": "cf3cdcea5ef1d0e42b87089b1b1e90e1",
+    "mtime": 1783429335.4576938,
+    "ast_hash": "4980a78280f492615a9c9c4eb4f60a49",
     "semantic_hash": ""
   },
   "frontend/src/store/apiSlice.ts": {
@@ -2245,8 +2245,8 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1783344672.3386538,
-    "ast_hash": "033ada94549d255e8028364b020926eb",
+    "mtime": 1783429523.6425292,
+    "ast_hash": "5eaec969c7c3734a3e30377287705d19",
     "semantic_hash": ""
   },
   "backend/app/templates/email/verification.html": {
@@ -2512,6 +2512,36 @@
   "ml/import_log.txt": {
     "mtime": 1783422543.7549846,
     "ast_hash": "b87f217436806dd89a98021ea9f994ea",
+    "semantic_hash": ""
+  },
+  "frontend/src/api/portfolio.ts": {
+    "mtime": 1783429267.2419262,
+    "ast_hash": "36e1b4881239f10ee7cd98e1046da984",
+    "semantic_hash": ""
+  },
+  "frontend/src/pages/Sandbox.tsx": {
+    "mtime": 1783429815.423033,
+    "ast_hash": "098b73b6e07e14bc386acd5b5a3f253e",
+    "semantic_hash": ""
+  },
+  "documentation/api.md": {
+    "mtime": 1783429469.0170486,
+    "ast_hash": "95656ffeafb4516d5273eedbb2719f61",
+    "semantic_hash": ""
+  },
+  "documentation/architecture.md": {
+    "mtime": 1783429453.3355024,
+    "ast_hash": "58ae7e2145e90ce8c686de30a4c86adc",
+    "semantic_hash": ""
+  },
+  "documentation/install.md": {
+    "mtime": 1783429437.402534,
+    "ast_hash": "821b58497e61347601f73e17fe8c815d",
+    "semantic_hash": ""
+  },
+  "documentation/workflows.md": {
+    "mtime": 1783429487.005548,
+    "ast_hash": "f7c77b2a474705ac3c2ee3aadfa28c0f",
     "semantic_hash": ""
   }
 }
