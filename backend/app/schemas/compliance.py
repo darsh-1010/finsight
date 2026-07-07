@@ -17,7 +17,7 @@ class ComplianceDisclosureBase(BaseModel):
     content: str
     disclosure_type: DisclosureType
     icon_name: str
-    color: Optional[str] = None
+    color: str | None = None
     sort_order: int = 0
     is_active: bool = True
 
@@ -43,7 +43,7 @@ class ComplianceDisclosureResponse(ComplianceDisclosureBase):
 class ComplianceGroupBase(BaseModel):
     name: str
     key: str
-    description: Optional[str] = None
+    description: str | None = None
 
 
 class ComplianceGroupCreate(ComplianceGroupBase):
@@ -54,7 +54,7 @@ class ComplianceGroupResponse(ComplianceGroupBase):
     id: int
     created_at: datetime
     updated_at: datetime
-    disclosures: List[ComplianceDisclosureResponse] = []
+    disclosures: list[ComplianceDisclosureResponse] = []
 
     class Config:
         from_attributes = True

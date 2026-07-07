@@ -5,7 +5,7 @@ Handles Redis interactions for session state and conversation history.
 
 import asyncio
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime, timezone
 from typing import Any
 
 from config.settings import settings
@@ -36,7 +36,7 @@ class SessionService:
         """Save full session state to Redis with TTL."""
         try:
             key = f"session_state:{session_id}"
-            state["last_activity"] = datetime.now(timezone.utc).isoformat()
+            state["last_activity"] = datetime.now(UTC).isoformat()
             state["turn_count"] = state.get("turn_count", 0) + 1
             ttl = getattr(settings, "session_state_ttl", 2592000)
             await asyncio.to_thread(get_redis().setex, key, ttl, json.dumps(state))
@@ -76,7 +76,7 @@ class SessionService:
         }
 
         if not state.get("created_at"):
-            state["created_at"] = datetime.now(timezone.utc).isoformat()
+            state["created_at"] = datetime.now(UTC).isoformat()
 
         if "entities" not in state:
             state["entities"] = {}
@@ -154,7 +154,7 @@ class SessionService:
                 except json.JSONDecodeError:
                     pass
 
-            now_iso = datetime.now(timezone.utc).isoformat()
+            now_iso = datetime.now(UTC).isoformat()
             messages.append(
                 self._build_history_entry(
                     role="user",

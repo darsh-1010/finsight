@@ -1,11 +1,10 @@
 """Quota enforcement middleware."""
 
 import time
-from typing import Any, Optional
+from typing import Optional
 
 from fastapi import Request, Response
-from starlette.middleware.base import (BaseHTTPMiddleware,
-                                       RequestResponseEndpoint)
+from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.responses import JSONResponse
 
 from config.settings import settings
@@ -60,7 +59,7 @@ class QuotaMiddleware(BaseHTTPMiddleware):
 
         return await call_next(request)
 
-    def _get_user_id(self, request: Request) -> Optional[str]:
+    def _get_user_id(self, request: Request) -> str | None:
         """Extract user_id from headers."""
         return request.headers.get("x-user-id")
 

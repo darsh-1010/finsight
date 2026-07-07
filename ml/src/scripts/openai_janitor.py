@@ -6,11 +6,10 @@ Designed to be run as a daily Cron job or background task.
 """
 
 import asyncio
-from datetime import datetime, timedelta, timezone
-
-from src.llm.fallback_client import FallbackAsyncOpenAI
+from datetime import UTC, datetime, timedelta, timezone
 
 from config.settings import settings
+from src.llm.fallback_client import FallbackAsyncOpenAI
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -30,12 +29,12 @@ async def cleanup_openai_files() -> None:
         files_response = await client.files.list(purpose="user_data")
         files = files_response.data
 
-        cutoff_time = datetime.now(timezone.utc) - timedelta(hours=MAX_FILE_AGE_HOURS)
+        cutoff_time = datetime.now(UTC) - timedelta(hours=MAX_FILE_AGE_HOURS)
         deleted_count = 0
 
         for file_info in files:
             # OpenAI created_at is a Unix timestamp
-            created_at = datetime.fromtimestamp(file_info.created_at, tz=timezone.utc)
+            created_at = datetime.fromtimestamp(file_info.created_at, tz=UTC)
 
             if created_at < cutoff_time:
                 logger.info(

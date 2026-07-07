@@ -30,7 +30,6 @@ DOMAIN_TO_SCRAPER_KEY: dict[str, str] = {
     "investing.com/news/stock-market-news": "investing_com",
     "db.com": "deutsche_bank",
     "wealth.db.com": "wealth_deutsche_bank",
-
     # Names from database
     "schwab": "schwab",
     "economic_times": "economic_times",
@@ -57,7 +56,7 @@ SCRAPER_KEY_TO_ID: dict[str, int] = {}
 WEBSITE_INTERVAL_MAP: dict[str, float] = {}
 
 
-def map_frequency_to_days(frequency: Optional[str]) -> float:
+def map_frequency_to_days(frequency: str | None) -> float:
     """Map frequency string to numeric interval in days."""
     if not frequency:
         return 1.0

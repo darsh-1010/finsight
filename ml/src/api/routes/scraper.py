@@ -1,6 +1,5 @@
 """Scraper API route handlers."""
 
-import uuid
 from functools import lru_cache
 from typing import Optional
 from urllib.parse import urlparse
@@ -8,9 +7,11 @@ from urllib.parse import urlparse
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, ConfigDict, Field
 
-
-from src.api.routes.scraper_mapping import (SCRAPER_KEY_TO_ID, WEBSITE_ID_MAP,
-                                            load_website_id_map)
+from src.api.routes.scraper_mapping import (
+    SCRAPER_KEY_TO_ID,
+    WEBSITE_ID_MAP,
+    load_website_id_map,
+)
 from src.scripts.scraper_job_queue import ScraperJobQueue
 from src.services.rag import RAGService
 from src.services.scrapper.scrapper_service import ScrapperService
@@ -32,7 +33,6 @@ def get_scrapper_service() -> ScrapperService:
 def get_rag_service() -> RAGService:
     """Get or create RAG service instance."""
     return RAGService()
-
 
 
 # ============================================================================
@@ -67,7 +67,7 @@ class ScrapeResult(BaseModel):
     status: str
     content_length: int = 0
     chunks_stored: int = 0
-    error: Optional[str] = None
+    error: str | None = None
     metadata: dict = Field(default_factory=dict)
 
 
@@ -85,14 +85,14 @@ class StoreDocumentRequest(BaseModel):
 
     url: str
     content: str
-    metadata: Optional[dict] = None
+    metadata: dict | None = None
 
 
 class RetrieveContextRequest(BaseModel):
     """Request to retrieve context from RAG."""
 
     query: str
-    limit: Optional[int] = None
+    limit: int | None = None
 
 
 # ============================================================================

@@ -29,7 +29,7 @@ DEFAULT_TIER_ID = 1
 
 # Static fallback policy (Truth Source: Backend Database)
 # These are kept as safe defaults if cache/DB is unreachable.
-TIER_POLICIES: Dict[int, TierFeatures] = {
+TIER_POLICIES: dict[int, TierFeatures] = {
     0: TierFeatures(
         name="Tier 0 (Guest)",
         search_depth=0,

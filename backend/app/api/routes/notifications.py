@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import and_, or_
@@ -45,7 +45,7 @@ def _user_audience_filters(user: User):
 
 
 def _base_visible_notifications_query(db: Session, user: User):
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
 
     return (
         db.query(Notification)
@@ -141,7 +141,7 @@ def mark_notification_read(
         )
         .first()
     )
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
 
     if read:
         read.is_read = True

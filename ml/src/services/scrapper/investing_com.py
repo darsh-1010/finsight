@@ -22,15 +22,20 @@ from crawlee._types import ConcurrencySettings
 from crawlee.configuration import Configuration
 from crawlee.crawlers import PlaywrightCrawler, PlaywrightCrawlingContext
 
-from src.services.schema.article_schema import (Article, ArticleMetadata,
-                                                ScrapeOutput,
-                                                load_scraper_config)
+from src.services.schema.article_schema import (
+    Article,
+    ArticleMetadata,
+    ScrapeOutput,
+    load_scraper_config,
+)
 from src.services.scrapper.camoufox_plugin import build_camoufox_pool
 from src.services.scrapper.date_filter import is_within_lookback, parse_date
-from src.services.scrapper.resilience import (build_playwright_retry_defaults,
-                                              detect_bot_block,
-                                              wait_for_any_selector,
-                                              wait_for_post_action_settle)
+from src.services.scrapper.resilience import (
+    build_playwright_retry_defaults,
+    detect_bot_block,
+    wait_for_any_selector,
+    wait_for_post_action_settle,
+)
 from src.utils.logger import get_logger
 
 # ── Configuration ─────────────────────────────────────────────────────────────

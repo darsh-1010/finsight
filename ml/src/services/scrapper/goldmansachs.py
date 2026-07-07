@@ -19,15 +19,20 @@ from crawlee._types import ConcurrencySettings
 from crawlee.configuration import Configuration
 from crawlee.crawlers import PlaywrightCrawler, PlaywrightCrawlingContext
 
-from src.services.schema.article_schema import (Article, ArticleMetadata,
-                                                ScrapeOutput,
-                                                load_scraper_config)
+from src.services.schema.article_schema import (
+    Article,
+    ArticleMetadata,
+    ScrapeOutput,
+    load_scraper_config,
+)
 from src.services.scrapper.camoufox_plugin import build_camoufox_pool
 from src.services.scrapper.date_filter import is_within_lookback, parse_date
-from src.services.scrapper.resilience import (SCRAPER_TRY_EXCEPTIONS,
-                                              build_playwright_retry_defaults,
-                                              detect_bot_block,
-                                              wait_for_any_selector)
+from src.services.scrapper.resilience import (
+    SCRAPER_TRY_EXCEPTIONS,
+    build_playwright_retry_defaults,
+    detect_bot_block,
+    wait_for_any_selector,
+)
 from src.utils.logger import get_logger
 
 # ── ONLY hardcoded URL ───────────────────────────────────────────────────────
@@ -434,7 +439,7 @@ async def main(
 
     await crawler.run([START_URL])
 
-    logger.info(f"\n{'='*60}")
+    logger.info(f"\n{'=' * 60}")
     logger.info(f"Done. Articles scraped: {len(scraped_outlooks)}")
     logger.info("=" * 60)
     save_results(scraped_outlooks, stats, lookback_days, output_file)

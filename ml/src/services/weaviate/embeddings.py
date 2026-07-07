@@ -12,44 +12,51 @@ from .config import EMBEDDING_BATCH_SIZE
 
 logger = get_logger(__name__)
 
+
 class FallbackOpenAIEmbeddings:
     """Wrapper that tries primary FreeLLMAPI first, then falls back to OpenAI."""
+
     def __init__(self, primary: OpenAIEmbeddings, fallback: OpenAIEmbeddings):
         self.primary = primary
         self.fallback = fallback
 
-    def embed_documents(self, texts: List[str]) -> List[List[float]]:
+    def embed_documents(self, texts: list[str]) -> list[list[float]]:
         try:
             return self.primary.embed_documents(texts)
         except Exception as e:
             logger.warning(f"Primary embeddings failed: {e}. Falling back to OpenAI.")
             return self.fallback.embed_documents(texts)
 
-    async def aembed_documents(self, texts: List[str]) -> List[List[float]]:
+    async def aembed_documents(self, texts: list[str]) -> list[list[float]]:
         try:
             return await self.primary.aembed_documents(texts)
         except Exception as e:
-            logger.warning(f"Primary async embeddings failed: {e}. Falling back to OpenAI.")
+            logger.warning(
+                f"Primary async embeddings failed: {e}. Falling back to OpenAI."
+            )
             return await self.fallback.aembed_documents(texts)
 
-    def embed_query(self, text: str) -> List[float]:
+    def embed_query(self, text: str) -> list[float]:
         try:
             return self.primary.embed_query(text)
         except Exception as e:
             logger.warning(f"Primary embed query failed: {e}. Falling back to OpenAI.")
             return self.fallback.embed_query(text)
 
-    async def aembed_query(self, text: str) -> List[float]:
+    async def aembed_query(self, text: str) -> list[float]:
         try:
             return await self.primary.aembed_query(text)
         except Exception as e:
-            logger.warning(f"Primary async embed query failed: {e}. Falling back to OpenAI.")
+            logger.warning(
+                f"Primary async embed query failed: {e}. Falling back to OpenAI."
+            )
             return await self.fallback.aembed_query(text)
+
 
 # FIX-004: In-process LRU cache for query embeddings.
 # Embeddings are deterministic: same text → same vector. Safe to cache indefinitely.
 # Capped at 5000 entries to avoid unbounded memory growth (~10 MB at 1536-dim float32).
-_EMBED_QUERY_CACHE: dict[str, List[float]] = {}
+_EMBED_QUERY_CACHE: dict[str, list[float]] = {}
 _EMBED_CACHE_MAX = 5000
 
 
@@ -67,9 +74,11 @@ class EmbeddingService:
             model=settings.embedding_model,
             api_key=settings.openai_api_key,
         )
-        self.embeddings = FallbackOpenAIEmbeddings(primary_embeddings, fallback_embeddings)
+        self.embeddings = FallbackOpenAIEmbeddings(
+            primary_embeddings, fallback_embeddings
+        )
 
-    async def aembed_documents(self, texts: List[str]) -> List[List[float]]:
+    async def aembed_documents(self, texts: list[str]) -> list[list[float]]:
         """
         Generate embeddings for a list of texts asynchronously.
 
@@ -89,12 +98,12 @@ class EmbeddingService:
                 batch_embeddings = await self.embeddings.aembed_documents(batch)
                 results.extend(batch_embeddings)
             except (AttributeError, TypeError, ValueError, RuntimeError) as e:
-                logger.error(f"Error embedding batch {i} to {i+len(batch)}: {e}")
+                logger.error(f"Error embedding batch {i} to {i + len(batch)}: {e}")
                 raise
 
         return results
 
-    def embed_documents(self, texts: List[str]) -> List[List[float]]:
+    def embed_documents(self, texts: list[str]) -> list[list[float]]:
         """
         Generate embeddings for a list of texts synchronously.
         """
@@ -107,12 +116,12 @@ class EmbeddingService:
                 batch_embeddings = self.embeddings.embed_documents(batch)
                 results.extend(batch_embeddings)
             except (AttributeError, TypeError, ValueError, RuntimeError) as e:
-                logger.error(f"Error embedding batch {i} to {i+len(batch)}: {e}")
+                logger.error(f"Error embedding batch {i} to {i + len(batch)}: {e}")
                 raise
 
         return results
 
-    def embed_query(self, text: str) -> List[float]:
+    def embed_query(self, text: str) -> list[float]:
         """Generate embedding for a single query text (cached).
 
         Cache key is normalised (lowercased + stripped) so that
@@ -128,7 +137,7 @@ class EmbeddingService:
         return result
 
     @timed("embedding.aembed_query", warn_threshold_s=1.0)
-    async def aembed_query(self, text: str) -> List[float]:
+    async def aembed_query(self, text: str) -> list[float]:
         """Generate embedding for a single query text asynchronously (cached).
 
         Cache key is normalised (lowercased + stripped) so that

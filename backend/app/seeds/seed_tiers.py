@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
+
 from app.core.database import SESSION_LOCAL
-from app.models.tiers import Tier, Entitlements, TierEntitlement
+from app.models.tiers import Entitlements, Tier, TierEntitlement
 
 # -------------------------
 # SEED DATA (UNCHANGED)
@@ -10,21 +11,17 @@ ENTITLEMENTS = [
     ("CHAT_ACCESS_BASIC", "Basic chat access"),
     ("CHAT_ACCESS_EXTENDED", "Extended chat with memory"),
     ("CHAT_ACCESS_PRIORITY", "Priority chat responses"),
-
     ("MEMORY_NONE", "No conversation memory"),
     ("MEMORY_SHORT", "Session-based memory"),
     ("MEMORY_LONG", "Long-term memory"),
-
     ("INSIGHTS_NONE", "No insights"),
     ("INSIGHTS_BASIC", "Basic educational insights"),
     ("INSIGHTS_PORTFOLIO", "Portfolio & macro insights"),
     ("INSIGHTS_PRO", "AI-powered insights"),
-
     ("SIGNALS_NONE", "No signals"),
     ("SIGNALS_EDUCATIONAL", "Illustrative signals"),
     ("SIGNALS_AI", "AI-detected patterns"),
     ("BRIEFINGS_WEEKLY", "Weekly intelligence briefings"),
-
     ("ADVISORY_DISABLED", "No advisory access"),
     ("ADVISORY_INTAKE", "Advisory intake & explanation"),
     ("ADVISORY_HUMAN", "Human advisor access"),
@@ -91,29 +88,36 @@ TIER_CATALOG = [
 ]
 
 TIER_ENTITLEMENTS = {
-    1: ["CHAT_ACCESS_BASIC", "MEMORY_NONE", "INSIGHTS_NONE",
-        "SIGNALS_NONE", "ADVISORY_DISABLED"],
-    2: ["CHAT_ACCESS_EXTENDED", "MEMORY_SHORT", "INSIGHTS_BASIC",
-        "SIGNALS_EDUCATIONAL"],
+    1: [
+        "CHAT_ACCESS_BASIC",
+        "MEMORY_NONE",
+        "INSIGHTS_NONE",
+        "SIGNALS_NONE",
+        "ADVISORY_DISABLED",
+    ],
+    2: [
+        "CHAT_ACCESS_EXTENDED",
+        "MEMORY_SHORT",
+        "INSIGHTS_BASIC",
+        "SIGNALS_EDUCATIONAL",
+    ],
     3: ["MEMORY_LONG", "INSIGHTS_PORTFOLIO"],
-    4: ["CHAT_ACCESS_PRIORITY", "INSIGHTS_PRO", "SIGNALS_AI",
-        "BRIEFINGS_WEEKLY"],
+    4: ["CHAT_ACCESS_PRIORITY", "INSIGHTS_PRO", "SIGNALS_AI", "BRIEFINGS_WEEKLY"],
 }
+
 
 def _sync_entitlements(db: Session):
     ent_map = {}
 
     for code, desc in ENTITLEMENTS:
-        ent = (
-            db.query(Entitlements)
-            .filter_by(code=code)
-            .first()
-            or db.merge(Entitlements(code=code, description=desc))
+        ent = db.query(Entitlements).filter_by(code=code).first() or db.merge(
+            Entitlements(code=code, description=desc)
         )
         ent_map[code] = ent
 
     db.flush()
     return ent_map
+
 
 def _sync_tiers(db: Session):
     tier_map = {}
@@ -144,6 +148,7 @@ def _sync_tiers(db: Session):
 
     return tier_map
 
+
 def _sync_tier_entitlements(db: Session, tier_map, ent_map):
     for level, codes in TIER_ENTITLEMENTS.items():
         tier = tier_map[level]
@@ -151,10 +156,14 @@ def _sync_tier_entitlements(db: Session, tier_map, ent_map):
         for code in codes:
             entitlement = ent_map[code]
 
-            exists = db.query(TierEntitlement).filter_by(
-                tier_id=tier.id,
-                entitlement_id=entitlement.id,
-            ).first()
+            exists = (
+                db.query(TierEntitlement)
+                .filter_by(
+                    tier_id=tier.id,
+                    entitlement_id=entitlement.id,
+                )
+                .first()
+            )
 
             if not exists:
                 db.add(
@@ -163,6 +172,7 @@ def _sync_tier_entitlements(db: Session, tier_map, ent_map):
                         entitlement_id=entitlement.id,
                     )
                 )
+
 
 def seed_tiers():
     """Sync tiers and entitlements."""
@@ -181,6 +191,7 @@ def seed_tiers():
         raise
     finally:
         db.close()
+
 
 if __name__ == "__main__":
     seed_tiers()

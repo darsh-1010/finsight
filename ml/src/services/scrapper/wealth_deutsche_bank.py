@@ -32,13 +32,18 @@ from crawlee._types import ConcurrencySettings
 from crawlee.configuration import Configuration
 from crawlee.crawlers import PlaywrightCrawler, PlaywrightCrawlingContext
 
-from src.services.schema.article_schema import (Article, ArticleMetadata,
-                                                ScrapeOutput,
-                                                load_scraper_config)
+from src.services.schema.article_schema import (
+    Article,
+    ArticleMetadata,
+    ScrapeOutput,
+    load_scraper_config,
+)
 from src.services.scrapper.date_filter import is_within_lookback, parse_date
 from src.services.scrapper.pdf_scraper import PDFScraper
-from src.services.scrapper.resilience import (build_playwright_retry_defaults,
-                                              wait_for_any_selector)
+from src.services.scrapper.resilience import (
+    build_playwright_retry_defaults,
+    wait_for_any_selector,
+)
 from src.utils.logger import get_logger
 
 # ── Constants ─────────────────────────────────────────────────────────────────

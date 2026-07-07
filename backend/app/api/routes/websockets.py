@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 class ConnectionManager:
     def __init__(self) -> None:
-        self.active_connections: List[WebSocket] = []
+        self.active_connections: list[WebSocket] = []
 
     async def connect(self, websocket: WebSocket) -> None:
         await websocket.accept()
@@ -86,15 +86,9 @@ async def sync_and_broadcast_jobs() -> None:
                                     else None
                                 ),
                                 "status": (
-                                    latest_job.status.value
-                                    if latest_job
-                                    else None
+                                    latest_job.status.value if latest_job else None
                                 ),
-                                "job_id": (
-                                    latest_job.job_id
-                                    if latest_job
-                                    else None
-                                ),
+                                "job_id": (latest_job.job_id if latest_job else None),
                             }
                         )
 
@@ -135,4 +129,3 @@ async def websocket_endpoint(websocket: WebSocket) -> None:
     except WebSocketDisconnect:
         manager.disconnect(websocket)
         await manager.broadcast("A client disconnected")
-        

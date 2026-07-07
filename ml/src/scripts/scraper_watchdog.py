@@ -20,7 +20,7 @@ Redis key schema (all with 48-hour TTL):
 """
 
 import logging
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta, timezone
 from typing import Optional
 
 from redis.exceptions import RedisError
@@ -105,7 +105,7 @@ class ScraperWatchdog:
             self._set_circuit_state(name, _STATE_CLOSED)
             return False
         cooldown_end = opened_at + timedelta(hours=self.cooldown_hours)
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         if now >= cooldown_end:
             self._set_circuit_state(name, _STATE_HALF_OPEN)
             logger.info(
@@ -171,7 +171,7 @@ class ScraperWatchdog:
         except (RedisError, AttributeError, TypeError, ValueError):  # noqa
             pass
 
-    def _get_circuit_opened_at(self, name: str) -> Optional[datetime]:
+    def _get_circuit_opened_at(self, name: str) -> datetime | None:
         try:
             raw = self._redis.get(_KEY_CIRCUIT_OPENED.format(name=name))
             if not raw:
@@ -181,7 +181,7 @@ class ScraperWatchdog:
             return None
 
     def _trip_circuit(self, name: str) -> None:
-        now_iso = datetime.now(timezone.utc).isoformat()
+        now_iso = datetime.now(UTC).isoformat()
         try:
             self._redis.set(
                 _KEY_CIRCUIT_OPENED.format(name=name), now_iso, ex=_WATCHDOG_KEY_TTL
@@ -244,9 +244,9 @@ def check_and_cleanup_ghosts(
 
         started = job.started_at
         if started.tzinfo is None:
-            started = started.replace(tzinfo=timezone.utc)
+            started = started.replace(tzinfo=UTC)
 
-        age_seconds = (datetime.now(timezone.utc) - started).total_seconds()
+        age_seconds = (datetime.now(UTC) - started).total_seconds()
         if age_seconds > stale_threshold:
             job_queue.mark_failed(
                 job.scraper_name,

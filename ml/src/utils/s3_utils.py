@@ -37,7 +37,7 @@ class S3Downloader:
             region_name=settings.aws_region,
         )
 
-    def parse_s3_url(self, url: str) -> Tuple[str, str]:
+    def parse_s3_url(self, url: str) -> tuple[str, str]:
         """Parse an s3:// URL or an S3 HTTPS object URL into bucket and key components.
 
         Supports:

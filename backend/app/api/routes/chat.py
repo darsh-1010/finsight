@@ -25,10 +25,12 @@ def create_session(
     db: Session = Depends(deps.get_db),
     current_user: User = Depends(deps.get_current_user),
 ):
-    return ChatService.create_session(db, user_id=current_user.id, session_in=session_in)
+    return ChatService.create_session(
+        db, user_id=current_user.id, session_in=session_in
+    )
 
 
-@router.get("/sessions", response_model=List[ChatSession])
+@router.get("/sessions", response_model=list[ChatSession])
 def get_sessions(
     db: Session = Depends(deps.get_db),
     current_user: User = Depends(deps.get_current_user),
@@ -81,14 +83,14 @@ async def create_message(
             session_id=session_id,
             user_id=current_user.id,
             message_in=message_in,
-            tier_level = current_user.subscription.tier.level
+            tier_level=current_user.subscription.tier.level,
         ),
         media_type="text/event-stream",
         headers={
             "Cache-Control": "no-cache",
             "Connection": "keep-alive",
             "X-Accel-Buffering": "no",
-        }
+        },
     )
     print(f"--- API: Returning StreamingResponse (200 OK headers sent) ---", flush=True)
     return response
@@ -104,16 +106,13 @@ async def create_trial_message(
     Does not require authentication.
     """
     response = StreamingResponse(
-        ChatService.create_trial_message_stream(
-            db,
-            message_in=message_in
-        ),
+        ChatService.create_trial_message_stream(db, message_in=message_in),
         media_type="text/event-stream",
         headers={
             "Cache-Control": "no-cache",
             "Connection": "keep-alive",
             "X-Accel-Buffering": "no",
-        }
+        },
     )
     return response
 
@@ -133,7 +132,7 @@ def get_usage(
 )
 async def upload_attachments(
     session_id: str,
-    files: List[UploadFile] = File(..., description="One or more files to attach"),
+    files: list[UploadFile] = File(..., description="One or more files to attach"),
     db: Session = Depends(deps.get_db),
     current_user: User = Depends(deps.get_current_user),
 ):

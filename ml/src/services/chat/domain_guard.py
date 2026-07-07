@@ -67,7 +67,6 @@ _PORTFOLIO_BUILD = re.compile(
 
 _FAST_REJECT_PATTERN = re.compile(
     r"\b("
-
     # ── Build / architect / design synonyms ───────────────────────────────────
     r"how\s+to\s+(build|make|create|design|architect|implement|set\s+up|develop|construct|engineer|write|assemble|compose|fabricate)\b"
     r"|how\s+(do\s+I|would\s+(I|one|you)|can\s+I)\s+(build|make|create|design|architect|implement|develop|construct|set\s+up|engineer|write|assemble|compose)\b"
@@ -88,7 +87,6 @@ _FAST_REJECT_PATTERN = re.compile(
     r"|systematic\s+(approach|process|way|method)\s+(to|for)\s+(building|creating|developing|designing|implementing|making|engineering|writing|coding)\b"
     r"|what('s|s|\s+is)\s+the\s+(best\s+)?(approach|methodology|process|way|method)\s+(to|for)\s+(building|creating|developing|designing|implementing|making|engineering)\b"
     r"|help\s+me\s+automate\b"
-
     # ── Software architecture / system design ─────────────────────────────────
     r"|architecture\s+(for|of|behind)\b"
     r"|software\s+(design|architecture|components?|structure)\b"
@@ -98,7 +96,6 @@ _FAST_REJECT_PATTERN = re.compile(
     r"|data\s+pipeline\s+(for|of|behind)\b"
     r"|(infrastructure|tech\s+stack|technology\s+stack)\s+(of|for|behind|used\s+by)\b"
     r"|software\s+design\s+of\b"
-
     # ── Programming languages / tools / libraries ─────────────────────────────
     r"|tech(?:nology)?\s+stack\s+(for|of|used|behind)\b"
     r"|(programming\s+language|coding\s+language)\s+(should|to|for|do|used)\b"
@@ -108,7 +105,6 @@ _FAST_REJECT_PATTERN = re.compile(
     r"|best\s+(framework|library|language|stack|tool|approach)\s+for\b"
     r"|recommend\s+(a\s+)?(tool|library|framework|language|stack)\b"
     r"|how\s+to\s+code\b"
-
     # ── General technology explanations ───────────────────────────────────────
     # "explain X" — covers ML, AI, infra, cloud, etc.
     r"|explain\s+(a\s+|an\s+)?(machine\s+learning|artificial\s+intelligence|deep\s+learning"
@@ -128,7 +124,6 @@ _FAST_REJECT_PATTERN = re.compile(
     r"|how\s+does?\s+(a\s+|an\s+)?(machine\s+learning|artificial\s+intelligence|deep\s+learning"
     r"|neural\s+networks?|nlp|natural\s+language\s+processing|blockchain|kubernetes|docker"
     r"|rest\s+api|apis?)\s+(work|learn|function|operate)\b"
-
     # ── Adversarial / jailbreak ───────────────────────────────────────────────
     r"|pretend\s+(you\s+are|to\s+be)\s+a?\s*(software|tech|system|developer|engineer|architect|coder|programmer)\b"
     r"|imagine\s+you\s*(?:'re|re|\s+are|\s+were|\s+could\s+be)\s*(a\s+|an\s+)?(software|tech|fintech|system|developer|engineer|architect|coder|programmer)\b"
@@ -137,7 +132,6 @@ _FAST_REJECT_PATTERN = re.compile(
     r"|from\s+a\s+(technical|engineering|software|developer|system\s+design)\s+(standpoint|perspective|angle|view)\b"
     r"|ignore\s+(previous|prior|all)?\s*instructions?\b"
     r"|as\s+(a\s+)?(software|tech|fintech)\s+(architect|engineer|developer|lead|director)\b"
-
     r")",
     re.IGNORECASE,
 )
@@ -161,6 +155,7 @@ def _fast_reject(message: str) -> bool:
 # ---------------------------------------------------------------------------
 # Schema — structured output returned by gpt-4.1-mini
 # ---------------------------------------------------------------------------
+
 
 class DomainDecision(BaseModel):
     """Structured output from the financial domain classifier.
@@ -437,7 +432,7 @@ class DomainGuard:
     async def classify(
         self,
         message: str,
-        session_id: Optional[str] = None,
+        session_id: str | None = None,
     ) -> DomainDecision:
         """Classify whether ``message`` is within the financial domain.
 
@@ -472,10 +467,12 @@ class DomainGuard:
             system_content = DOMAIN_CLASSIFIER_PROMPT + history_block
 
             decision: DomainDecision = await asyncio.wait_for(
-                self._classifier.ainvoke([
-                    SystemMessage(content=system_content),
-                    HumanMessage(content=f"Classify this query: {message[:600]}"),
-                ]),
+                self._classifier.ainvoke(
+                    [
+                        SystemMessage(content=system_content),
+                        HumanMessage(content=f"Classify this query: {message[:600]}"),
+                    ]
+                ),
                 timeout=_CLASSIFIER_TIMEOUT_SECONDS,
             )
 
@@ -511,7 +508,7 @@ class DomainGuard:
     # Private helpers
     # ------------------------------------------------------------------
 
-    async def _build_history_block(self, session_id: Optional[str]) -> str:
+    async def _build_history_block(self, session_id: str | None) -> str:
         """Fetch recent conversation turns for reference resolution context."""
         if not session_id:
             return ""
@@ -530,5 +527,8 @@ class DomainGuard:
                 + "\n".join(lines)
             )
         except Exception as exc:  # pylint: disable=broad-except
-            logger.debug("[DOMAIN_GUARD] History fetch failed (%s) — continuing without context", exc)
+            logger.debug(
+                "[DOMAIN_GUARD] History fetch failed (%s) — continuing without context",
+                exc,
+            )
             return ""

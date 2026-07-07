@@ -7,11 +7,14 @@ manages file path resolution for scraper outputs.
 import json
 import logging
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime, timezone
 from pathlib import Path
 
-from src.scripts.scraper_snapshot import (IngestionReport, StoredArticleRecord,
-                                          notify_backend_deleted_documents)
+from src.scripts.scraper_snapshot import (
+    IngestionReport,
+    StoredArticleRecord,
+    notify_backend_deleted_documents,
+)
 from src.services.rag.rag_service import RAGService
 from src.services.scrapper.date_filter import parse_date
 
@@ -127,7 +130,7 @@ async def ingest_to_weaviate_with_report(
         if not os.path.exists(output_file):
             return IngestionReport()
 
-        with open(output_file, "r", encoding="utf-8") as file_handle:
+        with open(output_file, encoding="utf-8") as file_handle:
             data = json.load(file_handle)
 
         articles = data.get("articles", [])
@@ -140,9 +143,11 @@ async def ingest_to_weaviate_with_report(
             await _cleanup_old_scraper_data(rag, scraper_name, start_time)
             return IngestionReport()
 
-        total_chunks, indexed_articles, stored_articles = (
-            await _accumulate_ingestion_results(rag, articles)
-        )
+        (
+            total_chunks,
+            indexed_articles,
+            stored_articles,
+        ) = await _accumulate_ingestion_results(rag, articles)
 
         logger.info(
             "[WEAVIATE_SUCCESS] Successfully stored %d total chunks.", total_chunks
@@ -195,7 +200,7 @@ def _build_stored_article_record(
 ) -> StoredArticleRecord:
     """Build the snapshot record for one article after successful storage."""
     scraped_at = str(
-        article.get("scraped_at") or datetime.now(timezone.utc).isoformat()
+        article.get("scraped_at") or datetime.now(UTC).isoformat()
     )
     return StoredArticleRecord(
         source=str(article.get("source", "unknown")),

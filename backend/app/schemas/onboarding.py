@@ -1,6 +1,7 @@
-from typing import List, Optional, Any, Union, Literal
+from typing import Annotated, Any, List, Literal, Optional, Union
+
 from pydantic import BaseModel, Field, field_validator
-from typing_extensions import Annotated
+
 from app.models.onboarding_questioner import QuestionType
 
 
@@ -15,33 +16,33 @@ class OnboardingQuestionOptionResponse(BaseModel):
 
 class OnboardingQuestionResponse(BaseModel):
     id: int
-    tier_id: Optional[int] = None
+    tier_id: int | None = None
     question_text: str
-    question_description: Optional[str] = None
-    title: Optional[str] = None
+    question_description: str | None = None
+    title: str | None = None
     question_type: QuestionType
-    order: Optional[int] = None
-    validation_rules: Optional[Any] = None
-    options: List[OnboardingQuestionOptionResponse] = []
+    order: int | None = None
+    validation_rules: Any | None = None
+    options: list[OnboardingQuestionOptionResponse] = []
 
     model_config = {"from_attributes": True}
 
 
 class AnswerCreate(BaseModel):
     question_id: int
-    option_id: Optional[int] = None
+    option_id: int | None = None
     answer_value: Any
 
 
 class AnswerUpdate(BaseModel):
     answer_value: Any
-    option_id: Optional[int] = None
+    option_id: int | None = None
 
 
 class AnswerResponse(BaseModel):
     id: int
     question_id: int
-    option_id: Optional[int] = None
+    option_id: int | None = None
     answer_value: Any
 
     model_config = {"from_attributes": True}
@@ -59,12 +60,12 @@ class QuestionOptionCreate(BaseModel):
 class BaseQuestionCreate(BaseModel):
     tier_id: int
     question_text: str
-    question_description: Optional[str] = None
-    title: Optional[str] = None
+    question_description: str | None = None
+    title: str | None = None
     order: int = 0
-    validation_rules: Optional[dict] = None
-    depends_on_question_id: Optional[int] = None
-    depends_on_value: Optional[str] = None
+    validation_rules: dict | None = None
+    depends_on_question_id: int | None = None
+    depends_on_value: str | None = None
 
 
 class TextQuestionCreate(BaseQuestionCreate):
@@ -93,7 +94,7 @@ class FileQuestionCreate(BaseQuestionCreate):
 
 class ChoiceQuestionCreate(BaseQuestionCreate):
     question_type: Literal["single_choice", "multi_choice", "dropdown"]
-    options: List[QuestionOptionCreate]
+    options: list[QuestionOptionCreate]
 
     @field_validator("options")
     @classmethod
@@ -118,26 +119,26 @@ QuestionCreate = Annotated[
 
 
 class QuestionUpdate(BaseModel):
-    question_text: Optional[str] = None
-    question_description: Optional[str] = None
-    title: Optional[str] = None
-    question_type: Optional[QuestionType] = None
-    order: Optional[int] = None
-    validation_rules: Optional[Any] = None
-    options: Optional[List[QuestionOptionCreate]] = None
-    depends_on_question_id: Optional[int] = None
-    depends_on_value: Optional[str] = None
+    question_text: str | None = None
+    question_description: str | None = None
+    title: str | None = None
+    question_type: QuestionType | None = None
+    order: int | None = None
+    validation_rules: Any | None = None
+    options: list[QuestionOptionCreate] | None = None
+    depends_on_question_id: int | None = None
+    depends_on_value: str | None = None
 
 
 class SimpleQuestionCreate(BaseModel):
     """Schema for creating a standalone question without tier association"""
 
     question_text: str
-    question_description: Optional[str] = None
-    title: Optional[str] = None
+    question_description: str | None = None
+    title: str | None = None
     question_type: QuestionType
-    validation_rules: Optional[dict] = None
-    options: Optional[List[QuestionOptionCreate]] = None
+    validation_rules: dict | None = None
+    options: list[QuestionOptionCreate] | None = None
 
 
 class CIPCalculationResponse(BaseModel):

@@ -20,7 +20,7 @@ logger = get_logger(__name__)
 class WeaviateClientManager:
     """Manages the Weaviate client lifecycle (Singleton pattern)."""
 
-    _client: Optional[WeaviateClient] = None
+    _client: WeaviateClient | None = None
 
     @classmethod
     def get_client(cls) -> WeaviateClient:

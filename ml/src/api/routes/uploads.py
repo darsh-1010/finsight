@@ -2,8 +2,15 @@
 
 import asyncio
 
-from fastapi import (APIRouter, BackgroundTasks, Depends, File, Header,
-                     HTTPException, UploadFile)
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    Depends,
+    File,
+    Header,
+    HTTPException,
+    UploadFile,
+)
 from fastapi.responses import JSONResponse
 
 from src.api.dependencies import get_user_upload_service

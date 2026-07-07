@@ -8,10 +8,10 @@ import asyncio
 import json
 import re
 import time
-from datetime import datetime, timezone
-from typing import Any, AsyncGenerator, Dict, List
+from collections.abc import AsyncGenerator
+from datetime import UTC, datetime, timezone
+from typing import Any, Dict, List
 
-from pydantic import BaseModel, Field
 from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 
@@ -47,10 +47,10 @@ def _build_domain_refusal_message() -> str:
         "- 🏢 **Company fundamentals** — revenue, margins, competitive positioning\n"
         "- 🌐 **Macroeconomics** — interest rates, inflation, industry outlooks\n\n"
         "**Here are a few examples of questions you can ask me instead:**\n"
-        "- *\"Is Tesla stock overvalued at its current price?\"*\n"
-        "- *\"How do I build a 6-month emergency savings fund?\"*\n"
-        "- *\"What is the difference between a Roth IRA and a Traditional IRA?\"*\n"
-        "- *\"How do rising interest rates affect bond yields?\"*\n\n"
+        '- *"Is Tesla stock overvalued at its current price?"*\n'
+        '- *"How do I build a 6-month emergency savings fund?"*\n'
+        '- *"What is the difference between a Roth IRA and a Traditional IRA?"*\n'
+        '- *"How do rising interest rates affect bond yields?"*\n\n'
         "Feel free to ask me anything in those areas and I'll give you a thorough, "
         "data-driven answer. What financial topic can I help you explore today?"
     )
@@ -71,6 +71,7 @@ IDENTITY_QUERY_PATTERN = re.compile(
     r")\b",
     re.IGNORECASE,
 )
+
 
 class ChatService(IChatService):
     """Chat service orchestrator."""
@@ -229,7 +230,9 @@ class ChatService(IChatService):
                 session_id,
                 message,
                 response_text=_build_domain_refusal_message(),
-                analysis_result={"expansion": {"is_financial": False, "suggested_follow_ups": []}},
+                analysis_result={
+                    "expansion": {"is_financial": False, "suggested_follow_ups": []}
+                },
                 citations=[],
                 usage={},
                 start_time=start_time,
@@ -408,7 +411,7 @@ class ChatService(IChatService):
         session_id: str,
         *,
         is_new: bool,
-        context_data: Dict[str, Any],
+        context_data: dict[str, Any],
         features: Any,
     ) -> tuple[str, dict]:
         """Prepare messages and generate LLM response."""
@@ -446,8 +449,8 @@ class ChatService(IChatService):
         message: str,
         *,
         response_text: str,
-        analysis_result: Dict[str, Any] | None,
-        citations: List[Dict[str, Any]],
+        analysis_result: dict[str, Any] | None,
+        citations: list[dict[str, Any]],
         **kwargs: Any,
     ) -> JsonDict:
         """Handle completion, logging, and payload construction."""
@@ -466,7 +469,7 @@ class ChatService(IChatService):
 
         latency_ms = int((time.monotonic() - start_time) * 1000)
 
-        meta: Dict[str, Any] = {
+        meta: dict[str, Any] = {
             "tokens_used": usage.get("total_tokens") if usage else None,
             "usage": usage,
             "request_id": request_id,
@@ -519,7 +522,13 @@ class ChatService(IChatService):
                 session_id=session_id,
                 message=message,
                 full_response=refusal,
-                context_data={"analysis_result": {"expansion": {"is_financial": False, "suggested_follow_ups": []}}, "citations": [], "should_search": False},
+                context_data={
+                    "analysis_result": {
+                        "expansion": {"is_financial": False, "suggested_follow_ups": []}
+                    },
+                    "citations": [],
+                    "should_search": False,
+                },
                 start_time=start_time,
                 stream_context=kwargs.get("stream_context"),
                 usage={},
@@ -700,7 +709,7 @@ class ChatService(IChatService):
         session_id: str,
         *,
         is_new: bool,
-        context_data: Dict[str, Any],
+        context_data: dict[str, Any],
         features: Any,
     ) -> AsyncGenerator[dict[str, Any], None]:
         """Prepare messages and stream LLM response content."""
@@ -730,7 +739,7 @@ class ChatService(IChatService):
             features=features,
         )
 
-        stream_kwargs: Dict[str, Any] = {}
+        stream_kwargs: dict[str, Any] = {}
         if features:
             stream_kwargs["max_tokens"] = features.max_tokens
             stream_kwargs["model_name"] = features.model_name
@@ -811,7 +820,7 @@ class ChatService(IChatService):
         }
 
     def _get_primary_ticker(
-        self, session_ticker: str | None, analysis_result: Dict[str, Any] | None
+        self, session_ticker: str | None, analysis_result: dict[str, Any] | None
     ) -> str | None:
         """Extract primary ticker from session or analysis result."""
         if session_ticker:
@@ -828,7 +837,7 @@ class ChatService(IChatService):
         message: str,
         is_new: bool,
         **kwargs: Any,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Orchestrate context retrieval using MessageManager and ContextManager."""
         features = kwargs.get("features")
         user_id = kwargs.get("user_id")
@@ -881,9 +890,9 @@ class ChatService(IChatService):
     async def _build_context_dict(
         self,
         context_str: str,
-        citations: List[Dict[str, Any]],
+        citations: list[dict[str, Any]],
         **kwargs: Any,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Inject quant metrics if needed and build context dict."""
         should_search = kwargs.get("should_search", False)
         raw_vector = kwargs.get("raw_vector")
@@ -967,12 +976,12 @@ class ChatService(IChatService):
         session_id: str,
         message: str,
         **kwargs: Any,
-    ) -> List[BaseMessage]:
+    ) -> list[BaseMessage]:
         """Prepare message list for LLM."""
         is_new = kwargs.get("is_new", False)
         context_data = kwargs.get("context_data", {})
         features = kwargs.get("features")
-        messages: List[BaseMessage] = [
+        messages: list[BaseMessage] = [
             SystemMessage(content=self._build_system_prompt(features))
         ]
 
@@ -1034,7 +1043,7 @@ class ChatService(IChatService):
         session_id: str,
         message: str,
         **kwargs: Any,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Handle end-of-turn updates and post-processing."""
         response_text = kwargs.get("response_text", "")
         analysis_result = kwargs.get("analysis_result")
@@ -1112,9 +1121,9 @@ class ChatService(IChatService):
         session_id: str,
         response_text: str,
         *,
-        citations: List[Dict[str, Any]],
-        analysis_result: Dict[str, Any] | None,
-        meta: Dict[str, Any],
+        citations: list[dict[str, Any]],
+        analysis_result: dict[str, Any] | None,
+        meta: dict[str, Any],
     ) -> JsonDict:
         """Build the final API response dictionary."""
         intent = None
@@ -1142,7 +1151,7 @@ class ChatService(IChatService):
             "tokens_used": meta.get("tokens_used"),
             "usage": meta.get("usage"),
             "request_id": meta.get("request_id"),
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "sources": self._postprocessor.build_sources(citations),
             "suggested_follow_ups": follow_ups,
             "confidence": meta.get("confidence", 0.0),
@@ -1155,7 +1164,7 @@ class ChatService(IChatService):
         await self.message_manager.clear_session(session_id)
         await self.history_service.clear_cache(session_id)
 
-    async def get_conversation_history(self, session_id: str) -> List[dict[str, Any]]:
+    async def get_conversation_history(self, session_id: str) -> list[dict[str, Any]]:
         """Get conversation history in chatbot-standard format."""
         return await self.history_service.get_raw_history(session_id, is_new=False)
 
@@ -1168,7 +1177,7 @@ class ChatService(IChatService):
             is_new,
         )
 
-    def _generate_fast_follow_ups(self, message: str) -> List[str]:
+    def _generate_fast_follow_ups(self, message: str) -> list[str]:
         """Generate follow-up questions quickly for the direct LLM path using simple heuristics."""
         if not message:
             return [

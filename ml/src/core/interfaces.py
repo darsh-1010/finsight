@@ -5,7 +5,8 @@ loose coupling and testability.
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, AsyncGenerator
+from collections.abc import AsyncGenerator
+from typing import Any
 
 
 class ILLMClient(ABC):

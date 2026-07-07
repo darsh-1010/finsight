@@ -119,7 +119,7 @@ class ScrapperService:
             "failed": failed,
         }
 
-    def _find_scraper(self, url: str) -> Optional[BaseScraper]:
+    def _find_scraper(self, url: str) -> BaseScraper | None:
         """Find appropriate scraper for the given URL.
 
         Args:

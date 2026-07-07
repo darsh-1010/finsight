@@ -24,19 +24,26 @@ from crawlee.browsers import BrowserPool
 from crawlee.configuration import Configuration
 from crawlee.crawlers import PlaywrightCrawler, PlaywrightCrawlingContext
 
-from src.services.schema.article_schema import (Article, ArticleMetadata,
-                                                ScrapeOutput,
-                                                load_scraper_config)
+from src.services.schema.article_schema import (
+    Article,
+    ArticleMetadata,
+    ScrapeOutput,
+    load_scraper_config,
+)
 from src.services.scrapper.bofa_private_bank_scripts import (
-    ARTICLE_CONTENT_EVAL_JS, LISTING_TILES_EVAL_JS)
+    ARTICLE_CONTENT_EVAL_JS,
+    LISTING_TILES_EVAL_JS,
+)
 from src.services.scrapper.camoufox_plugin import CamoufoxPlugin
 from src.services.scrapper.date_filter import is_within_lookback
-from src.services.scrapper.resilience import (SCRAPER_TRY_EXCEPTIONS,
-                                              build_playwright_retry_defaults,
-                                              detect_bot_block,
-                                              probe_available_selectors,
-                                              wait_for_any_selector,
-                                              wait_for_post_action_settle)
+from src.services.scrapper.resilience import (
+    SCRAPER_TRY_EXCEPTIONS,
+    build_playwright_retry_defaults,
+    detect_bot_block,
+    probe_available_selectors,
+    wait_for_any_selector,
+    wait_for_post_action_settle,
+)
 
 try:
     pypdf: ModuleType | None

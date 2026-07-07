@@ -1,9 +1,8 @@
-from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import sessionmaker
 
 from app.core.database import engine
 from app.models.users import Role, UserRole
-
 
 SESSION_LOCAL = sessionmaker(bind=engine)
 
@@ -16,11 +15,7 @@ def seed_roles():
         roles_to_seed = [UserRole.ADMIN, UserRole.USER]
 
         for role_enum in roles_to_seed:
-            existing_role = (
-                db.query(Role)
-                .filter(Role.role == role_enum)
-                .first()
-            )
+            existing_role = db.query(Role).filter(Role.role == role_enum).first()
 
             if not existing_role:
                 print(f"  > Creating role: {role_enum.value}")

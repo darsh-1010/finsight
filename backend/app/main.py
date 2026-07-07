@@ -1,9 +1,23 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .core.config import settings
-from .core.database import engine, Base
 
-from .api.routes import auth, tiers, payments, admin, content, onboarding, chat, websockets, scraping, ml_data_transfer, market, tokens, notifications
+from .api.routes import (
+    admin,
+    auth,
+    chat,
+    content,
+    market,
+    ml_data_transfer,
+    notifications,
+    onboarding,
+    payments,
+    scraping,
+    tiers,
+    tokens,
+    websockets,
+)
+from .core.config import settings
+from .core.database import Base, engine
 
 Base.metadata.create_all(bind=engine)
 

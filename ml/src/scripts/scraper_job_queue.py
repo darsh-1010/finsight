@@ -55,11 +55,11 @@ class ScraperJob:
     name: str
     run_id: str
     status: str = JobStatus.QUEUED
-    queued_at: Optional[str] = None
-    started_at: Optional[str] = None
-    in_progress_at: Optional[str] = None
-    completed_at: Optional[str] = None
-    error: Optional[str] = None
+    queued_at: str | None = None
+    started_at: str | None = None
+    in_progress_at: str | None = None
+    completed_at: str | None = None
+    error: str | None = None
     articles_scraped: int = 0
     chunks_indexed: int = 0
 
@@ -110,7 +110,7 @@ class ScraperJobQueue:
         """Build the permanent Redis key for a scraper's last successful run."""
         return f"scraper:last_success:{name}"
 
-    def _read_job(self, name: str) -> Optional[ScraperJob]:
+    def _read_job(self, name: str) -> ScraperJob | None:
         """Read and deserialize a job from Redis.
 
         Args:
@@ -209,7 +209,7 @@ class ScraperJobQueue:
         self._write_job(job)
         logger.error(f"[JOB_FAILED] Scraper: {name} | Error: {error}")
 
-    def get_last_success_timestamp(self, name: str) -> Optional[datetime]:
+    def get_last_success_timestamp(self, name: str) -> datetime | None:
         """Retrieve the last successful completion time for a scraper from Redis.
 
         Args:
@@ -229,7 +229,7 @@ class ScraperJobQueue:
 
     # ── Inspection ─────────────────────────────────────────────────────────────
 
-    def get_job_status(self, name: str) -> Optional[str]:
+    def get_job_status(self, name: str) -> str | None:
         """Return the current status string for a scraper job.
 
         Args:
@@ -308,7 +308,7 @@ class ScraperJobQueue:
             )
         return stale_count
 
-    def get_latest_run_id(self) -> Optional[str]:
+    def get_latest_run_id(self) -> str | None:
         """Find the most recent run_id present in Redis.
 
         Returns:
@@ -326,7 +326,7 @@ class ScraperJobQueue:
             return None
         return sorted(list(run_ids), reverse=True)[0]
 
-    def get_all_jobs(self, run_id: Optional[str] = None) -> list[ScraperJob]:
+    def get_all_jobs(self, run_id: str | None = None) -> list[ScraperJob]:
         """Return a list of all ScraperJob objects for a specific run_id.
 
         Args:
@@ -348,7 +348,7 @@ class ScraperJobQueue:
         jobs.sort(key=lambda x: x.name)
         return jobs
 
-    def get_job_for_scraper(self, scraper_name: str) -> Optional[ScraperJob]:
+    def get_job_for_scraper(self, scraper_name: str) -> ScraperJob | None:
         """Return the most recent ScraperJob for a given scraper name across all runs.
 
         Scans all Redis keys matching scraper:job:*:{scraper_name} then

@@ -1,9 +1,8 @@
 import asyncio
 import logging
 import os
-from typing import Callable, Awaitable, List
-
-from ..core.config import settings
+from collections.abc import Awaitable, Callable
+from typing import List
 
 logger = logging.getLogger("cron")
 
@@ -14,8 +13,10 @@ Job = Callable[[], Awaitable[None]]
 class CronService:
     def __init__(self, interval_seconds: int | None = None):
         # default interval comes from env or settings, fallback to 60s
-        self.interval = interval_seconds or int(os.getenv("CRON_INTERVAL_SECONDS", "60"))
-        self._jobs: List[Job] = []
+        self.interval = interval_seconds or int(
+            os.getenv("CRON_INTERVAL_SECONDS", "60")
+        )
+        self._jobs: list[Job] = []
         self._runner: asyncio.Task | None = None
         self._stop_event: asyncio.Event | None = None
 

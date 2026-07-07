@@ -16,13 +16,16 @@ import os
 from typing import Any
 
 import httpx
-from src.llm.fallback_client import FallbackAsyncOpenAI
 from pydantic import BaseModel, Field
 
 from src.core.exceptions import LLMError
-from src.services.market_insights.models import (InsightCategory,
-                                                 InsightResult, InsightTopic,
-                                                 MarketEvent)
+from src.llm.fallback_client import FallbackAsyncOpenAI
+from src.services.market_insights.models import (
+    InsightCategory,
+    InsightResult,
+    InsightTopic,
+    MarketEvent,
+)
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)

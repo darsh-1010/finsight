@@ -35,7 +35,6 @@ Any unknown / extra fields in the response are silently ignored.
 """
 
 import logging
-from datetime import datetime, timezone
 from typing import Literal
 
 import httpx
@@ -49,8 +48,6 @@ from app.models.notifications import (
     NotificationAudience,
     NotificationPriority,
 )
-from app.models.users import Role, User, UserRole
-
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +55,7 @@ SyncMode = Literal["daily", "weekly"]
 
 # ML API paths (sync=true triggers the ML side to refresh its cache)
 _ML_PATHS: dict[SyncMode, str] = {
-    "daily":  "/api/v1/alerts/daily?sync=true",
+    "daily": "/api/v1/alerts/daily?sync=true",
     "weekly": "/api/v1/alerts/weekly?sync=true",
 }
 
@@ -76,6 +73,7 @@ _PER_TIER_TIMEOUT_SECS = 300
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _coerce_trend_type(value: str | None) -> TrendType | None:
     if not value:
@@ -132,7 +130,8 @@ async def _fetch_for_tier(
     except httpx.TimeoutException:
         logger.warning(
             "  ✗ Tier %d timed out after %ds — skipping.",
-            tier_id, _PER_TIER_TIMEOUT_SECS,
+            tier_id,
+            _PER_TIER_TIMEOUT_SECS,
         )
         return []
     except httpx.HTTPError as exc:
@@ -142,12 +141,14 @@ async def _fetch_for_tier(
     if not response.is_success:
         logger.warning(
             "  ✗ Tier %d returned HTTP %s: %s",
-            tier_id, response.status_code, response.text[:200],
+            tier_id,
+            response.status_code,
+            response.text[:200],
         )
         return []
 
     data = response.json()
-    
+
     if isinstance(data, dict):
         data = data.get("report", {}).get("highlights", [])
 
@@ -182,14 +183,18 @@ def _create_admin_notification(
     db.add(notification)
     db.flush()  # populate notification.id
 
-    db.add(NotificationAudience(
-        notification_id=notification.id,
-        audience_type=AudienceType.ADMIN,
-        audience_id=None,
-    ))
+    db.add(
+        NotificationAudience(
+            notification_id=notification.id,
+            audience_type=AudienceType.ADMIN,
+            audience_id=None,
+        )
+    )
     logger.info(
         "Admin notification created (id=%s) — %s sync, %d record(s).",
-        notification.id, mode, count,
+        notification.id,
+        mode,
+        count,
     )
     return notification
 
@@ -197,6 +202,7 @@ def _create_admin_notification(
 # ---------------------------------------------------------------------------
 # Public entry-point
 # ---------------------------------------------------------------------------
+
 
 async def sync_insights(db: Session, mode: SyncMode) -> int:
     """
@@ -213,7 +219,9 @@ async def sync_insights(db: Session, mode: SyncMode) -> int:
 
     logger.info(
         "Starting %s insights sync for tiers %s → %s",
-        mode.upper(), tiers_to_sync, url,
+        mode.upper(),
+        tiers_to_sync,
+        url,
     )
 
     all_insights: list[Insight] = []
@@ -239,22 +247,28 @@ async def sync_insights(db: Session, mode: SyncMode) -> int:
     notification = _create_admin_notification(db, mode, total, tiers_with_data)
 
     try:
-        from app.api.routes.websockets import manager
         import json
-        payload = json.dumps({
-            "type": "NEW_NOTIFICATION",
-            "data": {
-                "id": notification.id,
-                "title": notification.title,
-                "message": notification.message
+
+        from app.api.routes.websockets import manager
+
+        payload = json.dumps(
+            {
+                "type": "NEW_NOTIFICATION",
+                "data": {
+                    "id": notification.id,
+                    "title": notification.title,
+                    "message": notification.message,
+                },
             }
-        })
+        )
         await manager.broadcast(payload)
     except Exception as e:
         logger.warning("Failed to broadcast WS notification for synced insights: %s", e)
 
     logger.info(
         "%s sync complete — %d insight(s) saved across tier(s) %s.",
-        mode.upper(), total, tiers_with_data,
+        mode.upper(),
+        total,
+        tiers_with_data,
     )
     return total

@@ -24,8 +24,8 @@ class TierFeatureResolver:
     async def resolve(
         self,
         tier_id: int,
-        override_features: Optional[dict[str, Any]] = None,
-        override_tier_name: Optional[str] = None,
+        override_features: dict[str, Any] | None = None,
+        override_tier_name: str | None = None,
     ) -> TierFeatures:
         """Resolve final feature set for a user tier.
 
@@ -76,7 +76,7 @@ class TierFeatureResolver:
         logger.warning("[TIER_RESOLVE] Source: StaticFallback | Tier: %d", tier_id)
         return get_static_policy(tier_id)
 
-    async def _fetch_from_backend(self, tier_id: int) -> Optional[TierFeatures]:
+    async def _fetch_from_backend(self, tier_id: int) -> TierFeatures | None:
         """Fetch tier definition from the master database via Backend API."""
         try:
             async with httpx.AsyncClient(timeout=5.0) as client:

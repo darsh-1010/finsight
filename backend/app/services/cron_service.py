@@ -14,20 +14,19 @@ IST = UTC+5:30, so 06:00 IST == 00:30 UTC.
 
 import asyncio
 import logging
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
 from app.core.database import SESSION_LOCAL
+from app.models.insights import Insight, InsightStatus
 from app.models.subscriptions import Subscription, SubscriptionStatus
 from app.models.tiers import Tier
 from app.models.tokens import TierTokenConfig, UserTokenWallets
 from app.models.users import User
-from app.models.insights import Insight, InsightStatus
-from app.services.token_service import TokenService
 from app.services.insights_sync_service import sync_insights
-
+from app.services.token_service import TokenService
 
 logger = logging.getLogger(__name__)
 
@@ -46,6 +45,7 @@ _WEEKLY_SYNC_DAY = settings.CRON_WEEKLY_INSIGHTS_SYNC_DAY
 # ---------------------------------------------------------------------------
 # Existing job: token wallet refill
 # ---------------------------------------------------------------------------
+
 
 def refill_due_token_wallets(db: Session, now: datetime | None = None) -> int:
     now = now or datetime.utcnow()
@@ -92,6 +92,7 @@ async def run_cron_jobs(db: Session) -> None:
 # Schedule helpers
 # ---------------------------------------------------------------------------
 
+
 def _seconds_until_next_ist(hour: int, minute: int) -> float:
     """Return how many seconds remain until the next occurrence of *hour*:*minute* IST."""
     now_ist = datetime.now(tz=_IST)
@@ -118,6 +119,7 @@ def _seconds_until_next_weekly_ist(hour: int, minute: int) -> float:
 # Individual scheduled job coroutines
 # ---------------------------------------------------------------------------
 
+
 def archive_expired_insights(db: Session) -> int:
     """Find all insights that are past their expiration date and not archived yet, and update status to archived."""
     now = datetime.utcnow()
@@ -142,8 +144,10 @@ async def _run_daily_insights_job(stop_event: asyncio.Event) -> None:
     while not stop_event.is_set():
         wait_secs = _seconds_until_next_ist(_TARGET_HOUR_IST, _TARGET_MINUTE_IST)
         logger.info(
-            "Daily insights sync scheduled in %.0f s (next %02d:%02d IST).", 
-            wait_secs, _TARGET_HOUR_IST, _TARGET_MINUTE_IST
+            "Daily insights sync scheduled in %.0f s (next %02d:%02d IST).",
+            wait_secs,
+            _TARGET_HOUR_IST,
+            _TARGET_MINUTE_IST,
         )
         try:
             await asyncio.wait_for(stop_event.wait(), timeout=wait_secs)
@@ -171,8 +175,10 @@ async def _run_weekly_insights_job(stop_event: asyncio.Event) -> None:
     while not stop_event.is_set():
         wait_secs = _seconds_until_next_weekly_ist(_TARGET_HOUR_IST, _TARGET_MINUTE_IST)
         logger.info(
-            "Weekly insights sync scheduled in %.0f s (next weekly day %02d:%02d IST).", 
-            wait_secs, _TARGET_HOUR_IST, _TARGET_MINUTE_IST
+            "Weekly insights sync scheduled in %.0f s (next weekly day %02d:%02d IST).",
+            wait_secs,
+            _TARGET_HOUR_IST,
+            _TARGET_MINUTE_IST,
         )
         try:
             await asyncio.wait_for(stop_event.wait(), timeout=wait_secs)
@@ -199,6 +205,7 @@ async def _run_weekly_insights_job(stop_event: asyncio.Event) -> None:
 # CronService
 # ---------------------------------------------------------------------------
 
+
 class CronService:
     def __init__(self, interval_seconds: int = settings.CRON_INTERVAL_SECONDS) -> None:
         self.interval_seconds = interval_seconds
@@ -220,8 +227,11 @@ class CronService:
             "Cron service started (tick interval: %s s). "
             "Daily insights: %02d:%02d IST. Weekly insights: day %s at %02d:%02d IST.",
             self.interval_seconds,
-            _TARGET_HOUR_IST, _TARGET_MINUTE_IST,
-            _WEEKLY_SYNC_DAY, _TARGET_HOUR_IST, _TARGET_MINUTE_IST,
+            _TARGET_HOUR_IST,
+            _TARGET_MINUTE_IST,
+            _WEEKLY_SYNC_DAY,
+            _TARGET_HOUR_IST,
+            _TARGET_MINUTE_IST,
         )
 
         if settings.CRON_RUN_ON_START:
