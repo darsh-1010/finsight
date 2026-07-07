@@ -12,7 +12,6 @@ import argparse
 import asyncio
 import logging
 from datetime import timedelta
-from typing import Dict, List, Optional
 from urllib.parse import urljoin
 
 from crawlee._request import Request

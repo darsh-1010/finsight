@@ -151,7 +151,7 @@ async def _run_daily_insights_job(stop_event: asyncio.Event) -> None:
         )
         try:
             await asyncio.wait_for(stop_event.wait(), timeout=wait_secs)
-        except asyncio.TimeoutError:
+        except TimeoutError:
             pass
 
         if stop_event.is_set():
@@ -182,7 +182,7 @@ async def _run_weekly_insights_job(stop_event: asyncio.Event) -> None:
         )
         try:
             await asyncio.wait_for(stop_event.wait(), timeout=wait_secs)
-        except asyncio.TimeoutError:
+        except TimeoutError:
             pass
 
         if stop_event.is_set():
@@ -251,5 +251,5 @@ class CronService:
         while not stop_event.is_set():
             try:
                 await asyncio.wait_for(stop_event.wait(), timeout=self.interval_seconds)
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 await self.run_once()

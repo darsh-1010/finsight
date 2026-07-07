@@ -1,4 +1,4 @@
-from typing import Annotated, Any, List, Literal, Optional, Union
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -105,15 +105,7 @@ class ChoiceQuestionCreate(BaseQuestionCreate):
 
 
 QuestionCreate = Annotated[
-    Union[
-        TextQuestionCreate,
-        NumberQuestionCreate,
-        EmailQuestionCreate,
-        PhoneQuestionCreate,
-        DateQuestionCreate,
-        FileQuestionCreate,
-        ChoiceQuestionCreate,
-    ],
+    TextQuestionCreate | NumberQuestionCreate | EmailQuestionCreate | PhoneQuestionCreate | DateQuestionCreate | FileQuestionCreate | ChoiceQuestionCreate,
     Field(discriminator="question_type"),
 ]
 

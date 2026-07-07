@@ -71,11 +71,6 @@ def get_config():
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 
-def safe_filename(text: str, max_len: int = 80) -> str:
-    """Sanitize string for filename use."""
-    text = re.sub(r"[^\w\s-]", "", text).strip()
-    text = re.sub(r"[\s_-]+", "_", text)
-    return text[:max_len] or "untitled"
 
 
 def resolve_url(href: str, page_url: str) -> str:
@@ -508,7 +503,7 @@ class WealthDesktopBankScraper:
                 logger.info("  [✓] Found 'Investing Insights': %s", full)
                 await ctx.add_requests([full])
                 return
-        except (AttributeError, TypeError, TimeoutError, asyncio.TimeoutError) as exc:
+        except (AttributeError, TypeError, TimeoutError) as exc:
             logger.error("  [!] Link not found: %s", exc)
         await ctx.add_requests(
             ["https://wealth.db.com/en/insights/investing-insights.html"]
@@ -527,11 +522,11 @@ class WealthDesktopBankScraper:
                     await link.click(timeout=5_000)
                     await asyncio.sleep(1)
                     await ctx.page.goto(full, wait_until="load", timeout=45_000)
-                except (AttributeError, TypeError, TimeoutError, asyncio.TimeoutError):
+                except (AttributeError, TypeError, TimeoutError):
                     await ctx.page.goto(full, wait_until="load", timeout=45_000)
                 await ctx.add_requests([ctx.page.url])
                 return
-        except (AttributeError, TypeError, TimeoutError, asyncio.TimeoutError) as exc:
+        except (AttributeError, TypeError, TimeoutError) as exc:
             logger.error("  [!] Insights link not found: %s", exc)
         await ctx.add_requests(["https://wealth.db.com/en/insights.html"])
 

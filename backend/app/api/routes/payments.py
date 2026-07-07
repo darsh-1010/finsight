@@ -1,7 +1,6 @@
 import uuid
-from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -17,10 +16,7 @@ from app.models.users import User
 router = APIRouter(prefix="/api/v1/payments", tags=["payments"])
 
 
-class CheckoutSessionRequest(BaseModel):
-    price_id: str
-    success_url: str
-    cancel_url: str
+from app.schemas.stripe import CheckoutSessionRequest
 
 
 class MockSessionResponse(BaseModel):

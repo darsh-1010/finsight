@@ -3,7 +3,6 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
-from typing import List
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from sqlalchemy import desc

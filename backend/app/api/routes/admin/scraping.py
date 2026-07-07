@@ -11,7 +11,6 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_db, require_role
-from app.core.config import settings
 from app.models.scraping import (
     IngestedPDF,
     ScrapingJobHistory,
@@ -249,8 +248,8 @@ async def list_scraping_urls(
             .first()
         )
 
-        setattr(url, "status", latest_job.status if latest_job else None)
-        setattr(url, "job_id", latest_job.job_id if latest_job else None)
+        url.status = latest_job.status if latest_job else None
+        url.job_id = latest_job.job_id if latest_job else None
 
     return urls
 

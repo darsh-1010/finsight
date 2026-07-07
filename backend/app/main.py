@@ -45,28 +45,6 @@ app.include_router(market.router)
 app.include_router(tokens.router)
 app.include_router(notifications.router)
 
-from .services.cron import cron_service
-
-
-@app.on_event("startup")
-async def _startup_event() -> None:
-    try:
-        await cron_service.start()
-    except Exception:
-        import logging
-
-        logging.getLogger("cron").exception("Failed to start cron service")
-
-
-@app.on_event("shutdown")
-async def _shutdown_event() -> None:
-    try:
-        await cron_service.stop()
-    except Exception:
-        import logging
-
-        logging.getLogger("cron").exception("Failed to stop cron service")
-
 
 @app.get("/")
 def read_root():

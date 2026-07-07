@@ -1,4 +1,3 @@
-from typing import Annotated, List
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, File, UploadFile
@@ -71,12 +70,12 @@ async def create_message(
     db: Session = Depends(deps.get_db),
     current_user: User = Depends(deps.get_current_user),
 ):
-    print(f"--- API: create_message ---", flush=True)
+    print("--- API: create_message ---", flush=True)
     print(f"Session ID: {session_id}", flush=True)
     print(f"User ID: {current_user.id}", flush=True)
     print(f"Message preview: {message_in.content[:50]}...", flush=True)
 
-    print(f"--- API: Calling ChatService.create_message_stream ---", flush=True)
+    print("--- API: Calling ChatService.create_message_stream ---", flush=True)
     response = StreamingResponse(
         ChatService.create_message_stream(
             db,
@@ -92,7 +91,7 @@ async def create_message(
             "X-Accel-Buffering": "no",
         },
     )
-    print(f"--- API: Returning StreamingResponse (200 OK headers sent) ---", flush=True)
+    print("--- API: Returning StreamingResponse (200 OK headers sent) ---", flush=True)
     return response
 
 

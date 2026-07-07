@@ -8,8 +8,7 @@ from __future__ import annotations
 
 import logging
 import re
-from datetime import UTC, datetime, timedelta, timezone
-from typing import Optional
+from datetime import UTC, datetime, timedelta
 
 logger = logging.getLogger(__name__)
 

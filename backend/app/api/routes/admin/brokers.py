@@ -1,6 +1,5 @@
 import csv
 import io
-from typing import List
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from sqlalchemy.orm import Session

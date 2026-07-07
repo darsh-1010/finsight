@@ -12,7 +12,6 @@ Organic navigation — only START_URL is hardcoded:
 import argparse
 import asyncio
 import logging
-import re
 from datetime import timedelta
 
 from crawlee._types import ConcurrencySettings
@@ -22,7 +21,6 @@ from crawlee.crawlers import PlaywrightCrawler, PlaywrightCrawlingContext
 from src.services.schema.article_schema import (
     Article,
     ArticleMetadata,
-    ScrapeOutput,
     load_scraper_config,
 )
 from src.services.scrapper.camoufox_plugin import build_camoufox_pool
@@ -34,6 +32,7 @@ from src.services.scrapper.resilience import (
     wait_for_any_selector,
 )
 from src.utils.logger import get_logger
+from src.services.scrapper.utils import dismiss_overlays, save_results, safe_filename
 
 # ── ONLY hardcoded URL ───────────────────────────────────────────────────────
 SOURCE_NAME = "goldmansachs"
@@ -47,54 +46,7 @@ def get_config():
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
-def safe_filename(text: str, max_len: int = 80) -> str:
-    text = re.sub(r"[^\w\s-]", "", text).strip()
-    text = re.sub(r"[\s_-]+", "_", text)
-    return text[:max_len] or "untitled"
 
-
-def save_results(
-    scraped_outlooks: list,
-    stats: dict,
-    lookback_days: int,
-    output_file: str,
-) -> None:
-    if not scraped_outlooks:
-        logger.warning("Nothing to save.")
-        return
-
-    output = ScrapeOutput(
-        source=SOURCE_NAME,
-        lookback_days=lookback_days,
-        total_found=stats["total_found"],
-        total_within_window=stats["total_within_window"],
-        total_scraped=len(scraped_outlooks),
-        articles=scraped_outlooks,
-    )
-
-    output.save(output_file)
-    logger.info(f"JSON saved to {output_file}")
-
-
-async def dismiss_overlays(page) -> None:
-    """Dismiss cookie banners or modal popups if present."""
-    for sel in [
-        "button[id*='accept']",
-        "button[id*='cookie']",
-        "button[aria-label*='Accept']",
-        "button[aria-label*='Close']",
-        "button[class*='close']",
-        "button[class*='accept']",
-    ]:
-        try:
-            # Check if it's visible first to avoid long timeouts
-            btn = page.locator(sel).first
-            if await btn.is_visible(timeout=500):
-                await btn.click(timeout=2_000)
-                logger.info("  [✓] Overlay dismissed")
-                break
-        except SCRAPER_TRY_EXCEPTIONS:
-            continue
 
 
 async def find_link_and_navigate(page, keywords: list[str], label: str) -> str | None:
@@ -442,7 +394,7 @@ async def main(
     logger.info(f"\n{'=' * 60}")
     logger.info(f"Done. Articles scraped: {len(scraped_outlooks)}")
     logger.info("=" * 60)
-    save_results(scraped_outlooks, stats, lookback_days, output_file)
+    save_results(scraped_outlooks, stats, lookback_days, output_file, SOURCE_NAME)
 
 
 if __name__ == "__main__":

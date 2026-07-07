@@ -15,7 +15,6 @@ import os
 import random
 import shutil
 from datetime import timedelta
-from typing import Dict, List
 
 from camoufox import AsyncNewBrowser
 from crawlee._request import Request

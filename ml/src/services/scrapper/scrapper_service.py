@@ -1,7 +1,6 @@
 """Main scrapper service that orchestrates PDF scraper."""
 
 import asyncio
-from typing import Optional
 
 from src.utils.logger import get_logger
 

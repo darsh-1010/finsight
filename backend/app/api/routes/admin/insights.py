@@ -1,7 +1,6 @@
 import json
 import uuid
 from datetime import datetime, timedelta
-from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
@@ -16,7 +15,7 @@ from app.models.notifications import (
     NotificationPriority,
 )
 from app.models.users import User
-from app.schemas.admin import ApprovalRequest, InsightStatusUpdateRequest
+from app.schemas.admin import InsightStatusUpdateRequest
 from app.schemas.content import InsightResponse
 
 router = APIRouter(prefix="/insights", tags=["Admin Insights"])
@@ -51,7 +50,7 @@ def _apply_status_update(
         notification_title = (
             item.alert_message
             if item.alert_message
-            else f"New Market Insight Available"
+            else "New Market Insight Available"
         )
         notification = Notification(
             title=notification_title,

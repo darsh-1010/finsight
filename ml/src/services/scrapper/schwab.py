@@ -15,7 +15,6 @@ import logging
 import os
 import shutil
 from datetime import timedelta
-from typing import Dict, List, Optional
 
 from crawlee._request import Request
 from crawlee._types import ConcurrencySettings

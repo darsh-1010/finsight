@@ -4,7 +4,6 @@ import uuid
 from collections.abc import AsyncGenerator
 from datetime import date
 from io import BytesIO
-from typing import List
 from uuid import UUID
 
 import httpx
@@ -142,9 +141,9 @@ class ChatService:
         message_in: ChatMessageCreate,
         tier_level: int,
     ) -> AsyncGenerator[str, None]:
-        print(f"--- Service: create_message_stream [GENERATOR START] ---", flush=True)
+        print("--- Service: create_message_stream [GENERATOR START] ---", flush=True)
         try:
-            print(f"--- Service: Calling _handle_session_creation ---", flush=True)
+            print("--- Service: Calling _handle_session_creation ---", flush=True)
             (
                 real_session_id,
                 is_new,
@@ -158,11 +157,11 @@ class ChatService:
             )
 
             if session_event:
-                print(f"--- Service: Yielding session_event ---", flush=True)
+                print("--- Service: Yielding session_event ---", flush=True)
                 yield session_event
 
             print(
-                f"--- Service: Calling create_message (saving user message) ---",
+                "--- Service: Calling create_message (saving user message) ---",
                 flush=True,
             )
             db_message = ChatService.create_message(
@@ -173,7 +172,7 @@ class ChatService:
                 flush=True,
             )
 
-            print(f"--- Service: Starting ML response stream ---", flush=True)
+            print("--- Service: Starting ML response stream ---", flush=True)
             async for chunk in ChatService._stream_ml_response(
                 db,
                 db_message.session,
@@ -184,7 +183,7 @@ class ChatService:
                 tier_level,
             ):
                 yield chunk
-            print(f"--- Service: ML response stream finished ---", flush=True)
+            print("--- Service: ML response stream finished ---", flush=True)
         except Exception as e:
             print(
                 f"--- Service: ERROR in create_message_stream: {str(e)} ---", flush=True
@@ -203,7 +202,7 @@ class ChatService:
         Stream ML response for trial (guest) users.
         Sets tier to 0 and does not persist to database.
         """
-        print(f"--- Service: create_trial_message_stream [TRIAL] ---", flush=True)
+        print("--- Service: create_trial_message_stream [TRIAL] ---", flush=True)
         try:
             # Use a dummy session ID for the trial
             trial_session_id = "trial-session"
@@ -212,7 +211,7 @@ class ChatService:
                 message_in.content, trial_session_id
             ):
                 yield chunk
-            print(f"--- Service: Trial ML response stream finished ---", flush=True)
+            print("--- Service: Trial ML response stream finished ---", flush=True)
         except Exception as e:
             print(
                 f"--- Service: ERROR in create_trial_message_stream: {str(e)} ---",
@@ -263,7 +262,7 @@ class ChatService:
     async def _handle_session_creation(
         db: Session, session_id: str, user_id: int, message_in: ChatMessageCreate
     ):
-        print(f"--- Service: _handle_session_creation ---", flush=True)
+        print("--- Service: _handle_session_creation ---", flush=True)
         if session_id == "null":
             print(f"Creating new session for user {user_id}", flush=True)
             db_session = ChatSession(
@@ -338,7 +337,7 @@ class ChatService:
                     sources = []
 
                     print(
-                        f"--- Service: Starting to iterate chunks from ML API ---",
+                        "--- Service: Starting to iterate chunks from ML API ---",
                         flush=True,
                     )
                     async for chunk in response.aiter_text():
@@ -388,7 +387,7 @@ class ChatService:
                                             continue
 
                     print(
-                        f"--- Service: Finished iterating chunks from ML API ---",
+                        "--- Service: Finished iterating chunks from ML API ---",
                         flush=True,
                     )
 
@@ -482,7 +481,7 @@ class ChatService:
         content: str,
         suggested_follow_ups: list[str] = None,
     ):
-        print(f"--- Service: _save_bot_message ---", flush=True)
+        print("--- Service: _save_bot_message ---", flush=True)
         print(f"Saving bot response ({len(content)} chars) to DB", flush=True)
         bot_msg = ChatMessage(
             session_id=session.id, role="bot", content=content, non_substantive=False
