@@ -247,7 +247,7 @@ services:
     image: ghcr.io/tashfeenahmed/freellmapi:latest
     container_name: finsight-freellmapi
     ports:
-      - "3001:3001"
+      - "3003:3001"
     environment:
       - ENCRYPTION_KEY=1234567890123456789012345678901234567890123456789012345678901234
       - API_KEY=freellmapi-unified-key

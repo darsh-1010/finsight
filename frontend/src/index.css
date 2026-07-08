@@ -156,11 +156,11 @@
 }
 
 .neon-button {
-  box-shadow: 0 0 10px rgba(13, 92, 70, 0.4), 0 0 20px rgba(197, 160, 89, 0.2);
+  box-shadow: 0 0 10px rgba(123, 97, 255, 0.4), 0 0 20px rgba(154, 139, 255, 0.2);
 }
 
 .dark .neon-button {
-  box-shadow: 0 0 10px rgba(0, 245, 180, 0.4), 0 0 20px rgba(226, 195, 132, 0.2);
+  box-shadow: 0 0 10px rgba(123, 97, 255, 0.4), 0 0 20px rgba(154, 139, 255, 0.2);
 }
 
 .neon-card {
@@ -168,13 +168,13 @@
 }
 
 .neon-card:hover {
-  box-shadow: 0 12px 30px -10px rgba(13, 92, 70, 0.15);
+  box-shadow: 0 12px 30px -10px rgba(123, 97, 255, 0.15);
   border-color: var(--color-primary);
   transform: translateY(-4px);
 }
 
 .dark .neon-card:hover {
-  box-shadow: 0 12px 35px -10px rgba(0, 245, 180, 0.2);
+  box-shadow: 0 12px 35px -10px rgba(123, 97, 255, 0.2);
   border-color: var(--color-primary);
   transform: translateY(-4px);
 }
@@ -184,8 +184,8 @@
 }
 
 .dark .bg-secondary-theme {
-  background-color: rgba(0, 245, 180, 0.1);
-  color: #00F5B4;
+  background-color: rgba(123, 97, 255, 0.1);
+  color: #A799FF;
 }
 
 @keyframes loading {

@@ -17405,7 +17405,7 @@
       "label": "Product()",
       "file_type": "code",
       "source_file": "frontend/src/pages/Product.tsx",
-      "source_location": "L91",
+      "source_location": "L245",
       "_origin": "ast",
       "id": "pages_product_product",
       "community": 126,
@@ -21578,7 +21578,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "routes_uploads_upload_documents",
-      "community": 55,
+      "community": 178,
       "norm_label": "upload_documents()"
     },
     {
@@ -21588,7 +21588,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "ml_src_api_routes_uploads_py_backgroundtasks",
-      "community": 55,
+      "community": 178,
       "norm_label": "backgroundtasks"
     },
     {
@@ -21598,7 +21598,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "ml_src_api_routes_uploads_py_uploadfile",
-      "community": 55,
+      "community": 178,
       "norm_label": "uploadfile"
     },
     {
@@ -21628,7 +21628,7 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "routes_uploads_rationale_44",
-      "community": 55,
+      "community": 178,
       "norm_label": "upload multiple documents for direct openai analysis.      available to tier 3"
     },
     {
@@ -21938,7 +21938,7 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "core_exceptions_queryanalysiserror",
-      "community": 0,
+      "community": 51,
       "norm_label": "queryanalysiserror"
     },
     {
@@ -22068,7 +22068,7 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "core_exceptions_rationale_54",
-      "community": 0,
+      "community": 51,
       "norm_label": "raised when llm-based query analysis fails."
     },
     {
@@ -22098,7 +22098,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "core_interfaces",
-      "community": 0,
+      "community": 124,
       "norm_label": "interfaces.py"
     },
     {
@@ -22108,7 +22108,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "core_interfaces_illmclient",
-      "community": 167,
+      "community": 124,
       "norm_label": "illmclient"
     },
     {
@@ -22118,7 +22118,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "abc",
-      "community": 0,
+      "community": 124,
       "norm_label": "abc"
     },
     {
@@ -22128,7 +22128,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "core_interfaces_illmclient_generate",
-      "community": 167,
+      "community": 124,
       "norm_label": ".generate()"
     },
     {
@@ -22138,7 +22138,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "core_interfaces_illmclient_generate_structured",
-      "community": 167,
+      "community": 30,
       "norm_label": ".generate_structured()"
     },
     {
@@ -22158,7 +22158,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "core_interfaces_illmclient_stream",
-      "community": 167,
+      "community": 124,
       "norm_label": ".stream()"
     },
     {
@@ -22168,7 +22168,7 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "core_interfaces_idatasource",
-      "community": 0,
+      "community": 124,
       "norm_label": "idatasource"
     },
     {
@@ -22188,7 +22188,7 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "core_interfaces_idatasource_validate",
-      "community": 0,
+      "community": 124,
       "norm_label": ".validate()"
     },
     {
@@ -22238,7 +22238,7 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "core_interfaces_itickerservice",
-      "community": 0,
+      "community": 124,
       "norm_label": "itickerservice"
     },
     {
@@ -22368,7 +22368,7 @@
       "source_location": "L161",
       "_origin": "ast",
       "id": "core_interfaces_icache",
-      "community": 30,
+      "community": 124,
       "norm_label": "icache"
     },
     {
@@ -22398,7 +22398,7 @@
       "source_location": "L173",
       "_origin": "ast",
       "id": "core_interfaces_icache_delete",
-      "community": 30,
+      "community": 124,
       "norm_label": ".delete()"
     },
     {
@@ -22408,7 +22408,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "core_interfaces_rationale_1",
-      "community": 0,
+      "community": 124,
       "norm_label": "abstract interfaces for dependency injection.  these interfaces define contrac"
     },
     {
@@ -22418,7 +22418,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "core_interfaces_rationale_13",
-      "community": 167,
+      "community": 124,
       "norm_label": "interface for llm client implementations."
     },
     {
@@ -22428,7 +22428,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "core_interfaces_rationale_17",
-      "community": 167,
+      "community": 124,
       "norm_label": "generate a text response from the llm."
     },
     {
@@ -22438,7 +22438,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "core_interfaces_rationale_21",
-      "community": 167,
+      "community": 30,
       "norm_label": "generate a structured response matching the schema."
     },
     {
@@ -22448,7 +22448,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "core_interfaces_rationale_25",
-      "community": 167,
+      "community": 124,
       "norm_label": "stream response chunks from the llm."
     },
     {
@@ -22458,7 +22458,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "core_interfaces_rationale_30",
-      "community": 0,
+      "community": 124,
       "norm_label": "interface for data source implementations."
     },
     {
@@ -22478,7 +22478,7 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "core_interfaces_rationale_38",
-      "community": 0,
+      "community": 124,
       "norm_label": "validate that the identifier exists."
     },
     {
@@ -22528,7 +22528,7 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "core_interfaces_rationale_63",
-      "community": 0,
+      "community": 124,
       "norm_label": "interface for ticker resolution service."
     },
     {
@@ -22658,7 +22658,7 @@
       "source_location": "L162",
       "_origin": "ast",
       "id": "core_interfaces_rationale_162",
-      "community": 30,
+      "community": 124,
       "norm_label": "interface for cache implementations."
     },
     {
@@ -22688,7 +22688,7 @@
       "source_location": "L174",
       "_origin": "ast",
       "id": "core_interfaces_rationale_174",
-      "community": 30,
+      "community": 124,
       "norm_label": "delete value from cache."
     },
     {
@@ -22718,7 +22718,7 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "core_models_expandedquery",
-      "community": 208,
+      "community": 0,
       "norm_label": "expandedquery"
     },
     {
@@ -22768,7 +22768,7 @@
       "source_location": "L115",
       "_origin": "ast",
       "id": "core_models_queryentities_primary_ticker",
-      "community": 317,
+      "community": 0,
       "norm_label": ".primary_ticker()"
     },
     {
@@ -22788,7 +22788,7 @@
       "source_location": "L198",
       "_origin": "ast",
       "id": "core_models_queryexpansionresult_get_primary_ticker",
-      "community": 317,
+      "community": 0,
       "norm_label": ".get_primary_ticker()"
     },
     {
@@ -22818,7 +22818,7 @@
       "source_location": "L213",
       "_origin": "ast",
       "id": "core_models_queryexpansionresult_get_high_priority_queries",
-      "community": 208,
+      "community": 0,
       "norm_label": ".get_high_priority_queries()"
     },
     {
@@ -22828,7 +22828,7 @@
       "source_location": "L217",
       "_origin": "ast",
       "id": "core_models_queryexpansionresult_get_queries_by_source",
-      "community": 208,
+      "community": 0,
       "norm_label": ".get_queries_by_source()"
     },
     {
@@ -22878,7 +22878,7 @@
       "source_location": "L324",
       "_origin": "ast",
       "id": "core_models_financialcontext_to_context_string",
-      "community": 100,
+      "community": 0,
       "norm_label": ".to_context_string()"
     },
     {
@@ -22888,7 +22888,7 @@
       "source_location": "L370",
       "_origin": "ast",
       "id": "core_models_financialcontext_get_currency_symbol",
-      "community": 100,
+      "community": 0,
       "norm_label": "._get_currency_symbol()"
     },
     {
@@ -22898,7 +22898,7 @@
       "source_location": "L384",
       "_origin": "ast",
       "id": "core_models_financialcontext_build_price_section",
-      "community": 100,
+      "community": 0,
       "norm_label": "._build_price_section()"
     },
     {
@@ -22908,7 +22908,7 @@
       "source_location": "L412",
       "_origin": "ast",
       "id": "core_models_financialcontext_build_company_overview",
-      "community": 100,
+      "community": 0,
       "norm_label": "._build_company_overview()"
     },
     {
@@ -22918,7 +22918,7 @@
       "source_location": "L425",
       "_origin": "ast",
       "id": "core_models_financialcontext_build_valuation_metrics",
-      "community": 100,
+      "community": 0,
       "norm_label": "._build_valuation_metrics()"
     },
     {
@@ -22928,7 +22928,7 @@
       "source_location": "L457",
       "_origin": "ast",
       "id": "core_models_financialcontext_build_performance_section",
-      "community": 100,
+      "community": 0,
       "norm_label": "._build_performance_section()"
     },
     {
@@ -22938,7 +22938,7 @@
       "source_location": "L472",
       "_origin": "ast",
       "id": "core_models_financialcontext_build_summaries",
-      "community": 100,
+      "community": 0,
       "norm_label": "._build_summaries()"
     },
     {
@@ -23048,7 +23048,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "core_models_rationale_33",
-      "community": 208,
+      "community": 0,
       "norm_label": "a single dynamically generated query expansion."
     },
     {
@@ -23098,7 +23098,7 @@
       "source_location": "L116",
       "_origin": "ast",
       "id": "core_models_rationale_116",
-      "community": 317,
+      "community": 0,
       "norm_label": "get the primary ticker if available."
     },
     {
@@ -23118,7 +23118,7 @@
       "source_location": "L199",
       "_origin": "ast",
       "id": "core_models_rationale_199",
-      "community": 317,
+      "community": 0,
       "norm_label": "get the first ticker if available."
     },
     {
@@ -23148,7 +23148,7 @@
       "source_location": "L214",
       "_origin": "ast",
       "id": "core_models_rationale_214",
-      "community": 208,
+      "community": 0,
       "norm_label": "get only high-priority expanded queries."
     },
     {
@@ -23158,7 +23158,7 @@
       "source_location": "L218",
       "_origin": "ast",
       "id": "core_models_rationale_218",
-      "community": 208,
+      "community": 0,
       "norm_label": "get queries that use a specific data source."
     },
     {
@@ -23198,7 +23198,7 @@
       "source_location": "L329",
       "_origin": "ast",
       "id": "core_models_rationale_329",
-      "community": 100,
+      "community": 0,
       "norm_label": "convert to formatted context string for llm.          args:             include_"
     },
     {
@@ -23208,7 +23208,7 @@
       "source_location": "L371",
       "_origin": "ast",
       "id": "core_models_rationale_371",
-      "community": 100,
+      "community": 0,
       "norm_label": "get symbol for currency code."
     },
     {
@@ -23218,7 +23218,7 @@
       "source_location": "L385",
       "_origin": "ast",
       "id": "core_models_rationale_385",
-      "community": 100,
+      "community": 0,
       "norm_label": "build the current market data section."
     },
     {
@@ -23228,7 +23228,7 @@
       "source_location": "L413",
       "_origin": "ast",
       "id": "core_models_rationale_413",
-      "community": 100,
+      "community": 0,
       "norm_label": "build the company overview section."
     },
     {
@@ -23238,7 +23238,7 @@
       "source_location": "L426",
       "_origin": "ast",
       "id": "core_models_rationale_426",
-      "community": 100,
+      "community": 0,
       "norm_label": "build the valuation metrics section."
     },
     {
@@ -23248,7 +23248,7 @@
       "source_location": "L458",
       "_origin": "ast",
       "id": "core_models_rationale_458",
-      "community": 100,
+      "community": 0,
       "norm_label": "build the performance section."
     },
     {
@@ -23258,7 +23258,7 @@
       "source_location": "L473",
       "_origin": "ast",
       "id": "core_models_rationale_473",
-      "community": 100,
+      "community": 0,
       "norm_label": "build the financial summaries section."
     },
     {
@@ -25128,7 +25128,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "llm_prompts",
-      "community": 141,
+      "community": 124,
       "norm_label": "prompts.py"
     },
     {
@@ -25138,7 +25138,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "llm_prompts_promptloader",
-      "community": 0,
+      "community": 124,
       "norm_label": "promptloader"
     },
     {
@@ -25148,7 +25148,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "llm_prompts_promptloader_pre_load_all",
-      "community": 141,
+      "community": 124,
       "norm_label": ".pre_load_all()"
     },
     {
@@ -25158,7 +25158,7 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "llm_prompts_promptloader_load",
-      "community": 141,
+      "community": 124,
       "norm_label": ".load()"
     },
     {
@@ -25168,7 +25168,7 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "llm_prompts_promptloader_get_cached",
-      "community": 141,
+      "community": 124,
       "norm_label": "._get_cached()"
     },
     {
@@ -25178,7 +25178,7 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "llm_prompts_promptloader_load_from_file",
-      "community": 141,
+      "community": 124,
       "norm_label": "._load_from_file()"
     },
     {
@@ -25188,7 +25188,7 @@
       "source_location": "L79",
       "_origin": "ast",
       "id": "llm_prompts_promptloader_reload",
-      "community": 0,
+      "community": 124,
       "norm_label": ".reload()"
     },
     {
@@ -25198,7 +25198,7 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "llm_prompts_promptloader_list_prompts",
-      "community": 141,
+      "community": 124,
       "norm_label": ".list_prompts()"
     },
     {
@@ -25208,7 +25208,7 @@
       "source_location": "L99",
       "_origin": "ast",
       "id": "llm_prompts_get_prompt",
-      "community": 141,
+      "community": 124,
       "norm_label": "get_prompt()"
     },
     {
@@ -25218,7 +25218,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "llm_prompts_rationale_1",
-      "community": 141,
+      "community": 124,
       "norm_label": "prompt loading utilities for llm interactions."
     },
     {
@@ -25228,7 +25228,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "llm_prompts_rationale_13",
-      "community": 0,
+      "community": 124,
       "norm_label": "load and manage prompts from markdown files.      prompts are stored in config/p"
     },
     {
@@ -25238,7 +25238,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "llm_prompts_rationale_31",
-      "community": 141,
+      "community": 124,
       "norm_label": "pre-load all prompts into memory."
     },
     {
@@ -25248,7 +25248,7 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "llm_prompts_rationale_39",
-      "community": 141,
+      "community": 124,
       "norm_label": "load a prompt by name and optionally format it.          args:             name:"
     },
     {
@@ -25258,7 +25258,7 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "llm_prompts_rationale_59",
-      "community": 141,
+      "community": 124,
       "norm_label": "get prompt from cache or load from file."
     },
     {
@@ -25268,7 +25268,7 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "llm_prompts_rationale_66",
-      "community": 141,
+      "community": 124,
       "norm_label": "load prompt content from markdown file."
     },
     {
@@ -25278,7 +25278,7 @@
       "source_location": "L80",
       "_origin": "ast",
       "id": "llm_prompts_rationale_80",
-      "community": 0,
+      "community": 124,
       "norm_label": "clear cache and reload prompt(s).          args:             name: specific prom"
     },
     {
@@ -25288,7 +25288,7 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "llm_prompts_rationale_94",
-      "community": 141,
+      "community": 124,
       "norm_label": "list all available prompt names."
     },
     {
@@ -25298,7 +25298,7 @@
       "source_location": "L100",
       "_origin": "ast",
       "id": "llm_prompts_rationale_100",
-      "community": 141,
+      "community": 124,
       "norm_label": "quick utility to get a prompt by name.      args:         name: prompt name (e.g"
     },
     {
@@ -32176,7 +32176,7 @@
       "source_location": "L190",
       "_origin": "ast",
       "id": "services_query_service_queryservice_ticker_service",
-      "community": 124,
+      "community": 51,
       "norm_label": ".ticker_service()"
     },
     {
@@ -32186,7 +32186,7 @@
       "source_location": "L199",
       "_origin": "ast",
       "id": "services_query_service_queryservice_data_source",
-      "community": 51,
+      "community": 0,
       "norm_label": ".data_source()"
     },
     {
@@ -32286,7 +32286,7 @@
       "source_location": "L351",
       "_origin": "ast",
       "id": "ml_src_services_query_service_py_jsondict",
-      "community": 0,
+      "community": 51,
       "norm_label": "jsondict"
     },
     {
@@ -32386,7 +32386,7 @@
       "source_location": "L572",
       "_origin": "ast",
       "id": "services_query_service_queryservice_build_llm_context",
-      "community": 51,
+      "community": 0,
       "norm_label": ".build_llm_context()"
     },
     {
@@ -32436,7 +32436,7 @@
       "source_location": "L191",
       "_origin": "ast",
       "id": "services_query_service_rationale_191",
-      "community": 124,
+      "community": 51,
       "norm_label": "get ticker service (lazy init if not provided)."
     },
     {
@@ -32446,7 +32446,7 @@
       "source_location": "L200",
       "_origin": "ast",
       "id": "services_query_service_rationale_200",
-      "community": 51,
+      "community": 0,
       "norm_label": "get data source (lazy init if not provided)."
     },
     {
@@ -32616,7 +32616,7 @@
       "source_location": "L578",
       "_origin": "ast",
       "id": "services_query_service_rationale_578",
-      "community": 51,
+      "community": 0,
       "norm_label": "build formatted context string for llm response generation.          args:"
     },
     {
@@ -40896,7 +40896,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "api_test_uploads_endpoint_fakeuploadfile",
-      "community": 180,
+      "community": 55,
       "norm_label": "fakeuploadfile"
     },
     {
@@ -40906,7 +40906,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "api_test_uploads_endpoint_fakeuploadfile_init",
-      "community": 180,
+      "community": 55,
       "norm_label": ".__init__()"
     },
     {
@@ -40916,7 +40916,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "api_test_uploads_endpoint_fakeuploadfile_read",
-      "community": 180,
+      "community": 55,
       "norm_label": ".read()"
     },
     {
@@ -40926,7 +40926,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "api_test_uploads_endpoint_fakeuploadfile_close",
-      "community": 180,
+      "community": 55,
       "norm_label": ".close()"
     },
     {
@@ -41006,7 +41006,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "api_test_uploads_endpoint_rationale_14",
-      "community": 180,
+      "community": 55,
       "norm_label": "minimal async uploadfile-compatible test double."
     },
     {
@@ -41016,7 +41016,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "api_test_uploads_endpoint_rationale_22",
-      "community": 180,
+      "community": 55,
       "norm_label": "return file bytes once."
     },
     {
@@ -41026,7 +41026,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "api_test_uploads_endpoint_rationale_26",
-      "community": 180,
+      "community": 55,
       "norm_label": "no-op close for test compatibility."
     },
     {
@@ -42806,7 +42806,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "services_test_ticker_service_concurrency",
-      "community": 124,
+      "community": 100,
       "norm_label": "test_ticker_service_concurrency.py"
     },
     {
@@ -42816,7 +42816,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "services_test_ticker_service_concurrency_fakeredisclient",
-      "community": 124,
+      "community": 100,
       "norm_label": "fakeredisclient"
     },
     {
@@ -42826,7 +42826,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "services_test_ticker_service_concurrency_fakeredisclient_get",
-      "community": 124,
+      "community": 100,
       "norm_label": ".get()"
     },
     {
@@ -42836,7 +42836,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "services_test_ticker_service_concurrency_fakeredisclient_setex",
-      "community": 124,
+      "community": 100,
       "norm_label": ".setex()"
     },
     {
@@ -42846,7 +42846,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "services_test_ticker_service_concurrency_fakeprompt",
-      "community": 124,
+      "community": 100,
       "norm_label": "fakeprompt"
     },
     {
@@ -42856,7 +42856,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "services_test_ticker_service_concurrency_fakeprompt_init",
-      "community": 124,
+      "community": 100,
       "norm_label": ".__init__()"
     },
     {
@@ -42866,7 +42866,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "services_test_ticker_service_concurrency_fakeprompt_or",
-      "community": 124,
+      "community": 100,
       "norm_label": ".__or__()"
     },
     {
@@ -42876,7 +42876,7 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "services_test_ticker_service_concurrency_fakechain",
-      "community": 124,
+      "community": 100,
       "norm_label": "fakechain"
     },
     {
@@ -42886,7 +42886,7 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "services_test_ticker_service_concurrency_fakechain_init",
-      "community": 124,
+      "community": 100,
       "norm_label": ".__init__()"
     },
     {
@@ -42916,7 +42916,7 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "services_test_ticker_service_concurrency_test_ticker_resolution_is_bounded",
-      "community": 124,
+      "community": 100,
       "norm_label": "test_ticker_resolution_is_bounded()"
     },
     {
@@ -42926,7 +42926,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "services_test_ticker_service_concurrency_rationale_1",
-      "community": 124,
+      "community": 100,
       "norm_label": "tests for bounded ticker resolution concurrency."
     },
     {
@@ -42936,7 +42936,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "services_test_ticker_service_concurrency_rationale_13",
-      "community": 124,
+      "community": 100,
       "norm_label": "minimal redis double for ticker cache operations."
     },
     {
@@ -42946,7 +42946,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "services_test_ticker_service_concurrency_rationale_23",
-      "community": 124,
+      "community": 100,
       "norm_label": "return a fake runnable chain that emits deterministic json."
     },
     {
@@ -42956,7 +42956,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "services_test_ticker_service_concurrency_rationale_33",
-      "community": 124,
+      "community": 100,
       "norm_label": "track concurrent llm work without calling a real model."
     },
     {
@@ -42966,7 +42966,7 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "services_test_ticker_service_concurrency_rationale_56",
-      "community": 124,
+      "community": 100,
       "norm_label": "ticker resolution should honor the configured concurrency cap."
     },
     {
@@ -69704,9 +69704,9 @@
       "source_file": "frontend/src/api/portfolio.ts",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "api_portfolio",
-      "target": "api_client",
-      "confidence_score": 1.0
+      "target": "api_client"
     },
     {
       "relation": "imports_from",
@@ -69803,9 +69803,9 @@
       "source_file": "frontend/src/api/portfolio.ts",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "api_portfolio",
-      "target": "api_client_client",
-      "confidence_score": 1.0
+      "target": "api_client_client"
     },
     {
       "relation": "imports",
@@ -70111,9 +70111,9 @@
       "source_file": "frontend/src/api/portfolio.ts",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "api_portfolio",
-      "target": "api_portfolio_crisisresult",
-      "confidence_score": 1.0
+      "target": "api_portfolio_crisisresult"
     },
     {
       "relation": "contains",
@@ -70121,9 +70121,9 @@
       "source_file": "frontend/src/api/portfolio.ts",
       "source_location": "L20",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "api_portfolio",
-      "target": "api_portfolio_portfolioapi",
-      "confidence_score": 1.0
+      "target": "api_portfolio_portfolioapi"
     },
     {
       "relation": "contains",
@@ -70131,9 +70131,9 @@
       "source_file": "frontend/src/api/portfolio.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "api_portfolio",
-      "target": "api_portfolio_portfolioasset",
-      "confidence_score": 1.0
+      "target": "api_portfolio_portfolioasset"
     },
     {
       "relation": "contains",
@@ -70141,9 +70141,9 @@
       "source_file": "frontend/src/api/portfolio.ts",
       "source_location": "L14",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "api_portfolio",
-      "target": "api_portfolio_stresstestresponse",
-      "confidence_score": 1.0
+      "target": "api_portfolio_stresstestresponse"
     },
     {
       "relation": "imports_from",
@@ -70152,9 +70152,9 @@
       "source_file": "frontend/src/pages/Sandbox.tsx",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "pages_sandbox",
-      "target": "api_portfolio",
-      "confidence_score": 1.0
+      "target": "api_portfolio"
     },
     {
       "relation": "imports",
@@ -70163,9 +70163,9 @@
       "source_file": "frontend/src/pages/Sandbox.tsx",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "pages_sandbox",
-      "target": "api_portfolio_portfolioasset",
-      "confidence_score": 1.0
+      "target": "api_portfolio_portfolioasset"
     },
     {
       "relation": "imports",
@@ -70174,9 +70174,9 @@
       "source_file": "frontend/src/pages/Sandbox.tsx",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "pages_sandbox",
-      "target": "api_portfolio_stresstestresponse",
-      "confidence_score": 1.0
+      "target": "api_portfolio_stresstestresponse"
     },
     {
       "relation": "imports",
@@ -70185,9 +70185,9 @@
       "source_file": "frontend/src/pages/Sandbox.tsx",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "pages_sandbox",
-      "target": "api_portfolio_portfolioapi",
-      "confidence_score": 1.0
+      "target": "api_portfolio_portfolioapi"
     },
     {
       "relation": "contains",
@@ -81566,9 +81566,9 @@
       "source_file": "frontend/src/pages/Sandbox.tsx",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "pages_sandbox",
-      "target": "ui_button",
-      "confidence_score": 1.0
+      "target": "ui_button"
     },
     {
       "relation": "imports_from",
@@ -81695,9 +81695,9 @@
       "source_file": "frontend/src/pages/Sandbox.tsx",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "pages_sandbox",
-      "target": "ui_button_button",
-      "confidence_score": 1.0
+      "target": "ui_button_button"
     },
     {
       "relation": "imports",
@@ -85440,9 +85440,9 @@
       "source_file": "frontend/src/pages/Sandbox.tsx",
       "source_location": "L14",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "pages_sandbox",
-      "target": "pages_sandbox_quick_tickers",
-      "confidence_score": 1.0
+      "target": "pages_sandbox_quick_tickers"
     },
     {
       "relation": "contains",
@@ -85450,9 +85450,9 @@
       "source_file": "frontend/src/pages/Sandbox.tsx",
       "source_location": "L16",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "pages_sandbox",
-      "target": "pages_sandbox_sandbox",
-      "confidence_score": 1.0
+      "target": "pages_sandbox_sandbox"
     },
     {
       "relation": "contains",
@@ -86351,9 +86351,9 @@
       "source_file": "frontend/src/routes/AppRoutes.tsx",
       "source_location": "L39",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_approutes",
-      "target": "routes_approutes_sandbox",
-      "confidence_score": 1.0
+      "target": "routes_approutes_sandbox"
     },
     {
       "relation": "contains",
@@ -133588,9 +133588,9 @@
       "source_file": "README.md",
       "source_location": "L134",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "readme_finsight_monorepo",
-      "target": "readme_detailed_documentation",
-      "confidence_score": 1.0
+      "target": "readme_detailed_documentation"
     },
     {
       "relation": "contains",
@@ -133598,9 +133598,9 @@
       "source_file": "README.md",
       "source_location": "L119",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "readme_finsight_monorepo",
-      "target": "readme_new_features",
-      "confidence_score": 1.0
+      "target": "readme_new_features"
     },
     {
       "relation": "contains",
@@ -133698,9 +133698,9 @@
       "source_file": "README.md",
       "source_location": "L121",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "readme_new_features",
-      "target": "readme_1_portfolio_stress_testing_sandbox",
-      "confidence_score": 1.0
+      "target": "readme_1_portfolio_stress_testing_sandbox"
     },
     {
       "relation": "contains",
@@ -133708,9 +133708,9 @@
       "source_file": "README.md",
       "source_location": "L128",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "readme_new_features",
-      "target": "readme_2_weekly_email_briefings",
-      "confidence_score": 1.0
+      "target": "readme_2_weekly_email_briefings"
     },
     {
       "relation": "contains",
@@ -133718,9 +133718,9 @@
       "source_file": "documentation/api.md",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_api",
-      "target": "documentation_api_finsight_api_reference_guide",
-      "confidence_score": 1.0
+      "target": "documentation_api_finsight_api_reference_guide"
     },
     {
       "relation": "contains",
@@ -133728,9 +133728,9 @@
       "source_file": "documentation/api.md",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_api_finsight_api_reference_guide",
-      "target": "documentation_api_1_authentication",
-      "confidence_score": 1.0
+      "target": "documentation_api_1_authentication"
     },
     {
       "relation": "contains",
@@ -133738,9 +133738,9 @@
       "source_file": "documentation/api.md",
       "source_location": "L43",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_api_finsight_api_reference_guide",
-      "target": "documentation_api_2_onboarding",
-      "confidence_score": 1.0
+      "target": "documentation_api_2_onboarding"
     },
     {
       "relation": "contains",
@@ -133748,9 +133748,9 @@
       "source_file": "documentation/api.md",
       "source_location": "L62",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_api_finsight_api_reference_guide",
-      "target": "documentation_api_3_market_insights",
-      "confidence_score": 1.0
+      "target": "documentation_api_3_market_insights"
     },
     {
       "relation": "contains",
@@ -133758,9 +133758,9 @@
       "source_file": "documentation/api.md",
       "source_location": "L93",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_api_finsight_api_reference_guide",
-      "target": "documentation_api_4_portfolio_sandbox",
-      "confidence_score": 1.0
+      "target": "documentation_api_4_portfolio_sandbox"
     },
     {
       "relation": "contains",
@@ -133768,9 +133768,9 @@
       "source_file": "documentation/api.md",
       "source_location": "L29",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_api_1_authentication",
-      "target": "documentation_api_login_user",
-      "confidence_score": 1.0
+      "target": "documentation_api_login_user"
     },
     {
       "relation": "contains",
@@ -133778,9 +133778,9 @@
       "source_file": "documentation/api.md",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_api_1_authentication",
-      "target": "documentation_api_signup_user",
-      "confidence_score": 1.0
+      "target": "documentation_api_signup_user"
     },
     {
       "relation": "contains",
@@ -133788,9 +133788,9 @@
       "source_file": "documentation/api.md",
       "source_location": "L45",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_api_2_onboarding",
-      "target": "documentation_api_submit_onboarding_answers",
-      "confidence_score": 1.0
+      "target": "documentation_api_submit_onboarding_answers"
     },
     {
       "relation": "contains",
@@ -133798,9 +133798,9 @@
       "source_file": "documentation/api.md",
       "source_location": "L64",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_api_3_market_insights",
-      "target": "documentation_api_trigger_watchlist_scan",
-      "confidence_score": 1.0
+      "target": "documentation_api_trigger_watchlist_scan"
     },
     {
       "relation": "contains",
@@ -133808,9 +133808,9 @@
       "source_file": "documentation/api.md",
       "source_location": "L95",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_api_4_portfolio_sandbox",
-      "target": "documentation_api_run_portfolio_stress_test",
-      "confidence_score": 1.0
+      "target": "documentation_api_run_portfolio_stress_test"
     },
     {
       "relation": "contains",
@@ -133818,9 +133818,9 @@
       "source_file": "documentation/architecture.md",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_architecture",
-      "target": "documentation_architecture_finsight_system_architecture_blueprint",
-      "confidence_score": 1.0
+      "target": "documentation_architecture_finsight_system_architecture_blueprint"
     },
     {
       "relation": "contains",
@@ -133828,9 +133828,9 @@
       "source_file": "documentation/architecture.md",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_architecture_finsight_system_architecture_blueprint",
-      "target": "documentation_architecture_high_level_system_architecture",
-      "confidence_score": 1.0
+      "target": "documentation_architecture_high_level_system_architecture"
     },
     {
       "relation": "contains",
@@ -133838,9 +133838,9 @@
       "source_file": "documentation/architecture.md",
       "source_location": "L47",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_architecture_finsight_system_architecture_blueprint",
-      "target": "documentation_architecture_modules_breakdown",
-      "confidence_score": 1.0
+      "target": "documentation_architecture_modules_breakdown"
     },
     {
       "relation": "contains",
@@ -133848,9 +133848,9 @@
       "source_file": "documentation/architecture.md",
       "source_location": "L49",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_architecture_modules_breakdown",
-      "target": "documentation_architecture_1_core_backend_fastapi",
-      "confidence_score": 1.0
+      "target": "documentation_architecture_1_core_backend_fastapi"
     },
     {
       "relation": "contains",
@@ -133858,9 +133858,9 @@
       "source_file": "documentation/architecture.md",
       "source_location": "L55",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_architecture_modules_breakdown",
-      "target": "documentation_architecture_2_ml_service",
-      "confidence_score": 1.0
+      "target": "documentation_architecture_2_ml_service"
     },
     {
       "relation": "contains",
@@ -133868,9 +133868,9 @@
       "source_file": "documentation/architecture.md",
       "source_location": "L60",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_architecture_modules_breakdown",
-      "target": "documentation_architecture_3_frontend_client",
-      "confidence_score": 1.0
+      "target": "documentation_architecture_3_frontend_client"
     },
     {
       "relation": "contains",
@@ -133878,9 +133878,9 @@
       "source_file": "documentation/install.md",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_install",
-      "target": "documentation_install_finsight_installation_setup_guide",
-      "confidence_score": 1.0
+      "target": "documentation_install_finsight_installation_setup_guide"
     },
     {
       "relation": "contains",
@@ -133888,9 +133888,9 @@
       "source_file": "documentation/install.md",
       "source_location": "L18",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_install_finsight_installation_setup_guide",
-      "target": "documentation_install_1_backend_setup",
-      "confidence_score": 1.0
+      "target": "documentation_install_1_backend_setup"
     },
     {
       "relation": "contains",
@@ -133898,9 +133898,9 @@
       "source_file": "documentation/install.md",
       "source_location": "L76",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_install_finsight_installation_setup_guide",
-      "target": "documentation_install_2_ml_service_setup",
-      "confidence_score": 1.0
+      "target": "documentation_install_2_ml_service_setup"
     },
     {
       "relation": "contains",
@@ -133908,9 +133908,9 @@
       "source_file": "documentation/install.md",
       "source_location": "L95",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_install_finsight_installation_setup_guide",
-      "target": "documentation_install_3_frontend_setup",
-      "confidence_score": 1.0
+      "target": "documentation_install_3_frontend_setup"
     },
     {
       "relation": "contains",
@@ -133918,9 +133918,9 @@
       "source_file": "documentation/install.md",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_install_finsight_installation_setup_guide",
-      "target": "documentation_install_prerequisites",
-      "confidence_score": 1.0
+      "target": "documentation_install_prerequisites"
     },
     {
       "relation": "contains",
@@ -133928,9 +133928,9 @@
       "source_file": "documentation/install.md",
       "source_location": "L22",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_install_1_backend_setup",
-      "target": "documentation_install_clone_the_repository",
-      "confidence_score": 1.0
+      "target": "documentation_install_clone_the_repository"
     },
     {
       "relation": "contains",
@@ -133938,9 +133938,9 @@
       "source_file": "documentation/install.md",
       "source_location": "L45",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_install_1_backend_setup",
-      "target": "documentation_install_configuration_environment_variables",
-      "confidence_score": 1.0
+      "target": "documentation_install_configuration_environment_variables"
     },
     {
       "relation": "contains",
@@ -133948,9 +133948,9 @@
       "source_file": "documentation/install.md",
       "source_location": "L28",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_install_1_backend_setup",
-      "target": "documentation_install_create_and_activate_virtual_environment",
-      "confidence_score": 1.0
+      "target": "documentation_install_create_and_activate_virtual_environment"
     },
     {
       "relation": "contains",
@@ -133958,9 +133958,9 @@
       "source_file": "documentation/install.md",
       "source_location": "L39",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_install_1_backend_setup",
-      "target": "documentation_install_install_dependencies",
-      "confidence_score": 1.0
+      "target": "documentation_install_install_dependencies"
     },
     {
       "relation": "contains",
@@ -133968,9 +133968,9 @@
       "source_file": "documentation/install.md",
       "source_location": "L68",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_install_1_backend_setup",
-      "target": "documentation_install_run_the_backend_server",
-      "confidence_score": 1.0
+      "target": "documentation_install_run_the_backend_server"
     },
     {
       "relation": "contains",
@@ -133978,9 +133978,9 @@
       "source_file": "documentation/install.md",
       "source_location": "L61",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_install_1_backend_setup",
-      "target": "documentation_install_seeding_tiers_and_users",
-      "confidence_score": 1.0
+      "target": "documentation_install_seeding_tiers_and_users"
     },
     {
       "relation": "contains",
@@ -133988,9 +133988,9 @@
       "source_file": "documentation/install.md",
       "source_location": "L80",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_install_2_ml_service_setup",
-      "target": "documentation_install_install_dependencies_80",
-      "confidence_score": 1.0
+      "target": "documentation_install_install_dependencies_80"
     },
     {
       "relation": "contains",
@@ -133998,9 +133998,9 @@
       "source_file": "documentation/install.md",
       "source_location": "L87",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_install_2_ml_service_setup",
-      "target": "documentation_install_run_the_ml_tests",
-      "confidence_score": 1.0
+      "target": "documentation_install_run_the_ml_tests"
     },
     {
       "relation": "contains",
@@ -134008,9 +134008,9 @@
       "source_file": "documentation/install.md",
       "source_location": "L105",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_install_3_frontend_setup",
-      "target": "documentation_install_configuration_environment_variables_105",
-      "confidence_score": 1.0
+      "target": "documentation_install_configuration_environment_variables_105"
     },
     {
       "relation": "contains",
@@ -134018,9 +134018,9 @@
       "source_file": "documentation/install.md",
       "source_location": "L99",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_install_3_frontend_setup",
-      "target": "documentation_install_install_dependencies_99",
-      "confidence_score": 1.0
+      "target": "documentation_install_install_dependencies_99"
     },
     {
       "relation": "contains",
@@ -134028,9 +134028,9 @@
       "source_file": "documentation/install.md",
       "source_location": "L111",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_install_3_frontend_setup",
-      "target": "documentation_install_run_the_frontend_development_server",
-      "confidence_score": 1.0
+      "target": "documentation_install_run_the_frontend_development_server"
     },
     {
       "relation": "contains",
@@ -134038,9 +134038,9 @@
       "source_file": "documentation/workflows.md",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_workflows",
-      "target": "documentation_workflows_finsight_application_workflows",
-      "confidence_score": 1.0
+      "target": "documentation_workflows_finsight_application_workflows"
     },
     {
       "relation": "contains",
@@ -134048,9 +134048,9 @@
       "source_file": "documentation/workflows.md",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_workflows_finsight_application_workflows",
-      "target": "documentation_workflows_1_portfolio_stress_testing_workflow",
-      "confidence_score": 1.0
+      "target": "documentation_workflows_1_portfolio_stress_testing_workflow"
     },
     {
       "relation": "contains",
@@ -134058,9 +134058,9 @@
       "source_file": "documentation/workflows.md",
       "source_location": "L34",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_workflows_finsight_application_workflows",
-      "target": "documentation_workflows_2_weekly_email_briefings_delivery_workflow",
-      "confidence_score": 1.0
+      "target": "documentation_workflows_2_weekly_email_briefings_delivery_workflow"
     },
     {
       "relation": "contains",
@@ -134068,9 +134068,9 @@
       "source_file": "documentation/workflows.md",
       "source_location": "L57",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "documentation_workflows_finsight_application_workflows",
-      "target": "documentation_workflows_3_real_time_market_scanner_workflow",
-      "confidence_score": 1.0
+      "target": "documentation_workflows_3_real_time_market_scanner_workflow"
     },
     {
       "relation": "contains",
@@ -136074,5 +136074,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "54d5acc422d038298b88f00705a7c7b5bb0a7ce9"
+  "built_at_commit": "608aeb84ec6e82fa930422fb3a1132d14e72b28b"
 }

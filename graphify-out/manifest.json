@@ -1455,8 +1455,8 @@
     "semantic_hash": ""
   },
   "frontend/src/pages/Product.tsx": {
-    "mtime": 1783063127.9535508,
-    "ast_hash": "637d1e9eaff01eb560431cc5d586d391",
+    "mtime": 1783514596.4077303,
+    "ast_hash": "e6a8ac2d425d8f6d05d7130fe381951d",
     "semantic_hash": ""
   },
   "frontend/src/pages/ResetPasswordPage.tsx": {
@@ -2260,8 +2260,8 @@
     "semantic_hash": ""
   },
   "docker-compose.yml": {
-    "mtime": 1782999027.7707257,
-    "ast_hash": "facf5c50e539f9338a92cf54366ab967",
+    "mtime": 1783513156.2246516,
+    "ast_hash": "6c864b8a85d96ba5090dc194e44a7f63",
     "semantic_hash": ""
   },
   "frontend/.github/workflows/deploy.yml": {
@@ -2454,16 +2454,6 @@
     "ast_hash": "f8c8af1397151bced0a3e3826a5affda",
     "semantic_hash": ""
   },
-  "frontend/public/assets/images/dashbaord-dark.png": {
-    "mtime": 1783071372.8245099,
-    "ast_hash": "973fa122445ca98a7897a4f8a62765c8",
-    "semantic_hash": ""
-  },
-  "frontend/public/assets/images/dashbaord-light.png": {
-    "mtime": 1783071352.6855235,
-    "ast_hash": "58a99b6b1f4ffcbccba646492afb1ce4",
-    "semantic_hash": ""
-  },
   "frontend/public/finsight.svg": {
     "mtime": 1782911123.8409894,
     "ast_hash": "0b6df70362a8e9b2c3ae675040db286a",
@@ -2542,6 +2532,11 @@
   "documentation/workflows.md": {
     "mtime": 1783429487.005548,
     "ast_hash": "f7c77b2a474705ac3c2ee3aadfa28c0f",
+    "semantic_hash": ""
+  },
+  "docker-compose.local.yml": {
+    "mtime": 1783513147.7333653,
+    "ast_hash": "2d3f159d4fdf513edcad61a152f7bdb0",
     "semantic_hash": ""
   }
 }

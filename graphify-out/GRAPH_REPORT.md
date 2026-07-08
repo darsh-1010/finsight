@@ -1,16 +1,16 @@
-# Graph Report - finsight  (2026-07-07)
+# Graph Report - finsight  (2026-07-08)
 
 ## Corpus Check
-- 487 files · ~329,051 words
+- 487 files · ~294,152 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 4670 nodes · 8623 edges · 322 communities (286 shown, 36 thin omitted)
+- 4670 nodes · 8623 edges · 317 communities (282 shown, 35 thin omitted)
 - Extraction: 80% EXTRACTED · 20% INFERRED · 0% AMBIGUOUS · INFERRED: 1729 edges (avg confidence: 0.56)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `54d5acc4`
+- Built from commit: `608aeb84`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -156,7 +156,6 @@
 - [[_COMMUNITY_Community 138|Community 138]]
 - [[_COMMUNITY_Community 139|Community 139]]
 - [[_COMMUNITY_Community 140|Community 140]]
-- [[_COMMUNITY_Community 141|Community 141]]
 - [[_COMMUNITY_Community 142|Community 142]]
 - [[_COMMUNITY_Community 143|Community 143]]
 - [[_COMMUNITY_Community 144|Community 144]]
@@ -182,7 +181,6 @@
 - [[_COMMUNITY_Community 164|Community 164]]
 - [[_COMMUNITY_Community 165|Community 165]]
 - [[_COMMUNITY_Community 166|Community 166]]
-- [[_COMMUNITY_Community 167|Community 167]]
 - [[_COMMUNITY_Community 168|Community 168]]
 - [[_COMMUNITY_Community 169|Community 169]]
 - [[_COMMUNITY_Community 170|Community 170]]
@@ -195,7 +193,6 @@
 - [[_COMMUNITY_Community 177|Community 177]]
 - [[_COMMUNITY_Community 178|Community 178]]
 - [[_COMMUNITY_Community 179|Community 179]]
-- [[_COMMUNITY_Community 180|Community 180]]
 - [[_COMMUNITY_Community 181|Community 181]]
 - [[_COMMUNITY_Community 182|Community 182]]
 - [[_COMMUNITY_Community 183|Community 183]]
@@ -221,7 +218,6 @@
 - [[_COMMUNITY_Community 205|Community 205]]
 - [[_COMMUNITY_Community 206|Community 206]]
 - [[_COMMUNITY_Community 207|Community 207]]
-- [[_COMMUNITY_Community 208|Community 208]]
 - [[_COMMUNITY_Community 258|Community 258]]
 - [[_COMMUNITY_Community 259|Community 259]]
 - [[_COMMUNITY_Community 260|Community 260]]
@@ -250,7 +246,6 @@
 - [[_COMMUNITY_Community 306|Community 306]]
 - [[_COMMUNITY_Community 315|Community 315]]
 - [[_COMMUNITY_Community 316|Community 316]]
-- [[_COMMUNITY_Community 317|Community 317]]
 - [[_COMMUNITY_Community 318|Community 318]]
 - [[_COMMUNITY_Community 319|Community 319]]
 - [[_COMMUNITY_Community 320|Community 320]]
@@ -300,11 +295,11 @@
 - 1-file cycle: `ml/src/services/weaviate/service.py -> ml/src/services/weaviate/service.py`
 - 1-file cycle: `ml/src/services/weaviate/collections.py -> ml/src/services/weaviate/collections.py`
 
-## Communities (322 total, 36 thin omitted)
+## Communities (317 total, 35 thin omitted)
 
 ### Community 0 - "Community 0"
-Cohesion: 0.08
-Nodes (39): ABC, QueryAnalysisError, Raised when LLM-based query analysis fails., IDataSource, IQueryService, ITickerService, Abstract interfaces for dependency injection.  These interfaces define contrac, Interface for data source implementations. (+31 more)
+Cohesion: 0.05
+Nodes (41): IQueryService, Interface for query analysis service., ExpandedQuery, FinancialContext, MultiTickerContext, QueryEntities, QueryExpansionResult, Pydantic models for the Query Intelligence system.  All models use Pydantic v2 f (+33 more)
 
 ### Community 1 - "Community 1"
 Cohesion: 0.07
@@ -424,7 +419,7 @@ Nodes (18): Can(), CanProps, Entitlement, UpgradePlanModalProps, InsightSectionP
 
 ### Community 30 - "Community 30"
 Cohesion: 0.07
-Nodes (16): ICache, Retrieve relevant document chunks for a query.          Args:             que, Interface for cache implementations., Get value from cache., Set value in cache with optional TTL., Delete value from cache., Fetch data for a given identifier., Analyze and expand a user query. (+8 more)
+Nodes (14): Retrieve relevant document chunks for a query.          Args:             que, Get value from cache., Set value in cache with optional TTL., Generate a structured response matching the schema., Fetch data for a given identifier., Analyze and expand a user query., Full pipeline: analyze query and fetch data., Build a formatted LLM context string for a response. (+6 more)
 
 ### Community 31 - "Community 31"
 Cohesion: 0.19
@@ -508,7 +503,7 @@ Nodes (17): FakeSearchResult, Tests for the current RAG service contract., Dupli
 
 ### Community 51 - "Community 51"
 Cohesion: 0.08
-Nodes (23): IQueryService, QueryExpansionResult, QueryService, Route query to fast or full LLM chain based on complexity signals., Get data source (lazy init if not provided)., Analyze query to extract intent, entities and specific requirements., Invoke the appropriate LLM chain and extract content., Validate parsed LLM response and ensure follow-ups exist. (+15 more)
+Nodes (25): QueryAnalysisError, Raised when LLM-based query analysis fails., IQueryService, JsonDict, QueryExpansionResult, QueryService, Route query to fast or full LLM chain based on complexity signals., Get ticker service (lazy init if not provided). (+17 more)
 
 ### Community 52 - "Community 52"
 Cohesion: 0.09
@@ -523,8 +518,8 @@ Cohesion: 0.07
 Nodes (28): 1. Chat Orchestration (Sequence Diagram), 1. Environment Setup, 1. Tiered Insight Delivery Architecture, 2. Query Intelligence Pipeline, 2. Run with Docker (Recommended), 2. Video Ingestion & Retrieval (RAG) Pipeline, 3. Local Development, 3. RAG Ingestion Flow (+20 more)
 
 ### Community 55 - "Community 55"
-Cohesion: 0.17
-Nodes (18): _make_upload_file(), Endpoint-function tests for user upload workflow., Size violations should return explicit size flags for client UX., ValueError with doc-limit semantics should map to 403., Build a fake UploadFile object for endpoint tests., Endpoint should process multiple files in one call., Tier 0/1/2 should be blocked before file processing., Tier limit should reject too many files in one upload request. (+10 more)
+Cohesion: 0.13
+Nodes (18): FakeUploadFile, _make_upload_file(), Endpoint-function tests for user upload workflow., Size violations should return explicit size flags for client UX., ValueError with doc-limit semantics should map to 403., Minimal async UploadFile-compatible test double., Return file bytes once., No-op close for test compatibility. (+10 more)
 
 ### Community 56 - "Community 56"
 Cohesion: 0.07
@@ -704,7 +699,7 @@ Nodes (15): anyio_backend(), Unit tests for the Market Insights notification pip
 
 ### Community 100 - "Community 100"
 Cohesion: 0.16
-Nodes (7): Convert to formatted context string for LLM.          Args:             include_, Get symbol for currency code., Build the current market data section., Build the company overview section., Build the valuation metrics section., Build the performance section., Build the financial summaries section.
+Nodes (9): FakeChain, FakePrompt, FakeRedisClient, Tests for bounded ticker resolution concurrency., Minimal Redis double for ticker cache operations., Return a fake runnable chain that emits deterministic JSON., Track concurrent LLM work without calling a real model., Ticker resolution should honor the configured concurrency cap. (+1 more)
 
 ### Community 101 - "Community 101"
 Cohesion: 0.24
@@ -799,8 +794,8 @@ Cohesion: 0.18
 Nodes (9): PlaywrightCrawlingContext, main(), Run the full pipeline synchronously., Crawlee-based async pipeline., Handle market-news listing page — extract and enqueue articles., Handle article detail pages., Instantiate the scraper and run it., Scrapes market-news articles from Seeking Alpha.      Pipeline:     1. Load m (+1 more)
 
 ### Community 124 - "Community 124"
-Cohesion: 0.08
-Nodes (27): Raised when a service fails to perform its primary function., Raised when ticker resolution fails or is highly ambiguous., ServiceError, TickerResolutionError, Validation status for ticker resolution., ValidationStatus, ITickerService, ChatOpenAI (+19 more)
+Cohesion: 0.05
+Nodes (42): ABC, Raised when a service fails to perform its primary function., Raised when ticker resolution fails or is highly ambiguous., ServiceError, TickerResolutionError, ICache, IDataSource, ILLMClient (+34 more)
 
 ### Community 125 - "Community 125"
 Cohesion: 0.22
@@ -861,10 +856,6 @@ Nodes (11): _build_tables(), is_loaded(), _load(), _normalize(), Static ticker l
 ### Community 139 - "Community 139"
 Cohesion: 0.20
 Nodes (10): _get_openai_canary_lock(), Create the canary lock lazily so it binds to the active event loop., Lock, Wait for Weaviate to be ready (async — FIX-011)., Close Weaviate connection., Manages the Weaviate client lifecycle (Singleton pattern)., Get or create Weaviate client instance., Create and connect a new Weaviate client. (+2 more)
-
-### Community 141 - "Community 141"
-Cohesion: 0.14
-Nodes (8): get_prompt(), Prompt loading utilities for LLM interactions., Quick utility to get a prompt by name.      Args:         name: Prompt name (e.g, Pre-load all prompts into memory., Load a prompt by name and optionally format it.          Args:             name:, Get prompt from cache or load from file., Load prompt content from markdown file., List all available prompt names.
 
 ### Community 142 - "Community 142"
 Cohesion: 0.18
@@ -954,10 +945,6 @@ Nodes (6): main(), Instantiate the scraper and run it., Scrapes articles from th
 Cohesion: 0.36
 Nodes (5): CrisisResult, portfolioApi, PortfolioAsset, StressTestResponse, QUICK_TICKERS
 
-### Community 167 - "Community 167"
-Cohesion: 0.25
-Nodes (5): ILLMClient, Interface for LLM client implementations., Generate a text response from the LLM., Generate a structured response matching the schema., Stream response chunks from the LLM.
-
 ### Community 168 - "Community 168"
 Cohesion: 0.33
 Nodes (3): get_current_user(), Request, Session
@@ -995,16 +982,12 @@ Cohesion: 0.29
 Nodes (7): _build_snapshot_payload(), notify_backend_deleted_documents(), Helpers for publishing the latest scheduler-wide article snapshot., Scheduler-wide snapshot item for one successfully indexed article., Build the latest-run snapshot payload., Notify the backend that documents have been deleted from the vector database., SchedulerSnapshotItem
 
 ### Community 178 - "Community 178"
-Cohesion: 0.40
-Nodes (4): UserUploadService, User document upload API routes., Wait for a delay and then delete the file from OpenAI.      Defaults to 7200 s, schedule_file_deletion()
+Cohesion: 0.25
+Nodes (8): BackgroundTasks, UploadFile, UserUploadService, User document upload API routes., Wait for a delay and then delete the file from OpenAI.      Defaults to 7200 s, Upload multiple documents for direct OpenAI analysis.      Available to Tier 3, schedule_file_deletion(), upload_documents()
 
 ### Community 179 - "Community 179"
 Cohesion: 0.33
 Nodes (5): Approve or unapprove a signal.     Path: /api/v1/admin/signals/approval, update_signal_approval(), ApprovalRequest, Session, User
-
-### Community 180 - "Community 180"
-Cohesion: 0.29
-Nodes (4): FakeUploadFile, Minimal async UploadFile-compatible test double., Return file bytes once., No-op close for test compatibility.
 
 ### Community 181 - "Community 181"
 Cohesion: 0.40
@@ -1090,10 +1073,6 @@ Nodes (4): client(), db(), Test creating a chat session with a custom title prov
 Cohesion: 0.50
 Nodes (3): Live integration test for Weaviate automatic cleanup functionality.  Verifies th, Verify that delete_old_scraper_data purges stale data and preserves new data., test_weaviate_auto_deletion_live()
 
-### Community 208 - "Community 208"
-Cohesion: 0.33
-Nodes (4): ExpandedQuery, Get only high-priority expanded queries., Get queries that use a specific data source., A single dynamically generated query expansion.
-
 ### Community 270 - "Community 270"
 Cohesion: 0.20
 Nodes (9): DailyStockHighlightTier1, DailyStockHighlightTier2, DailyStockHighlightTier3, DailyStockHighlightTier4, Pydantic models for the Daily Market Insights compiler.  Defines structured dail, Stock-specific highlight for the daily report (Tier 2 - Basic)., Stock-specific highlight for the daily report (Tier 3 - Pro)., Stock-specific highlight for the daily report (Tier 4 - Institutional). (+1 more)
@@ -1121,14 +1100,14 @@ Nodes (3): AsyncOpenAI, FallbackAsyncOpenAI, Initialize with Redis and OpenAI cl
 ## Knowledge Gaps
 - **529 isolated node(s):** `Session`, `Config`, `Config`, `Config`, `Config` (+524 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **36 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **35 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `User` connect `Community 17` to `Community 96`, `Community 162`, `Community 34`, `Community 168`, `Community 41`, `Community 10`, `Community 76`, `Community 15`, `Community 112`, `Community 111`, `Community 179`, `Community 20`, `Community 52`, `Community 88`, `Community 26`?**
   _High betweenness centrality (0.054) - this node is a cross-community bridge._
-- **Why does `ChatService` connect `Community 1` to `Community 96`, `Community 65`, `Community 0`, `Community 35`, `Community 5`, `Community 106`, `Community 16`, `Community 17`, `Community 87`?**
+- **Why does `ChatService` connect `Community 1` to `Community 96`, `Community 65`, `Community 35`, `Community 5`, `Community 106`, `Community 16`, `Community 17`, `Community 87`, `Community 124`?**
   _High betweenness centrality (0.053) - this node is a cross-community bridge._
 - **Why does `RAGService` connect `Community 22` to `Community 32`, `Community 57`, `Community 106`, `Community 50`?**
   _High betweenness centrality (0.031) - this node is a cross-community bridge._
