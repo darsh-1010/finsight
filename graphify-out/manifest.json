@@ -720,8 +720,8 @@
     "semantic_hash": ""
   },
   "frontend/package.json": {
-    "mtime": 1783327480.1525738,
-    "ast_hash": "e69b558c0e379a1cddc34d059edd2a03",
+    "mtime": 1783589850.417602,
+    "ast_hash": "2fb41f3c71fd7bf033b01ffca18f002c",
     "semantic_hash": ""
   },
   "frontend/postcss.config.js": {
@@ -1245,8 +1245,8 @@
     "semantic_hash": ""
   },
   "frontend/src/components/profile/TokenUsage.tsx": {
-    "mtime": 1783085155.527968,
-    "ast_hash": "de620aaa592155c9e098927e2a2140e4",
+    "mtime": 1783591911.9892335,
+    "ast_hash": "f5d781e072e104b3e8bc3047204b2cad",
     "semantic_hash": ""
   },
   "frontend/src/components/profile/UpgradeModal.tsx": {
@@ -1425,8 +1425,8 @@
     "semantic_hash": ""
   },
   "frontend/src/pages/LandingPage.tsx": {
-    "mtime": 1783337599.9752662,
-    "ast_hash": "17594316cca921975c508c2b9687dac7",
+    "mtime": 1783591902.525287,
+    "ast_hash": "7469b58257ceb03dba2d130133d36704",
     "semantic_hash": ""
   },
   "frontend/src/pages/LoginPage.tsx": {

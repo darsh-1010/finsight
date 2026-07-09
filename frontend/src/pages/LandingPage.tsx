@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { IoArrowForwardOutline } from 'react-icons/io5';
-import { motion, useScroll, useTransform } from 'framer-motion';
 import {
   PiMonitor,
   PiUserFocus,
@@ -16,6 +15,8 @@ import {
   PiGraduationCap,
   PiLightning,
 } from 'react-icons/pi';
+import * as THREE from 'three';
+import { gsap } from 'gsap';
 
 import { Button } from '@/components/ui/button';
 
@@ -62,61 +63,205 @@ const AnimatedCounter: React.FC<{ end: number; suffix?: string; duration?: numbe
   );
 };
 
+/* ─── Interactive Three.js Background ────────────────────── */
+const InteractiveThreeBackground: React.FC = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const width = container.clientWidth || window.innerWidth;
+    const height = container.clientHeight || window.innerHeight;
+
+    // Scene
+    const scene = new THREE.Scene();
+
+    // Camera
+    const camera = new THREE.PerspectiveCamera(60, width / height, 1, 1000);
+    camera.position.z = 400;
+
+    // Renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    // Particles Group
+    const group = new THREE.Group();
+    scene.add(group);
+
+    // Create particles
+    const particleCount = 100;
+    const r = 350;
+    const positions = new Float32Array(particleCount * 3);
+    const velocities = new Float32Array(particleCount * 3);
+
+    for (let i = 0; i < particleCount; i++) {
+      const u = Math.random();
+      const v = Math.random();
+      const theta = u * 2.0 * Math.PI;
+      const phi = Math.acos(2.0 * v - 1.0);
+      const radius = r * Math.cbrt(Math.random());
+
+      positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+      positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+      positions[i * 3 + 2] = radius * Math.cos(phi);
+
+      velocities[i * 3] = (Math.random() - 0.5) * 0.4;
+      velocities[i * 3 + 1] = (Math.random() - 0.5) * 0.4;
+      velocities[i * 3 + 2] = (Math.random() - 0.5) * 0.4;
+    }
+
+    const pointsGeometry = new THREE.BufferGeometry();
+    pointsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+    const pointsMaterial = new THREE.PointsMaterial({
+      color: 0x7B61FF,
+      size: 4,
+      transparent: true,
+      opacity: 0.8,
+      blending: THREE.AdditiveBlending,
+    });
+
+    const points = new THREE.Points(pointsGeometry, pointsMaterial);
+    group.add(points);
+
+    // Line segments geometry
+    const lineGeometry = new THREE.BufferGeometry();
+    const lineMaterial = new THREE.LineBasicMaterial({
+      vertexColors: true,
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      linewidth: 1,
+    });
+
+    const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
+    group.add(lines);
+
+    // Mouse tracking
+    let mouseX = 0;
+    let mouseY = 0;
+    const handleMouseMove = (event: MouseEvent) => {
+      mouseX = (event.clientX / window.innerWidth) - 0.5;
+      mouseY = (event.clientY / window.innerHeight) - 0.5;
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+
+    // Animation Loop
+    let animationFrameId: number;
+    const maxDistance = 120;
+
+    const animate = () => {
+      animationFrameId = requestAnimationFrame(animate);
+
+      // Rotate group gently
+      group.rotation.y += 0.001;
+      group.rotation.x += 0.0005;
+
+      // Parallax camera movement based on mouse
+      camera.position.x += (mouseX * 250 - camera.position.x) * 0.05;
+      camera.position.y += (-mouseY * 250 - camera.position.y) * 0.05;
+      camera.lookAt(scene.position);
+
+      const posAttr = pointsGeometry.getAttribute('position') as THREE.BufferAttribute;
+      const posArray = posAttr.array as Float32Array;
+
+      for (let i = 0; i < particleCount; i++) {
+        posArray[i * 3] += velocities[i * 3];
+        posArray[i * 3 + 1] += velocities[i * 3 + 1];
+        posArray[i * 3 + 2] += velocities[i * 3 + 2];
+
+        // Boundary checks (bounce back)
+        const x = posArray[i * 3];
+        const y = posArray[i * 3 + 1];
+        const z = posArray[i * 3 + 2];
+        const dist = Math.sqrt(x*x + y*y + z*z);
+        if (dist > r) {
+          velocities[i * 3] *= -1;
+          velocities[i * 3 + 1] *= -1;
+          velocities[i * 3 + 2] *= -1;
+        }
+      }
+      posAttr.needsUpdate = true;
+
+      const linePositions: number[] = [];
+      const lineColors: number[] = [];
+
+      for (let i = 0; i < particleCount; i++) {
+        for (let j = i + 1; j < particleCount; j++) {
+          const dx = posArray[i * 3] - posArray[j * 3];
+          const dy = posArray[i * 3 + 1] - posArray[j * 3 + 1];
+          const dz = posArray[i * 3 + 2] - posArray[j * 3 + 2];
+          const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+          if (dist < maxDistance) {
+            linePositions.push(posArray[i * 3], posArray[i * 3 + 1], posArray[i * 3 + 2]);
+            linePositions.push(posArray[j * 3], posArray[j * 3 + 1], posArray[j * 3 + 2]);
+
+            const alpha = 1.0 - (dist / maxDistance);
+            lineColors.push(0.48 * alpha, 0.38 * alpha, 1.0 * alpha);
+            lineColors.push(0.48 * alpha, 0.38 * alpha, 1.0 * alpha);
+          }
+        }
+      }
+
+      lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+      lineGeometry.setAttribute('color', new THREE.Float32BufferAttribute(lineColors, 3));
+
+      renderer.render(scene, camera);
+    };
+
+    animate();
+
+    const handleResize = () => {
+      if (!container) return;
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    };
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('resize', handleResize);
+      if (container.contains(renderer.domElement)) {
+        container.removeChild(renderer.domElement);
+      }
+      renderer.dispose();
+    };
+  }, []);
+
+  return <div ref={containerRef} className="absolute inset-0 z-0 pointer-events-none" />;
+};
+
 /* ─── 3D Hero Section ────────────────────────────────────── */
 const HeroSection = () => {
-  const { scrollY } = useScroll();
-  const y1 = useTransform(scrollY, [0, 1000], [0, 200]);
-  const y2 = useTransform(scrollY, [0, 1000], [0, -100]);
-  const scale = useTransform(scrollY, [0, 1000], [1, 1.2]);
-  const opacity = useTransform(scrollY, [0, 500], [1, 0]);
-
   return (
     <div className="relative flex flex-col justify-center items-center min-h-[calc(100vh-80px)] px-6 text-center pt-16 pb-8 overflow-hidden perspective-[1000px]">
-      {/* Dynamic 3D Background */}
-      <motion.div style={{ scale, opacity }} className="absolute inset-0 z-0 pointer-events-none">
+      {/* Interactive WebGL 3D Constellation Background */}
+      <InteractiveThreeBackground />
+
+      {/* Dynamic Glow Overlays */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background/90 to-background/20" />
-        <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-primary/20 blur-[120px]" />
-        <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-[30rem] h-[30rem] rounded-full bg-purple-500/20 blur-[150px]" />
-      </motion.div>
+        <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-primary/10 blur-[120px]" />
+        <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-[30rem] h-[30rem] rounded-full bg-purple-500/10 blur-[150px]" />
+      </div>
 
       <div className="w-full max-w-5xl flex flex-col items-center justify-center z-10 relative">
-        <motion.div 
-          initial={{ opacity: 0, y: -20, rotateX: 30 }}
-          animate={{ opacity: 1, y: 0, rotateX: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="flex items-center gap-3 border border-primary/30 px-5 py-2 rounded-full bg-background/60 backdrop-blur-xl shadow-2xl shadow-primary/10 hover:border-primary/60 transition-all cursor-pointer mb-10"
-        >
-          <span className="flex h-2.5 w-2.5 rounded-full bg-primary animate-pulse shadow-[0_0_12px_var(--color-primary)]" />
-          <p className="text-xs md:text-sm font-bold tracking-wide text-foreground uppercase">
-            Join 200+ Professional Investors
-          </p>
-          <span className="text-xs bg-primary/20 px-3 py-1 rounded-full text-primary font-bold">Explore</span>
-        </motion.div>
-
-        <motion.h1 
-          initial={{ opacity: 0, y: 40, rotateX: -20 }}
-          animate={{ opacity: 1, y: 0, rotateX: 0 }}
-          transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
-          className="text-5xl sm:text-7xl md:text-[6rem] font-extrabold tracking-tighter max-w-5xl leading-[1.05] text-foreground drop-shadow-2xl"
-        >
+        <h1 className="hero-title text-5xl sm:text-7xl md:text-[6rem] font-extrabold tracking-tighter max-w-5xl leading-[1.05] text-foreground drop-shadow-2xl">
           Redefining <span className="text-transparent bg-clip-text bg-gradient-to-br from-primary via-purple-500 to-accent drop-shadow-sm">Intelligence</span> for the Modern Investor
-        </motion.h1>
+        </h1>
 
-        <motion.p 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut", delay: 0.4 }}
-          className="mt-8 text-lg md:text-2xl text-muted-foreground max-w-3xl leading-relaxed font-medium"
-        >
+        <p className="hero-subtitle mt-8 text-lg md:text-2xl text-muted-foreground max-w-3xl leading-relaxed font-medium">
           Experience the future of financial research with AI-driven insights, institutional thinking, and education-first portfolio analysis.
-        </motion.p>
+        </p>
 
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 0.6 }}
-          className="mt-12 flex flex-col sm:flex-row gap-6 items-center"
-        >
+        <div className="hero-buttons mt-12 flex flex-col sm:flex-row gap-6 items-center">
           <Link to="/try-finsight">
             <Button className="text-lg py-7 px-12 rounded-full bg-primary text-primary-foreground shadow-2xl shadow-primary/30 hover:shadow-primary/50 hover:scale-[1.05] active:scale-95 transition-all duration-300 font-bold group">
               Start Your Journey
@@ -128,45 +273,23 @@ const HeroSection = () => {
               Discover Product <PiSparkleFill className="ml-3 text-primary group-hover:rotate-12 transition-transform" />
             </Button>
           </Link>
-        </motion.div>
+        </div>
 
         {/* Social proof numbers */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1 }}
-          className="mt-24 flex flex-wrap justify-center gap-12 sm:gap-24"
-        >
+        <div className="mt-24 flex flex-wrap justify-center gap-12 sm:gap-24">
           {[
-            { value: 200, suffix: '+', label: 'Investors' },
             { value: 60, suffix: '%', label: 'Better Decisions' },
             { value: 3, suffix: 'X', label: 'Faster Understanding' },
           ].map((stat) => (
-            <motion.div 
-              key={stat.label} 
-              whileHover={{ scale: 1.1, y: -5 }}
-              className="text-center group"
-            >
+            <div key={stat.label} className="hero-social-stat text-center group">
               <p className="text-4xl sm:text-6xl font-black text-foreground group-hover:text-primary transition-colors duration-300 drop-shadow-xl">
                 <AnimatedCounter end={stat.value} suffix={stat.suffix} />
               </p>
               <p className="text-sm uppercase tracking-widest font-bold text-muted-foreground mt-3">{stat.label}</p>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
-
-      {/* 3D Floating elements */}
-      <motion.div style={{ y: y1 }} className="absolute right-[5%] top-[20%] hidden xl:block">
-        <div className="glass-panel p-6 rounded-3xl rotate-12 hover:rotate-0 transition-transform duration-500 shadow-2xl backdrop-blur-xl border border-white/10">
-          <PiBrain className="text-6xl text-primary drop-shadow-[0_0_15px_rgba(255,68,51,0.5)]" />
-        </div>
-      </motion.div>
-      <motion.div style={{ y: y2 }} className="absolute left-[5%] top-[40%] hidden xl:block">
-        <div className="glass-panel p-6 rounded-3xl -rotate-12 hover:rotate-0 transition-transform duration-500 shadow-2xl backdrop-blur-xl border border-white/10">
-          <PiChartLine className="text-6xl text-purple-500 drop-shadow-[0_0_15px_rgba(168,85,247,0.5)]" />
-        </div>
-      </motion.div>
     </div>
   );
 };
@@ -258,13 +381,7 @@ const WhoItsForSection = () => {
     <section className="py-32 relative overflow-hidden bg-background">
       <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/5 via-background to-background" />
       <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <motion.div 
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
-          className="text-center max-w-4xl mx-auto mb-24"
-        >
+        <div className="audience-header text-center max-w-4xl mx-auto mb-24">
           <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-sm font-bold uppercase tracking-widest text-primary mb-6 shadow-[0_0_15px_rgba(255,68,51,0.2)]">
             Ecosystem
           </span>
@@ -274,20 +391,13 @@ const WhoItsForSection = () => {
           <p className="text-muted-foreground text-lg md:text-xl font-medium">
             Whether you&apos;re starting your wealth journey or managing institutional portfolios.
           </p>
-        </motion.div>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div className="audience-grid grid-cols-1 md:grid-cols-3 gap-10">
           {audienceCards.map((card, i) => {
             const tiltRef = useTilt(15);
             return (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.6, delay: i * 0.2 }}
-                className="perspective-[1000px]"
-              >
+              <div key={i} className="audience-card perspective-[1000px]">
                 <div
                   ref={tiltRef}
                   className="glass-panel p-10 rounded-3xl flex flex-col items-start group will-change-transform cursor-pointer border-t border-l border-white/10 shadow-2xl transition-all duration-200 h-full bg-gradient-to-br from-background/80 to-background/40"
@@ -306,7 +416,7 @@ const WhoItsForSection = () => {
                     Explore Solutions <PiArrowRight size={20} />
                   </div>
                 </div>
-              </motion.div>
+              </div>
             );
           })}
         </div>
@@ -320,21 +430,10 @@ const CTASection = () => {
   return (
     <section className="py-32 px-6 relative overflow-hidden">
       <div className="absolute inset-0 bg-background pointer-events-none" />
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1 }}
-        className="max-w-5xl mx-auto relative z-10"
-      >
+      <div className="cta-container max-w-5xl mx-auto relative z-10">
         <div className="relative overflow-hidden rounded-[3rem] border border-primary/30 bg-gradient-to-br from-primary/10 via-background to-purple-900/10 p-16 md:p-24 text-center shadow-[0_0_50px_rgba(255,68,51,0.15)] backdrop-blur-2xl">
-          {/* Animated glow */}
           <div className="absolute inset-0 pointer-events-none">
-            <motion.div 
-              animate={{ rotate: 360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 blur-[100px] rounded-full" 
-            />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 blur-[100px] rounded-full" />
           </div>
 
           <div className="relative z-10">
@@ -358,19 +457,83 @@ const CTASection = () => {
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 };
 
 /* ─── Main ────────────────────────────────────────────── */
-const LandingPage: React.FC = () => (
-  <main className="relative bg-background">
-    <HeroSection />
-    <FeatureStrip />
-    <WhoItsForSection />
-    <CTASection />
-  </main>
-);
+const LandingPage: React.FC = () => {
+  const landingRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // 1. Hero timeline reveal animation
+      const tl = gsap.timeline({ defaults: { ease: 'power4.out', duration: 1.2 } });
+
+      tl.from('.hero-title', { opacity: 0, y: 60, rotationX: -15, transformOrigin: 'top center', duration: 1.5 })
+        .from('.hero-subtitle', { opacity: 0, y: 30, duration: 1.2 }, '-=1.0')
+        .from('.hero-buttons', { opacity: 0, scale: 0.9, duration: 0.8 }, '-=0.9')
+        .from('.hero-social-stat', { opacity: 0, y: 40, stagger: 0.15, duration: 1 }, '-=0.7');
+
+      // 2. Who it's for section reveal on scroll
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            gsap.from('.audience-header', {
+              opacity: 0,
+              y: 40,
+              duration: 1,
+              ease: 'power3.out',
+            });
+            gsap.from('.audience-card', {
+              opacity: 0,
+              y: 60,
+              rotationX: 10,
+              stagger: 0.2,
+              duration: 1,
+              ease: 'power3.out',
+              delay: 0.2,
+            });
+            observer.disconnect();
+          }
+        });
+      }, { threshold: 0.1 });
+
+      const target = document.querySelector('.audience-grid');
+      if (target) observer.observe(target);
+
+      // 3. CTA Section reveal on scroll
+      const ctaObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            gsap.from('.cta-container', {
+              opacity: 0,
+              scale: 0.95,
+              y: 40,
+              duration: 1.2,
+              ease: 'power3.out',
+            });
+            ctaObserver.disconnect();
+          }
+        });
+      }, { threshold: 0.1 });
+
+      const ctaTarget = document.querySelector('.cta-container');
+      if (ctaTarget) ctaObserver.observe(ctaTarget);
+    }, landingRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <main ref={landingRef} className="relative bg-background overflow-x-hidden">
+      <HeroSection />
+      <FeatureStrip />
+      <WhoItsForSection />
+      <CTASection />
+    </main>
+  );
+};
 
 export default LandingPage;

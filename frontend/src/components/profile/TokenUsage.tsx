@@ -198,13 +198,7 @@ const RefillCard = ({ usage }: { usage: TokenUsageData }) => (
 );
 
 const UsageDetails = ({ usage }: { usage: TokenUsageData }) => {
-  const dailyTokensLeft = usage.daily_token_limit - usage.daily_tokens_used;
-  const tokensLeft = Math.min(usage.available_tokens, dailyTokensLeft);
-
-  const displayDailyUsed =
-    tokensLeft <= 5000 ? usage.daily_token_limit : usage.daily_tokens_used;
-  
-  const dailyPercent = usagePercent(displayDailyUsed, usage.daily_token_limit);
+  const dailyPercent = usagePercent(usage.daily_tokens_used, usage.daily_token_limit);
   const walletPercent = usagePercent(usage.available_tokens, usage.weekly_tokens);
 
   const dailyStatus = getDailyStatus(dailyPercent);
