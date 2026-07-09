@@ -15,7 +15,10 @@ const SecurityPreferences: React.FC<SecurityPreferencesProps> = ({
   embedded = false,
 }) => {
   const { user } = useAuth();
-  const [optIn, setOptIn] = React.useState(() => localStorage.getItem("weekly_briefing_opt_in") !== "false");
+  const [optIn, setOptIn] = React.useState(() => {
+    if (typeof window === 'undefined') return true;
+    return localStorage.getItem("weekly_briefing_opt_in") !== "false";
+  });
 
   const content = (
     <div className="space-y-4">

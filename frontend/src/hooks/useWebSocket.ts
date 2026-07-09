@@ -8,7 +8,7 @@ type WebSocketHookResult = {
 };
 
 const buildWsUrl = (urlPath: string): string => {
-  const baseUrl = (import.meta.env.VITE_API_BASE_URL as string)?.replace(/\/+$/, '') || '';
+  const baseUrl = (process.env.VITE_API_BASE_URL as string || '')?.replace(/\/+$/, '') || '';
 
   return baseUrl.replace(/^http/, 'ws') + urlPath;
 };

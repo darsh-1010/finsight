@@ -1,66 +1,45 @@
 # -------------------------
-# Stage 1: Build
+# Stage 1: Dependencies
 # -------------------------
-FROM node:20-alpine AS build
-
+FROM node:20-alpine AS deps
 WORKDIR /app
-
-# Install dependencies
 COPY package*.json ./
 RUN npm ci
 
-# Copy source code
+# -------------------------
+# Stage 2: Builder
+# -------------------------
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
-# Accept environment variables at build time
-ARG VITE_API_BASE_URL
-ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
-
-# Build the app
+ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
 # -------------------------
-# Stage 2: Serve
+# Stage 3: Runner
 # -------------------------
-FROM nginx:alpine
+FROM node:20-alpine AS runner
+WORKDIR /app
 
-# Remove default nginx website
-RUN rm -rf /usr/share/nginx/html/*
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+ENV NEXT_TELEMETRY_DISABLED=1
 
-# Copy built files from builder
-COPY --from=build /app/dist /usr/share/nginx/html
+# Create app user for security
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
 
-# Copy custom nginx config
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /app/public ./public
 
-# Expose port 80
-EXPOSE 80
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Start Nginx
-CMD ["nginx", "-g", "daemon off;"]
+USER nextjs
 
+EXPOSE 3000
 
-
-
-
-# # Build Stage
-# FROM node:20-alpine AS build
-
-# WORKDIR /app
-
-# COPY package*.json ./
-
-# RUN npm install
-
-# COPY . .
-
-# RUN npm run build
-
-# # Production Stage
-# FROM nginx:alpine
-
-# COPY --from=build /app/dist /usr/share/nginx/html
-
-# EXPOSE 80
-
-# CMD ["nginx", "-g", "daemon off;"]
+CMD ["node", "server.js"]

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   TrendingUp,
   TrendingDown,
@@ -8,6 +8,7 @@ import {
   Zap,
   Clock,
 } from "lucide-react";
+import { gsap } from "gsap";
 
 import TradingViewChart from "../components/dashboard/TradingViewChart";
 import TradingViewCryptoNews from "../components/dashboard/TradingViewCryptoNews";
@@ -78,8 +79,8 @@ const KpiCard: React.FC<KpiCardProps> = ({
   delay,
 }) => (
   <div
-    className="glass-panel bento-hover p-5 rounded-xl flex flex-col gap-3 group animate-fade-in-up will-change-transform"
-    style={{ animationDelay: delay }}
+    className="kpi-card glass-panel bento-hover p-5 rounded-xl flex flex-col gap-3 group will-change-transform"
+    style={{ animationDelay: delay, opacity: 0, transform: 'translateY(28px)' }}
   >
     <div className="flex items-center justify-between">
       <span className="text-sm font-semibold text-muted-foreground">{title}</span>
@@ -110,6 +111,40 @@ const KpiCard: React.FC<KpiCardProps> = ({
   </div>
 );
 
+/* ─── Animated Section Wrapper ────────────────────────── */
+const AnimatedSection: React.FC<{ children: React.ReactNode; className?: string }> = ({
+  children,
+  className,
+}) => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          gsap.to(el, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' });
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.08 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={sectionRef}
+      className={className}
+      style={{ opacity: 0, transform: 'translateY(24px)' }}
+    >
+      {children}
+    </div>
+  );
+};
+
 /* ─── Header ──────────────────────────────────────────── */
 const HeaderComponent = () => {
   const [time, setTime] = useState(new Date());
@@ -120,7 +155,7 @@ const HeaderComponent = () => {
   }, []);
 
   return (
-    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="dashboard-header flex flex-col md:flex-row md:items-center justify-between gap-4" style={{ opacity: 0 }}>
       <div>
         <div className="flex items-center gap-2 mb-1">
           <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse" />
@@ -162,6 +197,17 @@ const SectionLabel: React.FC<{ icon: React.ReactNode; label: string }> = ({
   </div>
 );
 
+/* ─── GSAP Entry Animations ───────────────────────────── */
+const useDashboardAnimations = () => {
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.to('.dashboard-header', { opacity: 1, duration: 0.6, ease: 'power2.out', delay: 0.1 });
+      gsap.to('.kpi-card', { opacity: 1, y: 0, duration: 0.55, stagger: 0.1, ease: 'power3.out', delay: 0.3 });
+    });
+    return () => ctx.revert();
+  }, []);
+};
+
 /* ─── Hook ────────────────────────────────────────────── */
 const useDashboardHook = () => {
   const [showWelcomeModal, setShowWelcomeModal] = useState(() => {
@@ -186,6 +232,7 @@ const useDashboardHook = () => {
 /* ─── Main Dashboard ──────────────────────────────────── */
 const Dashboard: React.FC = () => {
   const { showWelcomeModal, handleCloseWelcomeModal } = useDashboardHook();
+  useDashboardAnimations();
 
   return (
     <div className="space-y-6">
@@ -206,31 +253,31 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Primary Chart */}
-        <section>
+        <AnimatedSection>
           <SectionLabel icon={<Activity className="w-4 h-4" />} label="Live Chart" />
           <div className="w-full">
             <TradingViewChart />
           </div>
-        </section>
+        </AnimatedSection>
 
         {/* Row 1: Technical Analysis + Market Overview + Crypto News */}
-        <section>
+        <AnimatedSection>
           <SectionLabel icon={<BarChart2 className="w-4 h-4" />} label="Market Signals" />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <TradingViewTechnicalAnalysis />
             <TradingViewMarketOverview />
             <TradingViewCryptoNews />
           </div>
-        </section>
+        </AnimatedSection>
 
         {/* Row 2: Screener + Calendar */}
-        <section>
+        <AnimatedSection>
           <SectionLabel icon={<Zap className="w-4 h-4" />} label="Research & Events" />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <TradingViewScreener />
             <TradingViewCalendar />
           </div>
-        </section>
+        </AnimatedSection>
       </div>
     </div>
   );

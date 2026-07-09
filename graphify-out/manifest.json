@@ -720,18 +720,13 @@
     "semantic_hash": ""
   },
   "frontend/package.json": {
-    "mtime": 1783589850.417602,
-    "ast_hash": "2fb41f3c71fd7bf033b01ffca18f002c",
+    "mtime": 1783610501.177922,
+    "ast_hash": "9d2b523c49e2a3d179ecdfffd780fd78",
     "semantic_hash": ""
   },
   "frontend/postcss.config.js": {
     "mtime": 1782911123.8348773,
     "ast_hash": "6d787f7d4ddbb943db3480f724aa3fc5",
-    "semantic_hash": ""
-  },
-  "frontend/src/App.tsx": {
-    "mtime": 1782911123.9485106,
-    "ast_hash": "e3fd52fef743368ac61a41d0b5f1e598",
     "semantic_hash": ""
   },
   "frontend/src/__tests__/App.test.tsx": {
@@ -745,8 +740,8 @@
     "semantic_hash": ""
   },
   "frontend/src/api/auth.ts": {
-    "mtime": 1782912365.4291134,
-    "ast_hash": "d0769a018d75e690c28f49f0d6a7358d",
+    "mtime": 1783600329.2549284,
+    "ast_hash": "2224807aa0acdfe1ee7b81a6409bed0b",
     "semantic_hash": ""
   },
   "frontend/src/api/brokers.ts": {
@@ -755,13 +750,13 @@
     "semantic_hash": ""
   },
   "frontend/src/api/chat.ts": {
-    "mtime": 1782911123.9810703,
-    "ast_hash": "22866a036adbedc539433ddb6ffb90c4",
+    "mtime": 1783600299.5339,
+    "ast_hash": "ffda7357d5589dc96fe88a707dd0f181",
     "semantic_hash": ""
   },
   "frontend/src/api/client.ts": {
-    "mtime": 1782911123.989372,
-    "ast_hash": "2d87ab53211d9cb1abf1e26fc9b45a0e",
+    "mtime": 1783600313.4979138,
+    "ast_hash": "2fd844a68f64161b587d0e78b7ba8e1d",
     "semantic_hash": ""
   },
   "frontend/src/api/content.ts": {
@@ -1240,8 +1235,8 @@
     "semantic_hash": ""
   },
   "frontend/src/components/profile/SecurityPreferences.tsx": {
-    "mtime": 1783429421.9929836,
-    "ast_hash": "9007342b91f964fd64f8a975e5fef7e8",
+    "mtime": 1783602705.0467415,
+    "ast_hash": "9a0f331fd2bf72a5aafa00b1c8c3f47a",
     "semantic_hash": ""
   },
   "frontend/src/components/profile/TokenUsage.tsx": {
@@ -1310,8 +1305,8 @@
     "semantic_hash": ""
   },
   "frontend/src/context/ThemeContext.tsx": {
-    "mtime": 1782911124.9259179,
-    "ast_hash": "aa50c14525cebb5c57a8fb4def65e36f",
+    "mtime": 1783602683.3517582,
+    "ast_hash": "3110afedfdc9bb90ed9140c855dfb4c5",
     "semantic_hash": ""
   },
   "frontend/src/data/finsight_starter_questions.json": {
@@ -1350,8 +1345,8 @@
     "semantic_hash": ""
   },
   "frontend/src/hooks/useWebSocket.ts": {
-    "mtime": 1782911125.043878,
-    "ast_hash": "c79d2e97578007857891c5705e007d35",
+    "mtime": 1783600280.8850293,
+    "ast_hash": "7ca92c5285f7962c26cf0fba15d0df6e",
     "semantic_hash": ""
   },
   "frontend/src/layouts/MinimalLayout.tsx": {
@@ -1394,129 +1389,9 @@
     "ast_hash": "6a4de14a62c923e9a859351ab2931369",
     "semantic_hash": ""
   },
-  "frontend/src/main.tsx": {
-    "mtime": 1782911125.200296,
-    "ast_hash": "9dd10424a1a09a2fcebceaa33f17bea8",
-    "semantic_hash": ""
-  },
-  "frontend/src/pages/AboutUs.tsx": {
-    "mtime": 1783071627.7415185,
-    "ast_hash": "8487f3729f1929bf1c4eac4d2072800d",
-    "semantic_hash": ""
-  },
-  "frontend/src/pages/AskFinSight.tsx": {
-    "mtime": 1782912365.6725698,
-    "ast_hash": "88863c0ee4b4b52085ae843de99fc425",
-    "semantic_hash": ""
-  },
-  "frontend/src/pages/Dashboard.tsx": {
-    "mtime": 1783337586.7553601,
-    "ast_hash": "1c5f5e5ffeda8b901730be8805610dc8",
-    "semantic_hash": ""
-  },
-  "frontend/src/pages/EmailVerificationNotice.tsx": {
-    "mtime": 1782984271.0555007,
-    "ast_hash": "66627f48fceefdd5a1395eda5f971296",
-    "semantic_hash": ""
-  },
-  "frontend/src/pages/ForgotPasswordPage.tsx": {
-    "mtime": 1783071797.0531354,
-    "ast_hash": "0fc2cc8972916b667f1608244c83b3ce",
-    "semantic_hash": ""
-  },
-  "frontend/src/pages/LandingPage.tsx": {
-    "mtime": 1783591902.525287,
-    "ast_hash": "7469b58257ceb03dba2d130133d36704",
-    "semantic_hash": ""
-  },
-  "frontend/src/pages/LoginPage.tsx": {
-    "mtime": 1783325393.4591691,
-    "ast_hash": "dfd690f969e57aa41ca0d7659ccb84f0",
-    "semantic_hash": ""
-  },
-  "frontend/src/pages/MarketInsigts.tsx": {
-    "mtime": 1782911125.3060737,
-    "ast_hash": "3b0c067a185853e2007fdc0cf0aa9a5d",
-    "semantic_hash": ""
-  },
-  "frontend/src/pages/PaymentCancel.tsx": {
-    "mtime": 1782984288.1019497,
-    "ast_hash": "012452bc2ee314c3ce63dd888fc922c2",
-    "semantic_hash": ""
-  },
-  "frontend/src/pages/PaymentSuccess.tsx": {
-    "mtime": 1782984279.3457062,
-    "ast_hash": "d4975abbbdd3125625cb55b3245c12d4",
-    "semantic_hash": ""
-  },
-  "frontend/src/pages/Pricing.tsx": {
-    "mtime": 1783325364.8410769,
-    "ast_hash": "919a47105ce3c4b949a6f61634279dfe",
-    "semantic_hash": ""
-  },
-  "frontend/src/pages/Product.tsx": {
-    "mtime": 1783514596.4077303,
-    "ast_hash": "e6a8ac2d425d8f6d05d7130fe381951d",
-    "semantic_hash": ""
-  },
-  "frontend/src/pages/ResetPasswordPage.tsx": {
-    "mtime": 1783071900.1965673,
-    "ast_hash": "7e07a07bc48f6083e3b5ddb3ec694f40",
-    "semantic_hash": ""
-  },
-  "frontend/src/pages/SignupPage.tsx": {
-    "mtime": 1783325411.2885005,
-    "ast_hash": "bf619b4b626694be0fba5aae5ebb23de",
-    "semantic_hash": ""
-  },
-  "frontend/src/pages/TryAskFinSight.tsx": {
-    "mtime": 1783085156.2882438,
-    "ast_hash": "de014c08a65a6deac05322628409823d",
-    "semantic_hash": ""
-  },
-  "frontend/src/pages/UserOnboarding.tsx": {
-    "mtime": 1783085156.3234234,
-    "ast_hash": "6c8d62ba2ddc96ca9a842d2f99f8264b",
-    "semantic_hash": ""
-  },
-  "frontend/src/pages/UserProfile.tsx": {
-    "mtime": 1782911125.4150212,
-    "ast_hash": "db6eca8345e03188130cb36a8b84a275",
-    "semantic_hash": ""
-  },
-  "frontend/src/pages/VerifyEmailPage.tsx": {
-    "mtime": 1782911125.420648,
-    "ast_hash": "c977ab6d9fe1cd7094b4c025028524dc",
-    "semantic_hash": ""
-  },
-  "frontend/src/pages/admin/AdminBrokersPage.tsx": {
-    "mtime": 1782911125.426877,
-    "ast_hash": "7970bbdc80dbe93c8e59d144158a5e63",
-    "semantic_hash": ""
-  },
-  "frontend/src/pages/admin/AdminDashboard.tsx": {
-    "mtime": 1783085156.0350509,
-    "ast_hash": "183a7fbf8a8b4315d04f2dd2cecc20c5",
-    "semantic_hash": ""
-  },
-  "frontend/src/pages/admin/AdminInsightsPage.tsx": {
-    "mtime": 1782911125.445621,
-    "ast_hash": "c1ef32e4df26b22db8b3879e6db0b4f5",
-    "semantic_hash": ""
-  },
-  "frontend/src/pages/admin/AdminScrapingPage.tsx": {
-    "mtime": 1782912365.7071588,
-    "ast_hash": "c3d0df66cf7d97f97b3d887fceba2156",
-    "semantic_hash": ""
-  },
-  "frontend/src/routes/AppRoutes.tsx": {
-    "mtime": 1783429335.4576938,
-    "ast_hash": "4980a78280f492615a9c9c4eb4f60a49",
-    "semantic_hash": ""
-  },
   "frontend/src/store/apiSlice.ts": {
-    "mtime": 1782963572.6524525,
-    "ast_hash": "b52819651c95b6a569af59a97bb5a052",
+    "mtime": 1783601320.7635782,
+    "ast_hash": "62f517f0f77d12e8e4dedb7014c00ffe",
     "semantic_hash": ""
   },
   "frontend/src/store/hooks.ts": {
@@ -1555,18 +1430,13 @@
     "semantic_hash": ""
   },
   "frontend/tsconfig.json": {
-    "mtime": 1782911125.5802145,
-    "ast_hash": "a6f8f16d872177e659b7676f4706b077",
+    "mtime": 1783599690.9834156,
+    "ast_hash": "021e6da1fe5780a0fb7b852b9e366f4d",
     "semantic_hash": ""
   },
   "frontend/tsconfig.node.json": {
     "mtime": 1782911125.588403,
     "ast_hash": "ca416e2a702e216deaaa822d738dba59",
-    "semantic_hash": ""
-  },
-  "frontend/vite.config.ts": {
-    "mtime": 1782911125.5933983,
-    "ast_hash": "952c5ee3a872e18ac8f5a2f96b6729bc",
     "semantic_hash": ""
   },
   "ml/config/__init__.py": {
@@ -2509,11 +2379,6 @@
     "ast_hash": "59b0edcaf3938dc69ea2b0ee54c269de",
     "semantic_hash": ""
   },
-  "frontend/src/pages/Sandbox.tsx": {
-    "mtime": 1783517335.993718,
-    "ast_hash": "49ea9de10f426b4b49bf6c7b9dcf8830",
-    "semantic_hash": ""
-  },
   "documentation/api.md": {
     "mtime": 1783429469.0170486,
     "ast_hash": "95656ffeafb4516d5273eedbb2719f61",
@@ -2535,8 +2400,293 @@
     "semantic_hash": ""
   },
   "docker-compose.local.yml": {
-    "mtime": 1783513147.7333653,
-    "ast_hash": "2d3f159d4fdf513edcad61a152f7bdb0",
+    "mtime": 1783609508.4654808,
+    "ast_hash": "b859b039c3d71ce3fcbdfd37636afa0c",
+    "semantic_hash": ""
+  },
+  "frontend/next-env.d.ts": {
+    "mtime": 1783599691.0482583,
+    "ast_hash": "90426577ad8f38459f3e566411c85589",
+    "semantic_hash": ""
+  },
+  "frontend/next.config.ts": {
+    "mtime": 1783602146.8660965,
+    "ast_hash": "d7208d6756d9a8f068ab53a927d5550b",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/(minimal)/layout.tsx": {
+    "mtime": 1783599207.8389318,
+    "ast_hash": "878b8b056901066744d84f25ffe2a1c9",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/(minimal)/payment-cancel/page.tsx": {
+    "mtime": 1783603046.8627498,
+    "ast_hash": "9385a0f8b454a4fb2ee8b3da9015bed4",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/(minimal)/payment-success/page.tsx": {
+    "mtime": 1783603046.8663583,
+    "ast_hash": "32d965a648014457919a9a9281313039",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/(minimal)/verify-email-pending/page.tsx": {
+    "mtime": 1783603046.8698068,
+    "ast_hash": "fe7084a30b9ea16bf173e5f39920f076",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/(protected)/admin/brokers/page.tsx": {
+    "mtime": 1783603046.8768387,
+    "ast_hash": "89b6df55640f212f189adb50ba58072f",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/(protected)/admin/insights/page.tsx": {
+    "mtime": 1783603046.8795393,
+    "ast_hash": "902a9b63917d78b65682c92a08a5605f",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/(protected)/admin/page.tsx": {
+    "mtime": 1783603046.8737361,
+    "ast_hash": "610fe1e456daf7a4a31ac662fc79f900",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/(protected)/admin/scraping/page.tsx": {
+    "mtime": 1783603046.8825989,
+    "ast_hash": "d5cdb84277be82668f2055d37744222f",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/(protected)/ask_finsight/c/[conversationId]/page.tsx": {
+    "mtime": 1783603046.8888981,
+    "ast_hash": "bc482563ed328d62a488865836bcf75a",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/(protected)/ask_finsight/page.tsx": {
+    "mtime": 1783603046.8854089,
+    "ast_hash": "bc482563ed328d62a488865836bcf75a",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/(protected)/dashboard/page.tsx": {
+    "mtime": 1783603046.8925478,
+    "ast_hash": "d65db7d2b954c80b5ae85d37de180235",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/(protected)/layout.tsx": {
+    "mtime": 1783599056.617483,
+    "ast_hash": "7061b77926da47611d39c0872ccc43e8",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/(protected)/market_insights/page.tsx": {
+    "mtime": 1783603046.8942058,
+    "ast_hash": "1ee4fec187f5ad2b7763659f966b4d02",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/(protected)/sandbox/page.tsx": {
+    "mtime": 1783603046.905223,
+    "ast_hash": "0c0884acf5285732bee67aff7c4587b6",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/(protected)/user_profile/page.tsx": {
+    "mtime": 1783603046.9362037,
+    "ast_hash": "f8223eaab30e914a8a90896a30b62b28",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/(public)/about-us/page.tsx": {
+    "mtime": 1783603046.9402277,
+    "ast_hash": "bceb1f17db2109ee358b7bf3bec65a88",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/(public)/forgot-password/page.tsx": {
+    "mtime": 1783603046.9544415,
+    "ast_hash": "c48c5939b409b11ab185d152ca5ed889",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/(public)/layout.tsx": {
+    "mtime": 1783599006.1318438,
+    "ast_hash": "900f38609d88378917fbd49170b57a5d",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/(public)/login/page.tsx": {
+    "mtime": 1783603046.9574366,
+    "ast_hash": "be75b0824f5a8a339b06e1a151957611",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/(public)/pricing/page.tsx": {
+    "mtime": 1783603046.9676578,
+    "ast_hash": "808a8cc0ef9e9319526db9d6b41e1296",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/(public)/product/page.tsx": {
+    "mtime": 1783603046.971748,
+    "ast_hash": "cf35abfde3920ffa6fb6c68e35d5efc5",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/(public)/reset-password/page.tsx": {
+    "mtime": 1783603046.9737916,
+    "ast_hash": "055912221a93d8ade48833f7f03adf89",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/(public)/signup/page.tsx": {
+    "mtime": 1783603046.9783278,
+    "ast_hash": "6deab9063c0310df10a08e50367a807b",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/(public)/verify-email/page.tsx": {
+    "mtime": 1783603046.9813206,
+    "ast_hash": "5d4dfc5914b29144adfac1b218f12c72",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/layout.tsx": {
+    "mtime": 1783598981.87699,
+    "ast_hash": "4310e614a5048b017a1612072bd7834f",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/not-found.tsx": {
+    "mtime": 1783599258.6916072,
+    "ast_hash": "4202496b372fd3b1f3ca762257ba0e8a",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/onboarding/page.tsx": {
+    "mtime": 1783603173.686664,
+    "ast_hash": "906b3f73078288e92dd25d0f9ca0818d",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/page.tsx": {
+    "mtime": 1783598993.74486,
+    "ast_hash": "7bbcade5be1487708bf2e57ed698e018",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/providers.tsx": {
+    "mtime": 1783598956.1986144,
+    "ast_hash": "fc3b306b466560b52f551773adbd41b0",
+    "semantic_hash": ""
+  },
+  "frontend/src/app/try-finsight/page.tsx": {
+    "mtime": 1783603047.005526,
+    "ast_hash": "4ccb8474d3c792d4db73e3d66845b8fe",
+    "semantic_hash": ""
+  },
+  "frontend/src/lib/react-router-dom-shim.tsx": {
+    "mtime": 1783599392.499028,
+    "ast_hash": "5f351a31e938b78f5bcc86e781abb908",
+    "semantic_hash": ""
+  },
+  "frontend/src/middleware.ts": {
+    "mtime": 1783599255.801051,
+    "ast_hash": "12e935c34b036ff80b33432cad774be2",
+    "semantic_hash": ""
+  },
+  "frontend/src/views/AboutUs.tsx": {
+    "mtime": 1783596841.320276,
+    "ast_hash": "4c6aa6ab98027809196cefb49053c7ac",
+    "semantic_hash": ""
+  },
+  "frontend/src/views/AskFinSight.tsx": {
+    "mtime": 1782912365.6725698,
+    "ast_hash": "88863c0ee4b4b52085ae843de99fc425",
+    "semantic_hash": ""
+  },
+  "frontend/src/views/Dashboard.tsx": {
+    "mtime": 1783596649.1625164,
+    "ast_hash": "1ff769e41b7768bd3b9db831fe0ecf2c",
+    "semantic_hash": ""
+  },
+  "frontend/src/views/EmailVerificationNotice.tsx": {
+    "mtime": 1783603434.2330635,
+    "ast_hash": "0a7fb5974ed4ff9a928af9b5081d32b3",
+    "semantic_hash": ""
+  },
+  "frontend/src/views/ForgotPasswordPage.tsx": {
+    "mtime": 1783071797.0531354,
+    "ast_hash": "0fc2cc8972916b667f1608244c83b3ce",
+    "semantic_hash": ""
+  },
+  "frontend/src/views/LandingPage.tsx": {
+    "mtime": 1783591902.525287,
+    "ast_hash": "7469b58257ceb03dba2d130133d36704",
+    "semantic_hash": ""
+  },
+  "frontend/src/views/LoginPage.tsx": {
+    "mtime": 1783325393.4591691,
+    "ast_hash": "dfd690f969e57aa41ca0d7659ccb84f0",
+    "semantic_hash": ""
+  },
+  "frontend/src/views/MarketInsigts.tsx": {
+    "mtime": 1782911125.3060737,
+    "ast_hash": "3b0c067a185853e2007fdc0cf0aa9a5d",
+    "semantic_hash": ""
+  },
+  "frontend/src/views/PaymentCancel.tsx": {
+    "mtime": 1782984288.1019497,
+    "ast_hash": "012452bc2ee314c3ce63dd888fc922c2",
+    "semantic_hash": ""
+  },
+  "frontend/src/views/PaymentSuccess.tsx": {
+    "mtime": 1782984279.3457062,
+    "ast_hash": "d4975abbbdd3125625cb55b3245c12d4",
+    "semantic_hash": ""
+  },
+  "frontend/src/views/Pricing.tsx": {
+    "mtime": 1783325364.8410769,
+    "ast_hash": "919a47105ce3c4b949a6f61634279dfe",
+    "semantic_hash": ""
+  },
+  "frontend/src/views/Product.tsx": {
+    "mtime": 1783514596.4077303,
+    "ast_hash": "e6a8ac2d425d8f6d05d7130fe381951d",
+    "semantic_hash": ""
+  },
+  "frontend/src/views/ResetPasswordPage.tsx": {
+    "mtime": 1783071900.1965673,
+    "ast_hash": "7e07a07bc48f6083e3b5ddb3ec694f40",
+    "semantic_hash": ""
+  },
+  "frontend/src/views/Sandbox.tsx": {
+    "mtime": 1783517335.993718,
+    "ast_hash": "49ea9de10f426b4b49bf6c7b9dcf8830",
+    "semantic_hash": ""
+  },
+  "frontend/src/views/SignupPage.tsx": {
+    "mtime": 1783325411.2885005,
+    "ast_hash": "bf619b4b626694be0fba5aae5ebb23de",
+    "semantic_hash": ""
+  },
+  "frontend/src/views/TryAskFinSight.tsx": {
+    "mtime": 1783085156.2882438,
+    "ast_hash": "de014c08a65a6deac05322628409823d",
+    "semantic_hash": ""
+  },
+  "frontend/src/views/UserOnboarding.tsx": {
+    "mtime": 1783085156.3234234,
+    "ast_hash": "6c8d62ba2ddc96ca9a842d2f99f8264b",
+    "semantic_hash": ""
+  },
+  "frontend/src/views/UserProfile.tsx": {
+    "mtime": 1782911125.4150212,
+    "ast_hash": "db6eca8345e03188130cb36a8b84a275",
+    "semantic_hash": ""
+  },
+  "frontend/src/views/VerifyEmailPage.tsx": {
+    "mtime": 1782911125.420648,
+    "ast_hash": "c977ab6d9fe1cd7094b4c025028524dc",
+    "semantic_hash": ""
+  },
+  "frontend/src/views/admin/AdminBrokersPage.tsx": {
+    "mtime": 1782911125.426877,
+    "ast_hash": "7970bbdc80dbe93c8e59d144158a5e63",
+    "semantic_hash": ""
+  },
+  "frontend/src/views/admin/AdminDashboard.tsx": {
+    "mtime": 1783085156.0350509,
+    "ast_hash": "183a7fbf8a8b4315d04f2dd2cecc20c5",
+    "semantic_hash": ""
+  },
+  "frontend/src/views/admin/AdminInsightsPage.tsx": {
+    "mtime": 1782911125.445621,
+    "ast_hash": "c1ef32e4df26b22db8b3879e6db0b4f5",
+    "semantic_hash": ""
+  },
+  "frontend/src/views/admin/AdminScrapingPage.tsx": {
+    "mtime": 1782912365.7071588,
+    "ast_hash": "c3d0df66cf7d97f97b3d887fceba2156",
     "semantic_hash": ""
   }
 }

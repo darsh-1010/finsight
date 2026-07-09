@@ -163,7 +163,7 @@ export const visitingUsersApi = {
 
 /** Cookie name — configurable via VITE_VISITING_USER_COOKIE_NAME env variable */
 const VISITING_USER_COOKIE_NAME: string =
-  (import.meta.env.VITE_VISITING_USER_COOKIE_NAME as string | undefined) ??
+  (process.env.VITE_VISITING_USER_COOKIE_NAME as string | undefined) ??
   "finsight_visiting_user";
 
 /** Visiting user cookie expires after 4 hours */

@@ -16,9 +16,10 @@ const EmailVerificationNotice: React.FC = () => {
   const [resendStatus, setResendStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [checking, setChecking] = useState(false);
 
-  const [isPaymentRedirectPending, setIsPaymentRedirectPending] = useState(
-    sessionStorage.getItem('payment_redirect_pending') === 'true'
-  );
+  const [isPaymentRedirectPending, setIsPaymentRedirectPending] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return sessionStorage.getItem('payment_redirect_pending') === 'true';
+  });
 
   useEffect(() => {
     // Failsafe: if payment redirect doesn't happen within 8 seconds, clear it.
