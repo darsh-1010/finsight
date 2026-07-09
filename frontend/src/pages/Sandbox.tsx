@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Sparkles,
   Trash2,
@@ -7,8 +7,15 @@ import {
   LineChart,
   BookOpen,
   AlertTriangle,
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react";
-import { portfolioApi, type PortfolioAsset, type StressTestResponse } from "@/api/portfolio";
+import {
+  portfolioApi,
+  type PortfolioAsset,
+  type StressTestResponse,
+  type StressScenario,
+} from "@/api/portfolio";
 import { Button } from "@/components/ui/button";
 
 const QUICK_TICKERS = ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "NVDA", "NFLX", "META", "SPY", "QQQ"];
@@ -21,6 +28,32 @@ const Sandbox: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<StressTestResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [availableScenarios, setAvailableScenarios] = useState<StressScenario[]>([]);
+  const [selectedScenarios, setSelectedScenarios] = useState<string[]>([
+    "2008_Crash",
+    "2020_COVID",
+  ]);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(
+    "Historical Crashes"
+  );
+
+  useEffect(() => {
+    const fetchScenarios = async () => {
+      try {
+        const list = await portfolioApi.getStressScenarios();
+        setAvailableScenarios(list);
+      } catch (err) {
+        console.error("Failed to load stress test scenarios", err);
+      }
+    };
+    fetchScenarios();
+  }, []);
+
+  const groupedScenarios = availableScenarios.reduce((acc, sc) => {
+    if (!acc[sc.category]) acc[sc.category] = [];
+    acc[sc.category].push(sc);
+    return acc;
+  }, {} as Record<string, typeof availableScenarios>);
 
   const totalWeight = assets.reduce((sum, asset) => sum + (asset.weight || 0), 0);
 
@@ -82,7 +115,12 @@ const Sandbox: React.FC = () => {
         weight: a.weight / 100,
       }));
 
-      const res = await portfolioApi.runStressTest(payload);
+      if (selectedScenarios.length === 0) {
+        setError("Please select at least one stress scenario to simulate.");
+        return;
+      }
+
+      const res = await portfolioApi.runStressTest(payload, selectedScenarios);
       setResults(res);
     } catch (err: any) {
       setError(
@@ -214,6 +252,123 @@ const Sandbox: React.FC = () => {
             </form>
           </div>
 
+          {/* Stress Scenarios Selector */}
+          <div className="glass-panel rounded-2xl p-6 border border-border/40 shadow-sm space-y-4">
+            <div className="flex items-center gap-2">
+              <span className="p-1 rounded-lg bg-primary/10 text-primary">
+                <Sparkles className="w-4 h-4" />
+              </span>
+              <h2 className="text-base font-bold text-foreground">
+                Select Stress Scenarios
+              </h2>
+            </div>
+            <p className="text-muted-foreground text-xs">
+              Choose which historical crises and hypothetical regimes to simulate.
+            </p>
+
+            {/* Quick Actions */}
+            <div className="flex flex-wrap gap-2 text-2xs font-bold">
+              <button
+                type="button"
+                onClick={() => setSelectedScenarios(["2008_Crash", "2020_COVID"])}
+                className="px-2.5 py-1.5 rounded-lg bg-secondary hover:bg-secondary/80 text-muted-foreground transition-all duration-200"
+              >
+                Reset to Defaults
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedScenarios(availableScenarios.map((s) => s.id))}
+                className="px-2.5 py-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-all duration-200"
+              >
+                Select All ({availableScenarios.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedScenarios([])}
+                className="px-2.5 py-1.5 rounded-lg bg-destructive/10 hover:bg-destructive/20 text-destructive transition-all duration-200"
+              >
+                Clear All
+              </button>
+            </div>
+
+            {/* Category Accordion */}
+            <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
+              {Object.entries(groupedScenarios).map(([category, list]) => {
+                const isExpanded = expandedCategory === category;
+                const selectedCount = list.filter((s) =>
+                  selectedScenarios.includes(s.id)
+                ).length;
+
+                return (
+                  <div
+                    key={category}
+                    className="border border-border/30 rounded-xl overflow-hidden bg-secondary/10"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setExpandedCategory(isExpanded ? null : category)}
+                      className="w-full px-4 py-3 flex items-center justify-between text-xs font-bold text-foreground hover:bg-secondary/20 transition-all text-left"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        {category}
+                        <span className="px-1.5 py-0.5 rounded-full bg-primary/10 text-primary text-3xs font-extrabold">
+                          {selectedCount}/{list.length}
+                        </span>
+                      </span>
+                      {isExpanded ? (
+                        <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
+                      ) : (
+                        <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
+                      )}
+                    </button>
+
+                    {isExpanded && (
+                      <div className="p-3 border-t border-border/20 bg-background/40 space-y-2 animate-fade-in-up">
+                        {list.map((sc) => {
+                          const isChecked = selectedScenarios.includes(sc.id);
+                          return (
+                            <label
+                              key={sc.id}
+                              className="flex items-start gap-2.5 p-2 rounded-lg hover:bg-secondary/20 cursor-pointer transition-all duration-150"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={() => {
+                                  if (isChecked) {
+                                    setSelectedScenarios(
+                                      selectedScenarios.filter((id) => id !== sc.id)
+                                    );
+                                  } else {
+                                    setSelectedScenarios([...selectedScenarios, sc.id]);
+                                  }
+                                }}
+                                className="mt-0.5 rounded border-border/60 text-primary focus:ring-primary h-3.5 w-3.5 accent-primary"
+                              />
+                              <div className="space-y-0.5">
+                                <p className="text-xs font-bold text-foreground flex items-center gap-1.5 flex-wrap">
+                                  {sc.name}
+                                  {sc.type === "synthetic" && (
+                                    <span className="px-1.5 py-0.2 bg-purple-500/20 text-purple-400 text-3xs font-black uppercase rounded">
+                                      Hypothetical
+                                    </span>
+                                  )}
+                                </p>
+                                <p className="text-muted-foreground text-3xs leading-normal">
+                                  {sc.description}
+                                </p>
+                              </div>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Quick Select Panel */}
           <div className="glass-panel rounded-2xl p-5 border border-border/40 shadow-sm">
             <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
@@ -274,74 +429,61 @@ const Sandbox: React.FC = () => {
           {results && (
             <div className="space-y-6 animate-fade-in-up">
               {/* Bento Grid Results */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* 2008 Crisis Card */}
-                <div className="glass-panel rounded-2xl p-6 border border-border/40 relative overflow-hidden bento-hover">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-destructive/5 rounded-full blur-2xl" />
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                      2008 Financial Crisis
-                    </span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-destructive/10 text-destructive text-2xs font-extrabold uppercase">
-                      Subprime Collapse
-                    </span>
-                  </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[500px] overflow-y-auto pr-1 custom-scrollbar">
+                {Object.entries(results.crises).map(([key, data]) => {
+                  const scenarioInfo = availableScenarios.find((s) => s.id === key);
+                  const displayName = scenarioInfo?.name || key.replace(/_/g, " ");
+                  const displayCategory = scenarioInfo?.category || "Stress Test";
+                  const displayDesc = scenarioInfo?.description || "";
+                  const isSuccess = data.status === "success";
 
-                  {results.crises["2008_Crash"]?.status === "success" ? (
-                    <div className="space-y-4">
+                  const isNegative = data.return_pct < 0;
+                  const returnColorClass = isNegative ? "text-red-500" : "text-emerald-500";
+
+                  return (
+                    <div
+                      key={key}
+                      className="glass-panel rounded-2xl p-6 border border-border/40 relative overflow-hidden bento-hover flex flex-col justify-between"
+                    >
+                      <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
+
                       <div>
-                        <p className="text-3xl font-extrabold tracking-tight text-foreground">
-                          {results.crises["2008_Crash"].return_pct}%
+                        <div className="flex items-start justify-between gap-2 mb-3">
+                          <span className="text-xs font-bold text-foreground leading-snug">
+                            {displayName}
+                          </span>
+                          <span className="px-2 py-0.5 rounded bg-secondary text-muted-foreground text-3xs font-extrabold uppercase shrink-0">
+                            {displayCategory}
+                          </span>
+                        </div>
+                        <p className="text-3xs text-muted-foreground leading-normal mb-4">
+                          {displayDesc}
                         </p>
-                        <p className="text-xs text-muted-foreground mt-0.5">Cumulative Period Return</p>
                       </div>
-                      <div className="pt-2 border-t border-border/40">
-                        <p className="text-xl font-bold text-destructive">
-                          {results.crises["2008_Crash"].max_drawdown}%
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-0.5">Maximum Peak-to-Trough Drawdown</p>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-muted-foreground text-xs py-8">
-                      Insufficient historical data for this portfolio during the 2008 GFC.
-                    </div>
-                  )}
-                </div>
 
-                {/* 2020 COVID Card */}
-                <div className="glass-panel rounded-2xl p-6 border border-border/40 relative overflow-hidden bento-hover">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-destructive/5 rounded-full blur-2xl" />
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                      2020 COVID-19 Dip
-                    </span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-destructive/10 text-destructive text-2xs font-extrabold uppercase">
-                      Pandemic Shock
-                    </span>
-                  </div>
-
-                  {results.crises["2020_COVID"]?.status === "success" ? (
-                    <div className="space-y-4">
-                      <div>
-                        <p className="text-3xl font-extrabold tracking-tight text-foreground">
-                          {results.crises["2020_COVID"].return_pct}%
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-0.5">Cumulative Period Return</p>
-                      </div>
-                      <div className="pt-2 border-t border-border/40">
-                        <p className="text-xl font-bold text-destructive">
-                          {results.crises["2020_COVID"].max_drawdown}%
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-0.5">Maximum Peak-to-Trough Drawdown</p>
-                      </div>
+                      {isSuccess ? (
+                        <div className="space-y-3 pt-3 border-t border-border/30 mt-auto">
+                          <div className="flex justify-between items-baseline">
+                            <span className="text-2xs text-muted-foreground">Cumulative Return</span>
+                            <span className={`text-base font-extrabold ${returnColorClass}`}>
+                              {data.return_pct}%
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-baseline">
+                            <span className="text-2xs text-muted-foreground">Max Drawdown</span>
+                            <span className="text-base font-extrabold text-destructive">
+                              {data.max_drawdown}%
+                            </span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-muted-foreground text-xs py-4 border-t border-border/30 mt-auto">
+                          Insufficient historical data for this portfolio during this period.
+                        </div>
+                      )}
                     </div>
-                  ) : (
-                    <div className="text-muted-foreground text-xs py-8">
-                      Insufficient historical data for this portfolio during the 2020 COVID dip.
-                    </div>
-                  )}
-                </div>
+                  );
+                })}
               </div>
 
               {/* Custom SVG Comparison Chart */}
@@ -350,20 +492,22 @@ const Sandbox: React.FC = () => {
                   Drawdown Comparison Chart
                 </h3>
 
-                {/* Render SVG Bar Chart */}
-                <div className="w-full flex flex-col gap-4">
+                <div className="w-full flex flex-col gap-4 max-h-[350px] overflow-y-auto pr-1 custom-scrollbar">
                   {Object.entries(results.crises).map(([name, data]) => {
                     if (data.status !== "success") return null;
-                    const cleanName = name === "2008_Crash" ? "2008 Financial Crisis" : "2020 COVID Crash";
+                    const scenarioInfo = availableScenarios.find((s) => s.id === name);
+                    const cleanName = scenarioInfo?.name || name.replace(/_/g, " ");
                     const maxVal = 100;
                     const drawdownPct = Math.abs(data.max_drawdown);
                     const widthPct = Math.min(100, Math.max(5, (drawdownPct / maxVal) * 100));
 
                     return (
-                      <div key={name} className="space-y-1.5">
+                      <div key={name} className="space-y-1.5 animate-fade-in-up">
                         <div className="flex justify-between text-xs font-bold text-muted-foreground">
                           <span>{cleanName}</span>
-                          <span className="text-destructive font-extrabold">{data.max_drawdown}% Drawdown</span>
+                          <span className="text-destructive font-extrabold">
+                            {data.max_drawdown}% Drawdown
+                          </span>
                         </div>
                         <div className="h-6 w-full bg-secondary/40 rounded-full overflow-hidden border border-border/30">
                           <div
@@ -385,7 +529,7 @@ const Sandbox: React.FC = () => {
                 <div className="space-y-1 text-sm">
                   <h4 className="font-bold text-foreground">Why Stress-Test Your Portfolio?</h4>
                   <p className="text-muted-foreground text-xs leading-relaxed">
-                    Historical crisis simulations help you identify hidden asset correlations and structural risks. During GFC (2008), highly levered financial assets suffered major declines, whereas the 2020 COVID crash hit retail and hospitality segments instantly, but rebounded quickly due to central bank interventions.
+                    Historical crisis simulations and hypothetical sector shocks help you identify hidden asset correlations and structural risk exposure. For instance, tech bubble bursts or rate tightening impact high-multiple growth equities instantly, while supply chain spikes favor commodity and energy sectors over transportation or consumer retail.
                   </p>
                 </div>
               </div>

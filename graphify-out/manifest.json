@@ -2480,13 +2480,13 @@
     "semantic_hash": ""
   },
   "backend/app/api/routes/portfolio.py": {
-    "mtime": 1783415733.720858,
-    "ast_hash": "d90122f02c63a294efa2ba1d90517495",
+    "mtime": 1783516985.9248977,
+    "ast_hash": "1e1130046664d4304f4a1c311c94a87f",
     "semantic_hash": ""
   },
   "backend/app/services/portfolio_service.py": {
-    "mtime": 1783415596.736837,
-    "ast_hash": "d03c03ca98cf768f3ee0adb01b27735d",
+    "mtime": 1783516962.5670538,
+    "ast_hash": "e88cedc17c1629f928bd2f8dcb192dfa",
     "semantic_hash": ""
   },
   "backend/tests/services/test_portfolio_service.py": {
@@ -2505,13 +2505,13 @@
     "semantic_hash": ""
   },
   "frontend/src/api/portfolio.ts": {
-    "mtime": 1783429267.2419262,
-    "ast_hash": "36e1b4881239f10ee7cd98e1046da984",
+    "mtime": 1783517261.8072767,
+    "ast_hash": "59b0edcaf3938dc69ea2b0ee54c269de",
     "semantic_hash": ""
   },
   "frontend/src/pages/Sandbox.tsx": {
-    "mtime": 1783429815.423033,
-    "ast_hash": "098b73b6e07e14bc386acd5b5a3f253e",
+    "mtime": 1783517335.993718,
+    "ast_hash": "49ea9de10f426b4b49bf6c7b9dcf8830",
     "semantic_hash": ""
   },
   "documentation/api.md": {
