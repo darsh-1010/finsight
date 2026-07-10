@@ -1,5 +1,5 @@
 'use client';
-
+ 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
@@ -8,6 +8,7 @@ import Loader from '@/components/common/Loader';
 
 /**
  * Home route — shows LandingPage for guests, redirects logged-in users.
+ * Placed in (public) route group to inherit Navbar & Footer.
  */
 export default function HomePage() {
   const { isLoggedIn, isLoading, user } = useAuth();
