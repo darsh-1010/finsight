@@ -74,7 +74,7 @@ export interface InsightStatusUpdateRequest {
 }
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: (process.env.VITE_API_BASE_URL as string || '')?.replace(/\/+$/, ''),
+  baseUrl: (process.env.NEXT_PUBLIC_API_BASE_URL as string || '')?.replace(/\/+$/, ''),
   credentials: 'include',
   prepareHeaders: (headers) => {
     return headers;

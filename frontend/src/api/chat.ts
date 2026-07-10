@@ -41,7 +41,7 @@ export interface AttachmentUploadResponse {
 // ---------- Stream helpers ----------
 
 const getStreamUrl = (sessionId: string) => {
-  const baseUrl = (process.env.VITE_API_BASE_URL as string || '')?.replace(/\/+$/, '');
+  const baseUrl = (process.env.NEXT_PUBLIC_API_BASE_URL as string || '')?.replace(/\/+$/, '');
 
   return `${baseUrl}/chat/sessions/${sessionId}/messages`;
 };
@@ -142,7 +142,7 @@ export const chatApi = {
     content: string,
     onChunk: (chunk: string) => void
   ): Promise<void> => {
-    const baseUrl = (process.env.VITE_API_BASE_URL as string || '')?.replace(/\/+$/, '');
+    const baseUrl = (process.env.NEXT_PUBLIC_API_BASE_URL as string || '')?.replace(/\/+$/, '');
     const streamUrl = `${baseUrl}/chat/trial/stream`;
     const fetchOptions = {
       method: 'POST',
