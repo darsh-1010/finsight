@@ -184,6 +184,7 @@ async def refresh_openai_canary() -> None:
     if (
         not settings.openai_api_key
         or settings.openai_api_key == "your_openai_api_key_here"
+        or settings.openai_api_key.startswith("freellmapi-")
     ):
         _set_openai_canary_status(True, "embedding canary ok (mocked for local dev)")
         return

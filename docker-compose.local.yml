@@ -43,6 +43,7 @@ services:
     environment:
       # OpenAI Configuration
       OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_API_BASE: http://freellmapi:3001/v1
       OPENAI_MODEL: gpt-4.1-mini
       OPENAI_EMBEDDING_MODEL: text-embedding-3-small
       FREELLMAPI_BASE_URL: http://freellmapi:3001/v1
@@ -76,7 +77,7 @@ services:
       redis:
         condition: service_healthy
       freellmapi:
-        condition: service_healthy
+        condition: service_started
     networks:
       - finsight-chatbot-network
     healthcheck:
@@ -104,6 +105,7 @@ services:
     environment:
       # OpenAI (needed for Weaviate embedding after ingestion)
       OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_API_BASE: http://freellmapi:3001/v1
       OPENAI_MODEL: gpt-4.1-mini
       OPENAI_EMBEDDING_MODEL: text-embedding-3-small
       FREELLMAPI_BASE_URL: http://freellmapi:3001/v1
@@ -137,7 +139,7 @@ services:
       ML_SCRAPER_TIMEZONE: ${ML_SCRAPER_TIMEZONE:-Asia/Kolkata}
 
       # Explicit memory limit for Crawlee (in MB)
-      CRAWLEE_MEMORY_MBYTES: 6144
+      CRAWLEE_MEMORY_MBYTES: 2560
 
       # Backend API Integration for local development
       ML_DATA_TRANSFER_BASE_URL: ${ML_DATA_TRANSFER_BASE_URL:-http://host.docker.internal:8001}
@@ -149,14 +151,14 @@ services:
     deploy:
       resources:
         limits:
-          memory: 6G
+          memory: 3G
     depends_on:
       weaviate:
         condition: service_healthy
       redis:
         condition: service_healthy
       freellmapi:
-        condition: service_healthy
+        condition: service_started
     networks:
       - finsight-chatbot-network
     healthcheck:
@@ -187,6 +189,8 @@ services:
       ASYNC_INDEXING: 'false'
       WRITE_TIMEOUT: '600s'
       READ_TIMEOUT: '600s'
+      LIMIT_RESOURCES: "true"
+      GOMEMLIMIT: "1600MiB"
     volumes:
       - weaviate_data_v2:/var/lib/weaviate
     networks:
