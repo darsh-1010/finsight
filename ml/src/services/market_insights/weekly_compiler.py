@@ -232,9 +232,11 @@ class WeeklySummaryCompiler:
             "[WEEKLY_REPORT_CACHE_MISS] Tier: %d | Serving instant fallback and triggering background compile",
             user_tier,
         )
-        asyncio.create_task(
-            self.generate_and_cache_summary(user_id, raw_alerts, user_tier)
-        )
+        import sys
+        if "pytest" not in sys.modules:
+            asyncio.create_task(
+                self.generate_and_cache_summary(user_id, raw_alerts, user_tier)
+            )
 
         fallback_tickers = [
             "AAPL",

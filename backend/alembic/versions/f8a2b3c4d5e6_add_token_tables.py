@@ -5,17 +5,17 @@ Revises: 5fb6880bb556
 Create Date: 2026-05-19 12:00:00.000000
 
 """
-from typing import Sequence, Union
 
-from alembic import op
+from collections.abc import Sequence
+
 import sqlalchemy as sa
-
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "f8a2b3c4d5e6"
-down_revision: Union[str, Sequence[str], None] = "5fb6880bb556"
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | Sequence[str] | None = "5fb6880bb556"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -31,10 +31,19 @@ def upgrade() -> None:
         sa.Column("id", sa.BigInteger(), nullable=False),
         sa.Column("tier_id", sa.Integer(), nullable=False),
         sa.Column("weekly_tokens", sa.Integer(), nullable=False, server_default="0"),
-        sa.Column("daily_token_limit", sa.Integer(), nullable=False, server_default="0"),
+        sa.Column(
+            "daily_token_limit", sa.Integer(), nullable=False, server_default="0"
+        ),
         sa.Column("monthly_token_limit", sa.Integer(), nullable=True),
-        sa.Column("refill_frequency", sa.String(length=20), nullable=False, server_default="weekly"),
-        sa.Column("max_tokens_per_prompt", sa.Integer(), nullable=False, server_default="1"),
+        sa.Column(
+            "refill_frequency",
+            sa.String(length=20),
+            nullable=False,
+            server_default="weekly",
+        ),
+        sa.Column(
+            "max_tokens_per_prompt", sa.Integer(), nullable=False, server_default="1"
+        ),
         sa.Column(
             "created_at",
             sa.DateTime(timezone=True),
@@ -69,7 +78,9 @@ def upgrade() -> None:
         sa.Column("id", sa.BigInteger(), nullable=False),
         sa.Column("user_id", sa.Integer(), nullable=False),
         sa.Column("available_tokens", sa.Integer(), nullable=False, server_default="0"),
-        sa.Column("total_used_tokens", sa.BigInteger(), nullable=False, server_default="0"),
+        sa.Column(
+            "total_used_tokens", sa.BigInteger(), nullable=False, server_default="0"
+        ),
         sa.Column("last_refill_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("next_refill_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column(
@@ -121,7 +132,9 @@ def upgrade() -> None:
         ),
         sa.ForeignKeyConstraint(["user_id"], ["users.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint("user_id", "usage_date", name="uq_daily_token_usage_user_date"),
+        sa.UniqueConstraint(
+            "user_id", "usage_date", name="uq_daily_token_usage_user_date"
+        ),
     )
     op.create_index(
         op.f("ix_daily_token_usage_id"),
@@ -188,19 +201,27 @@ def downgrade() -> None:
         op.f("ix_token_transactions_transaction_type"),
         table_name="token_transactions",
     )
-    op.drop_index(op.f("ix_token_transactions_user_id"), table_name="token_transactions")
+    op.drop_index(
+        op.f("ix_token_transactions_user_id"), table_name="token_transactions"
+    )
     op.drop_index(op.f("ix_token_transactions_id"), table_name="token_transactions")
     op.drop_table("token_transactions")
 
-    op.drop_index(op.f("ix_daily_token_usage_usage_date"), table_name="daily_token_usage")
+    op.drop_index(
+        op.f("ix_daily_token_usage_usage_date"), table_name="daily_token_usage"
+    )
     op.drop_index(op.f("ix_daily_token_usage_user_id"), table_name="daily_token_usage")
     op.drop_index(op.f("ix_daily_token_usage_id"), table_name="daily_token_usage")
     op.drop_table("daily_token_usage")
 
-    op.drop_index(op.f("ix_user_token_wallets_user_id"), table_name="user_token_wallets")
+    op.drop_index(
+        op.f("ix_user_token_wallets_user_id"), table_name="user_token_wallets"
+    )
     op.drop_index(op.f("ix_user_token_wallets_id"), table_name="user_token_wallets")
     op.drop_table("user_token_wallets")
 
-    op.drop_index(op.f("ix_tier_token_configs_tier_id"), table_name="tier_token_configs")
+    op.drop_index(
+        op.f("ix_tier_token_configs_tier_id"), table_name="tier_token_configs"
+    )
     op.drop_index(op.f("ix_tier_token_configs_id"), table_name="tier_token_configs")
     op.drop_table("tier_token_configs")

@@ -113,3 +113,29 @@ pytest tests/ -v --tb=short
 # ML tests
 pytest ml/tests/ -v
 ```
+
+---
+
+## 📈 New Features
+
+### 1. Portfolio Stress-Testing Sandbox
+- Access via the **Portfolio Sandbox** tab in the sidebar.
+- Enter custom stock tickers and weights, check allocation metrics, and evaluate drawdown performance during historical market crises:
+  - **2008 Financial Crisis**
+  - **2020 COVID-19 Crash**
+- Custom premium SVG bar-chart comparison.
+
+### 2. Weekly Email Briefings
+- Automated weekly performance digests delivered directly to your inbox.
+- Configure/opt-out of briefings in **User Profile > Security & Preferences > Weekly Email Briefings**. Note that this premium service is entitlement-locked and requires **Tier 4 (Institutional)**.
+
+---
+
+## 📄 Detailed Documentation
+
+For deep dives and installation guides:
+- [Installation Guide](file:///c:/Users/10102/Downloads/codebase/finsight/documentation/install.md) — Local manual setup.
+- [Architecture Blueprint](file:///c:/Users/10102/Downloads/codebase/finsight/documentation/architecture.md) — System flow details.
+- [API Reference Guide](file:///c:/Users/10102/Downloads/codebase/finsight/documentation/api.md) — Full backend endpoint docs.
+- [Workflows & Diagrams](file:///c:/Users/10102/Downloads/codebase/finsight/documentation/workflows.md) — Mermaid workflows.
+

@@ -1,8 +1,10 @@
 import stripe
+
 from app.core.config import settings
 
 # Configure stripe API key if available
 stripe.api_key = getattr(settings, "STRIPE_API_KEY", "mock_stripe_key")
+
 
 class StripeService:
     @staticmethod

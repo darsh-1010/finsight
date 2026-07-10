@@ -1,7 +1,9 @@
+import asyncio
 import unittest
 from unittest.mock import MagicMock, patch
-import asyncio
+
 from app.services.s3_service import S3Service
+
 
 class TestS3Service(unittest.TestCase):
     @patch("boto3.client")
@@ -29,23 +31,27 @@ class TestS3Service(unittest.TestCase):
         self.assertIn("test.txt", upload_url)
 
         # 2. Test Presigned URL
-        mock_s3.generate_presigned_url.return_value = "https://presigned-url.com/test.txt"
+        mock_s3.generate_presigned_url.return_value = (
+            "https://presigned-url.com/test.txt"
+        )
         presigned_url = loop.run_until_complete(service.get_presigned_url("test.txt"))
 
         from app.core.config import settings
+
         mock_s3.generate_presigned_url.assert_called_once_with(
             "get_object",
             Params={
                 "Bucket": service.bucket_name,
                 "Key": "test.txt",
                 "ResponseContentType": "text/plain",
-                "ResponseContentDisposition": "inline"
+                "ResponseContentDisposition": "inline",
             },
-            ExpiresIn=settings.S3_PRESIGNED_URL_EXPIRE_SECONDS
+            ExpiresIn=settings.S3_PRESIGNED_URL_EXPIRE_SECONDS,
         )
         self.assertEqual(presigned_url, "https://presigned-url.com/test.txt")
 
         loop.close()
+
 
 if __name__ == "__main__":
     unittest.main()

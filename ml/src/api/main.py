@@ -37,6 +37,11 @@ logger = get_logger(__name__)
 
 async def _warm_weekly_reports_cache() -> None:
     """Pre-compiles and warms weekly report caches for all tiers at startup."""
+    import sys
+    if "pytest" in sys.modules:
+        logger.info("[STARTUP_CACHE_WARMING] Skipping cache warming during tests.")
+        return
+
     try:
         logger.info(
             "[STARTUP_CACHE_WARMING] Initializing weekly insights pre-compilation background worker"

@@ -1,17 +1,18 @@
 import enum
 from datetime import datetime
 
-from sqlalchemy import (func, JSON, 
+from sqlalchemy import (
+    JSON,
     Column,
+    DateTime,
+    Enum as SQLEnum,
+    ForeignKey,
     Integer,
     String,
-    DateTime,
-    ForeignKey,
-    Enum as SQLEnum,
     UniqueConstraint,
 )
-from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm import relationship
 
 from app.core.database import Base
 
@@ -55,6 +56,7 @@ class TierOnboardingQuestion(Base):
         foreign_keys=[depends_on_question_id],
     )
 
+
 class OnboardingQuestion(Base):
     __tablename__ = "onboarding_questions"
 
@@ -80,6 +82,7 @@ class OnboardingQuestion(Base):
     )
 
     answers = relationship("UserOnboardingAnswer", back_populates="question")
+
 
 class OnboardingQuestionOption(Base):
     __tablename__ = "onboarding_question_options"

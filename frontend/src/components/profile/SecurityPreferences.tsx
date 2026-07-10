@@ -15,6 +15,10 @@ const SecurityPreferences: React.FC<SecurityPreferencesProps> = ({
   embedded = false,
 }) => {
   const { user } = useAuth();
+  const [optIn, setOptIn] = React.useState(() => {
+    if (typeof window === 'undefined') return true;
+    return localStorage.getItem("weekly_briefing_opt_in") !== "false";
+  });
 
   const content = (
     <div className="space-y-4">
@@ -38,16 +42,46 @@ const SecurityPreferences: React.FC<SecurityPreferencesProps> = ({
           <span className="sm:hidden">Change</span>
         </Button>
       </div>
-      <div className="flex items-center justify-between py-4 gap-4">
+      <div className="flex items-center justify-between py-4 gap-4 border-b border-border/50">
         <div className="flex-1 pr-2">
-          <p className="font-semibold">Email Notifications</p>
+          <p className="font-semibold">Weekly Email Briefings</p>
           <p className="text-xs text-muted-foreground">
-            Receive market insights and alert digests.
+            Get a weekly performance digest of trending tickers in your mailbox.
           </p>
         </div>
-        <Button variant="outline" size="sm" disabled className="shrink-0">
-          Configure
-        </Button>
+        {user?.entitlements?.includes("BRIEFINGS_WEEKLY") ? (
+          <button
+            type="button"
+            onClick={() => {
+              const nextVal = !optIn;
+              localStorage.setItem("weekly_briefing_opt_in", nextVal.toString());
+              setOptIn(nextVal);
+            }}
+            className={`w-11 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${
+              optIn ? "bg-primary" : "bg-gray-300 dark:bg-gray-700"
+            }`}
+          >
+            <div
+              className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+                optIn ? "translate-x-5" : "translate-x-0"
+              }`}
+            />
+          </button>
+        ) : (
+          <div className="flex items-center gap-2">
+            <span className="text-2xs font-extrabold bg-primary/10 text-primary px-2.5 py-1 rounded-full uppercase tracking-wider">
+              Institutional Tier
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.location.assign("/pricing")}
+              className="shrink-0"
+            >
+              Upgrade
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

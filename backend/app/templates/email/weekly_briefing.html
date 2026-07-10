@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Weekly Finsight Briefing</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f9f9f9; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff; border-radius: 8px; margin-top: 40px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .header { text-align: center; border-bottom: 2px solid #f0f0f0; padding-bottom: 20px; margin-bottom: 20px; }
+        .header h1 { margin: 0; color: #2563eb; }
+        .content { font-size: 16px; color: #4b5563; }
+        .stock-card { border: 1px solid #e5e7eb; border-radius: 6px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .stock-ticker { font-weight: bold; font-size: 18px; color: #111827; }
+        .stock-price { font-size: 16px; color: #6b7280; margin-left: 10px; }
+        .stock-perf { font-weight: bold; font-size: 16px; }
+        .perf-positive { color: #16a34a; }
+        .perf-negative { color: #dc2626; }
+        .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #9ca3af; border-top: 1px solid #f0f0f0; padding-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Finsight Weekly Briefing</h1>
+        </div>
+        <div class="content">
+            <p>Hi {{ name }},</p>
+            <p>Here is how the stocks on your watchlist performed over the last 7 days:</p>
+
+            <div class="portfolio-list">
+                {% for ticker, data in perf.items() %}
+                <div class="stock-card">
+                    <div>
+                        <span class="stock-ticker">{{ ticker }}</span>
+                        <span class="stock-price">${{ "%.2f"|format(data.price) }}</span>
+                    </div>
+                    <div>
+                        {% if data.change_pct >= 0 %}
+                            <span class="stock-perf perf-positive">+{{ "%.2f"|format(data.change_pct) }}%</span>
+                        {% else %}
+                            <span class="stock-perf perf-negative">{{ "%.2f"|format(data.change_pct) }}%</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <p style="margin-top: 25px;">Keep exploring to stay ahead of the market!</p>
+            <p>Best regards,<br>The Finsight Team</p>
+        </div>
+        <div class="footer">
+            <p>&copy; {{ current_year }} Finsight. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

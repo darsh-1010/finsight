@@ -9,4 +9,3 @@ for u in users:
 tokens = db.query(UserVerificationToken).all()
 for t in tokens:
     print(f"Token: {t.token}, user_id: {t.user_id}, type: {t.token_type}")
-

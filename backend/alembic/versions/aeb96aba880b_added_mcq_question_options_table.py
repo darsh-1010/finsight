@@ -5,17 +5,17 @@ Revises: 072fb12742fe
 Create Date: 2026-01-24 21:26:32.276704
 """
 
-from typing import Sequence, Union
+from collections.abc import Sequence
 
-from alembic import op
 import sqlalchemy as sa
+from alembic import op
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision: str = "aeb96aba880b"
-down_revision: Union[str, Sequence[str], None] = "072fb12742fe"
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | Sequence[str] | None = "072fb12742fe"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -99,7 +99,6 @@ def upgrade() -> None:
     # ---- INLINE FIX: SAFE CAST VARCHAR -> JSONB ----
     # ---- INLINE FIX: SANITIZE INVALID JSON THEN CAST TO JSONB ----
 
-
     # 1. If value is plain words like 'string', 'number', etc → replace with empty object
     op.execute("""
     UPDATE onboarding_questions
@@ -108,10 +107,8 @@ def upgrade() -> None:
     OR validation_rules ~ '^[A-Za-z_]+$';
     """)
 
-
     # 2. If value looks like JSON but stored as text, keep it
     # (Postgres will cast valid JSON strings correctly)
-
 
     # 3. Now safely cast
     op.execute("""
@@ -130,7 +127,9 @@ def upgrade() -> None:
 
     op.add_column(
         "user_onboarding_answers",
-        sa.Column("answer_value", postgresql.JSONB(astext_type=sa.Text()), nullable=False),
+        sa.Column(
+            "answer_value", postgresql.JSONB(astext_type=sa.Text()), nullable=False
+        ),
     )
     op.add_column(
         "user_onboarding_answers",
@@ -140,11 +139,17 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.add_column("user_onboarding_answers", sa.Column("answer_text", sa.TEXT(), nullable=False))
+    op.add_column(
+        "user_onboarding_answers", sa.Column("answer_text", sa.TEXT(), nullable=False)
+    )
     op.drop_column("user_onboarding_answers", "updated_at")
     op.drop_column("user_onboarding_answers", "answer_value")
 
-    op.drop_constraint("onboarding_questions_depends_on_question_id_fkey", "onboarding_questions", type_="foreignkey")
+    op.drop_constraint(
+        "onboarding_questions_depends_on_question_id_fkey",
+        "onboarding_questions",
+        type_="foreignkey",
+    )
 
     op.alter_column(
         "onboarding_questions",

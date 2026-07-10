@@ -4,12 +4,12 @@ Revision ID: dbcc1e8f7f8b
 Revises: c8d508f52d22
 """
 
-from typing import Sequence, Union
+from collections.abc import Sequence
+
 from alembic import op
-import sqlalchemy as sa
 
 revision: str = "dbcc1e8f7f8b"
-down_revision: Union[str, Sequence[str], None] = "c8d508f52d22"
+down_revision: str | Sequence[str] | None = "c8d508f52d22"
 branch_labels = None
 depends_on = None
 
@@ -19,7 +19,9 @@ def upgrade() -> None:
     with op.get_context().autocommit_block():
         op.execute("ALTER TYPE riskbucket ADD VALUE IF NOT EXISTS 'risk_averse'")
         op.execute("ALTER TYPE riskbucket ADD VALUE IF NOT EXISTS 'moderate'")
-        op.execute("ALTER TYPE riskbucket ADD VALUE IF NOT EXISTS 'moderately_aggressive'")
+        op.execute(
+            "ALTER TYPE riskbucket ADD VALUE IF NOT EXISTS 'moderately_aggressive'"
+        )
         op.execute("ALTER TYPE riskbucket ADD VALUE IF NOT EXISTS 'very_aggressive'")
 
     # --- Now we can safely use new enum values ---

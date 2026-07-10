@@ -23,6 +23,7 @@ env/
 .ruff_cache/
 
 # ── Test / coverage ───────────────────────────────────────────────────────────
+*.db
 .pytest_cache/
 .coverage
 htmlcov/
@@ -31,6 +32,7 @@ htmlcov/
 # ── ML scraper storage (large, generated at runtime) ─────────────────────────
 ml/storage_*/
 ml/graphify-out/
+graphify-out/cache/
 ml/logs/
 ml/outputs/
 ml/financial-perf-audit/
@@ -39,6 +41,8 @@ ml/financial-perf-audit/
 frontend/node_modules/
 frontend/dist/
 frontend/.vite/
+frontend/.next/
+
 
 # ── Environment files (never commit real secrets) ─────────────────────────────
 .env

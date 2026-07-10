@@ -1,39 +1,42 @@
 from datetime import datetime
-from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-
+from app.api.deps import get_current_user
 from app.core.database import get_db
 from app.models.onboarding_questioner import (
     OnboardingQuestion,
-    UserOnboardingAnswer,
     TierOnboardingQuestion,
+    UserOnboardingAnswer,
 )
-from app.models.users import User, UserProfile
 from app.models.tiers import Tier
-from app.api.deps import get_current_user
+from app.models.users import User, UserProfile
 from app.schemas.onboarding import (
     AnswerCreate,
     AnswerResponse,
     CIPCalculationResponse,
 )
 from app.utils.onboarding_utils import (
-    save_single_answer,
     CIP_PROFILES,
     calculate_cip_profile_and_risk_bucket,
-    update_risk_bucket_from_cip,
     check_and_update_onboarding_status,
+    save_single_answer,
+    update_risk_bucket_from_cip,
 )
 
 router = APIRouter(prefix="/api/v1/onboarding", tags=["Onboarding"])
 
 
 @router.get("/questions")
-def get_questions_by_tier(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+def get_questions_by_tier(
+    current_user: User = Depends(get_current_user), db: Session = Depends(get_db)
+):
     """Get all questions for a specific tier with proper ordering."""
     if not current_user.subscription or not current_user.subscription.tier:
-        raise HTTPException(status_code=400, detail="User has no active subscription tier")
+        raise HTTPException(
+            status_code=400, detail="User has no active subscription tier"
+        )
 
     tier_id = current_user.subscription.tier.id
     tier = db.query(Tier).filter(Tier.id == tier_id).first()
@@ -76,9 +79,9 @@ def get_questions_by_tier(current_user: User = Depends(get_current_user), db: Se
     return result
 
 
-@router.post("/answers", response_model=List[AnswerResponse])
+@router.post("/answers", response_model=list[AnswerResponse])
 def submit_answers(
-    answers: List[AnswerCreate],
+    answers: list[AnswerCreate],
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):

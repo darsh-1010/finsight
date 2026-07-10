@@ -74,7 +74,7 @@ export interface InsightStatusUpdateRequest {
 }
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: (import.meta.env.VITE_API_BASE_URL as string)?.replace(/\/+$/, ''),
+  baseUrl: (process.env.VITE_API_BASE_URL as string || '')?.replace(/\/+$/, ''),
   credentials: 'include',
   prepareHeaders: (headers) => {
     return headers;
@@ -106,8 +106,11 @@ export const apiSlice = createApi({
   tagTypes: ['Broker', 'TokenUsage', 'Notification', 'AdminInsight', 'ScrapingURL', 'ScrapingHistory', 'ScrapingSubURL', 'IngestedPDF'],
   endpoints: (builder) => ({
     getNotifications: builder.query<NotificationResponse[], { limit?: number; unreadOnly?: boolean } | void>({
-      query: ({ limit = 20, unreadOnly = false } = {}) =>
-        `/notifications?limit=${limit}&unread_only=${unreadOnly}`,
+      query: (arg) => {
+        const limit = arg && typeof arg === 'object' && 'limit' in arg ? arg.limit ?? 20 : 20;
+        const unreadOnly = arg && typeof arg === 'object' && 'unreadOnly' in arg ? arg.unreadOnly ?? false : false;
+        return `/notifications?limit=${limit}&unread_only=${unreadOnly}`;
+      },
       providesTags: ['Notification'],
     }),
     markNotificationRead: builder.mutation<{ id: number; notification_id: number; is_read: boolean; read_at: string }, number>({
@@ -118,9 +121,9 @@ export const apiSlice = createApi({
       invalidatesTags: ['Notification'],
     }),
     getAdminInsights: builder.query<InsightResponse[], { status?: InsightResponse['status'] } | void>({
-      query: ({ status } = {}) => {
+      query: (arg) => {
+        const status = arg && typeof arg === 'object' && 'status' in arg ? arg.status : undefined;
         const params = status ? `?status=${status}` : '';
-
         return `/admin/insights${params}`;
       },
       providesTags: ['AdminInsight'],
@@ -138,8 +141,11 @@ export const apiSlice = createApi({
       providesTags: ['TokenUsage'],
     }),
     getTokenTransactions: builder.query<TokenTransactionList, { limit?: number; offset?: number } | void>({
-      query: ({ limit = 10, offset = 0 } = {}) =>
-        `/tokens/transactions?limit=${limit}&offset=${offset}`,
+      query: (arg) => {
+        const limit = arg && typeof arg === 'object' && 'limit' in arg ? arg.limit ?? 10 : 10;
+        const offset = arg && typeof arg === 'object' && 'offset' in arg ? arg.offset ?? 0 : 0;
+        return `/tokens/transactions?limit=${limit}&offset=${offset}`;
+      },
       providesTags: ['TokenUsage'],
     }),
     getBrokers: builder.query<BrokerResponse[], void>({

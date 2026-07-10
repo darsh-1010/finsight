@@ -1,23 +1,24 @@
 from sqlalchemy.orm import Session
+
 from app.core.database import SESSION_LOCAL
-from app.models.tiers import Tier
 from app.models.onboarding_questioner import (
     OnboardingQuestion,
     OnboardingQuestionOption,
-    TierOnboardingQuestion,
     QuestionType,
+    TierOnboardingQuestion,
     UserOnboardingAnswer,
 )
-from app.models.users import UserProfile, RiskBucket
+from app.models.tiers import Tier
+from app.models.users import RiskBucket, UserProfile
 
 # Common CIP Scoring Questions (shared across all tiers)
 COMMON_CIP_QUESTIONS = [
     {
         "title": "CIP Scoring",
         "question_text": "What is the maximum percentage (%) of your investments "
-                         "that you can afford to lose in the next 12 months?",
+        "that you can afford to lose in the next 12 months?",
         "question_description": "Affordability refers to the % you could lose "
-                                "without impacting your current standard of living [cite: 116]",
+        "without impacting your current standard of living [cite: 116]",
         "question_type": QuestionType.SINGLE_CHOICE,
         "options": [
             {"label": "Less than 1%", "value": "A", "order": 0},

@@ -1,5 +1,5 @@
-from typing import Any, Dict, Optional
 import json
+from typing import Any
 
 from pydantic import PostgresDsn, validator
 from pydantic_settings import BaseSettings
@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
     POSTGRES_PORT: str = "5432"
-    DATABASE_URL: Optional[str] = None
+    DATABASE_URL: str | None = None
 
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
@@ -22,24 +22,25 @@ class Settings(BaseSettings):
     COOKIE_SECURE: bool = True
     COOKIE_SAMESITE: str = "lax"
 
-
     BACKEND_CORS_ORIGINS: list[str] = []
 
     ML_API_URL: str = "http://localhost:8000"
-    ML_SERVER_SECRET_TOKEN: str = "0eW2d8E9L18opApMBYjUV6965Cjs59Ri1QxKHxL7MpSfHtmCtYVuvgzek6xzd4Oa"
+    ML_SERVER_SECRET_TOKEN: str = (
+        "0eW2d8E9L18opApMBYjUV6965Cjs59Ri1QxKHxL7MpSfHtmCtYVuvgzek6xzd4Oa"
+    )
 
     @validator(
-        "ML_API_URL", 
+        "ML_API_URL",
         "AWS_ACCESS_KEY_ID",
         "AWS_SECRET_ACCESS_KEY",
         "AWS_REGION",
         "S3_BUCKET_NAME",
-        pre=True
+        pre=True,
     )
     @classmethod
     def clean_strings(cls, v: Any) -> Any:
         if isinstance(v, str):
-            return v.strip(' "\'')
+            return v.strip(" \"'")
         return v
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)
@@ -66,7 +67,7 @@ class Settings(BaseSettings):
     S3_PRESIGNED_URL_EXPIRE_SECONDS: int = 604800  # Default to 7 days (max allowed)
 
     SES_SENDER_EMAIL: str = ""
-    SES_REGION_NAME: Optional[str] = None
+    SES_REGION_NAME: str | None = None
     FRONTEND_URL: str = "http://localhost:3000"
 
     REDIS_HOST: str = "localhost"
@@ -83,8 +84,8 @@ class Settings(BaseSettings):
     @classmethod
     def assemble_db_connection(
         cls,
-        v: Optional[str],
-        values: Dict[str, Any],
+        v: str | None,
+        values: dict[str, Any],
     ) -> str:
         if isinstance(v, str):
             return v

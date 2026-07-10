@@ -2,7 +2,7 @@ import axios, { type InternalAxiosRequestConfig } from 'axios';
 
 // Create an Axios instance
 const client = axios.create({
-  baseURL: (import.meta.env.VITE_API_BASE_URL as string)?.replace(/\/+$/, ''),
+  baseURL: (process.env.VITE_API_BASE_URL as string || '')?.replace(/\/+$/, ''),
   withCredentials: true, // Important for cookies
   headers: {
     'Content-Type': 'application/json',

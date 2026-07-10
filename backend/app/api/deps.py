@@ -1,4 +1,3 @@
-from typing import Optional
 
 from fastapi import Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordBearer
@@ -8,7 +7,6 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.core.database import SESSION_LOCAL
 from app.models.users import User
-
 
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.ALGORITHM
@@ -30,7 +28,7 @@ def get_db():
 def get_current_user(
     request: Request,
     db: Session = Depends(get_db),
-    token: Optional[str] = Depends(oauth2_scheme),
+    token: str | None = Depends(oauth2_scheme),
 ):
     # 1. Try getting token from Bearer Header (Swagger UI uses this)
     if not token:

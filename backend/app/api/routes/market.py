@@ -12,7 +12,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 
 logger = logging.getLogger(__name__)
 
@@ -70,17 +70,53 @@ RECOMMENDATION_SCORE: dict[str, int] = {
 
 # Fallback static data (used when TradingView is unreachable)
 FALLBACK: list[dict[str, Any]] = [
-    {"id": "1", "symbol": "BTC", "name": "Bitcoin",  "price": "$98,450", "change": "2.4%",  "isPositive": True,  "score": 85, "recommendation": "BUY"},
-    {"id": "2", "symbol": "ETH", "name": "Ethereum", "price": "$3,240",  "change": "1.2%",  "isPositive": True,  "score": 78, "recommendation": "BUY"},
-    {"id": "3", "symbol": "SOL", "name": "Solana",   "price": "$245",    "change": "0.5%",  "isPositive": False, "score": 62, "recommendation": "NEUTRAL"},
-    {"id": "4", "symbol": "BNB", "name": "BNB",      "price": "$610",    "change": "1.8%",  "isPositive": True,  "score": 70, "recommendation": "BUY"},
+    {
+        "id": "1",
+        "symbol": "BTC",
+        "name": "Bitcoin",
+        "price": "$98,450",
+        "change": "2.4%",
+        "isPositive": True,
+        "score": 85,
+        "recommendation": "BUY",
+    },
+    {
+        "id": "2",
+        "symbol": "ETH",
+        "name": "Ethereum",
+        "price": "$3,240",
+        "change": "1.2%",
+        "isPositive": True,
+        "score": 78,
+        "recommendation": "BUY",
+    },
+    {
+        "id": "3",
+        "symbol": "SOL",
+        "name": "Solana",
+        "price": "$245",
+        "change": "0.5%",
+        "isPositive": False,
+        "score": 62,
+        "recommendation": "NEUTRAL",
+    },
+    {
+        "id": "4",
+        "symbol": "BNB",
+        "name": "BNB",
+        "price": "$610",
+        "change": "1.8%",
+        "isPositive": True,
+        "score": 70,
+        "recommendation": "BUY",
+    },
 ]
 
 
 def _fetch_live_data() -> list[dict[str, Any]]:
     """Fetch live analysis from TradingView and return serialisable dicts."""
     # Import here so a missing package only fails at call time, not import time.
-    from tradingview_ta import TA_Handler, Interval  # type: ignore
+    from tradingview_ta import Interval, TA_Handler  # type: ignore
 
     results: list[dict[str, Any]] = []
 
@@ -123,9 +159,7 @@ def _fetch_live_data() -> list[dict[str, Any]]:
         except Exception as exc:  # noqa: BLE001
             logger.warning("Could not fetch TA for %s: %s", sym["symbol"], exc)
             # Fall back for this individual symbol
-            fallback_entry = next(
-                (f for f in FALLBACK if f["id"] == sym["id"]), None
-            )
+            fallback_entry = next((f for f in FALLBACK if f["id"] == sym["id"]), None)
             if fallback_entry:
                 results.append(fallback_entry)
 

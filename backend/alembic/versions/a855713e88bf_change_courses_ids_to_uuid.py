@@ -5,22 +5,21 @@ Revises: b74fcab99764
 Create Date: 2026-04-22 10:56:45.512892
 
 """
-from typing import Sequence, Union
+
+from collections.abc import Sequence
 
 from alembic import op
-import sqlalchemy as sa
-
 
 # revision identifiers, used by Alembic.
-revision: str = 'a855713e88bf'
-down_revision: Union[str, Sequence[str], None] = 'b74fcab99764'
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+revision: str = "a855713e88bf"
+down_revision: str | Sequence[str] | None = "b74fcab99764"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
     # Use raw SQL to handle the change correctly without losing data
-    op.execute('''
+    op.execute("""
         -- 1. Add uuid generation extension if not exists
         CREATE EXTENSION IF NOT EXISTS "pgcrypto";
         
@@ -137,7 +136,8 @@ def upgrade() -> None:
         CREATE INDEX ix_lessons_id ON lessons (id);
         CREATE INDEX ix_lesson_progress_id ON lesson_progress (id);
         CREATE INDEX ix_lesson_resources_id ON lesson_resources (id);
-    ''')
+    """)
+
 
 def downgrade() -> None:
     # Downgrading involves converting UUID to SERIAL which is complex.
