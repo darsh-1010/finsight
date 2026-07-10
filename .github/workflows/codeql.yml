@@ -1,0 +1,65 @@
+##############################################################################
+# Finsight — GitHub CodeQL Static Analysis
+#
+# Scans Python source code (backend + ml) for security vulnerabilities
+# using GitHub's CodeQL engine (no tokens required — uses GITHUB_TOKEN).
+#
+# Runs:
+#   • On push to main/develop
+#   • On PRs targeting main
+#   • Weekly on Sunday at 03:00 UTC (catches newly disclosed CVE patterns)
+##############################################################################
+
+name: "CodeQL Security Analysis"
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "backend/**"
+      - "ml/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - "ml/**"
+  schedule:
+    # Runs every Sunday at 03:00 UTC
+    - cron: "0 3 * * 0"
+
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+
+jobs:
+  analyze:
+    name: "CodeQL (${{ matrix.language }})"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [python]
+        # Add 'javascript' here if you want frontend scanning too
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          # Use the default security-extended query suite which includes
+          # injection, SQL injection, path traversal, and XSS patterns
+          queries: security-extended
+
+      # For Python, CodeQL uses autobuild — no explicit compile step needed
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
+          upload: true

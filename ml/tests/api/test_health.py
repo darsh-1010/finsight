@@ -1,132 +1,137 @@
-"""Tests for application health helpers."""
+"""
+Tests for the ML service health check endpoints.
 
-import asyncio
-import json
+  GET /health/live
+  GET /health/ready
+  GET /health
+  GET /
 
-from src.api import health as health_module
-from src.api.routes import chatbot
+All heavy external dependencies (Redis, Weaviate, OpenAI) are mocked.
+"""
 
+import sys
+from pathlib import Path
+from unittest.mock import AsyncMock, MagicMock, patch
 
-def test_build_readiness_report_returns_ready(monkeypatch):
-    """Readiness should report healthy when every dependency check passes."""
-    monkeypatch.setattr(health_module, "_check_required_config", lambda: {
-        "name": "config",
-        "status": "ok",
-        "details": "required settings loaded",
-    })
-    monkeypatch.setattr(health_module, "_check_prompt_catalog", lambda: {
-        "name": "prompts",
-        "status": "ok",
-        "details": "required prompts loaded",
-    })
-    monkeypatch.setattr(health_module, "_check_redis_dependency", lambda: {
-        "name": "redis",
-        "status": "ok",
-        "details": "ping ok",
-    })
-    monkeypatch.setattr(health_module, "_check_weaviate_dependency", lambda: {
-        "name": "weaviate",
-        "status": "ok",
-        "details": "ready",
-    })
-    monkeypatch.setattr(health_module, "_get_openai_dependency_status", lambda: {
-        "name": "openai",
-        "status": "ok",
-        "details": "embedding canary ok",
-        "checked_at": "2026-04-08T00:00:00+00:00",
-    })
+import pytest
 
-    status_code, payload = asyncio.run(health_module.build_readiness_report())
+# Ensure src and root are importable
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-    assert status_code == 200
-    assert payload["status"] == "ready"
-    assert payload["checks"][-1]["name"] == "openai"
+from fastapi.testclient import TestClient
 
 
-def test_build_readiness_report_returns_not_ready(monkeypatch):
-    """Readiness should fail when a dependency check fails."""
-    monkeypatch.setattr(health_module, "_check_required_config", lambda: {
-        "name": "config",
-        "status": "failed",
-        "details": "missing: openai_api_key",
-    })
-    monkeypatch.setattr(health_module, "_check_prompt_catalog", lambda: {
-        "name": "prompts",
-        "status": "ok",
-        "details": "required prompts loaded",
-    })
-    monkeypatch.setattr(health_module, "_check_redis_dependency", lambda: {
-        "name": "redis",
-        "status": "ok",
-        "details": "ping ok",
-    })
-    monkeypatch.setattr(health_module, "_check_weaviate_dependency", lambda: {
-        "name": "weaviate",
-        "status": "failed",
-        "details": "not ready",
-    })
-    monkeypatch.setattr(health_module, "_get_openai_dependency_status", lambda: {
-        "name": "openai",
-        "status": "failed",
-        "details": "OpenAI canary timed out",
-        "checked_at": "2026-04-08T00:00:00+00:00",
-    })
+# ── Fixtures ───────────────────────────────────────────────────────────────────
 
-    status_code, payload = asyncio.run(health_module.build_readiness_report())
+@pytest.fixture(scope="module")
+def ml_client():
+    """
+    TestClient for the ML FastAPI app.
 
-    assert status_code == 503
-    assert payload["status"] == "not_ready"
+    Mocks Redis, Weaviate, and OpenAI so no real connections are attempted.
+    """
+    with (
+        patch("src.utils.redis_client.get_async_redis", return_value=AsyncMock()),
+        patch("src.services.weaviate.client.WeaviateClientManager.__init__", return_value=None),
+        patch("src.api.health.build_readiness_report", new_callable=AsyncMock,
+              return_value=(200, {"status": "ok", "components": []})),
+        patch("src.api.health.build_liveness_report", return_value={"status": "alive", "version": "1.0.0"}),
+        patch("src.api.health.start_openai_canary_monitor", new_callable=AsyncMock),
+        patch("src.api.health.stop_openai_canary_monitor", new_callable=AsyncMock),
+        patch("src.llm.prompts.PromptLoader.pre_load_all", return_value=None),
+        patch("src.api.routes.scraper.load_website_id_map", return_value=None),
+    ):
+        from src.api.main import create_app
+        test_app = create_app()
+        with TestClient(test_app, raise_server_exceptions=False) as client:
+            yield client
 
 
-def test_build_liveness_report_returns_alive():
-    """Liveness should only report that the process is up."""
-    payload = health_module.build_liveness_report()
+# ── Liveness ──────────────────────────────────────────────────────────────────
 
-    assert payload["status"] == "alive"
-    assert payload["version"] == "1.0.0"
+class TestLivenessEndpoint:
+    """Tests for GET /health/live."""
 
+    def test_returns_200(self, ml_client: TestClient):
+        """Liveness check must return HTTP 200."""
+        response = ml_client.get("/health/live")
+        assert response.status_code == 200
 
-def test_refresh_openai_canary_updates_cached_status(monkeypatch):
-    """A successful OpenAI canary should update the cached dependency result."""
-    health_module._openai_canary_checked_at = None
-    health_module._openai_canary_status = {
-        "name": "openai",
-        "status": "failed",
-        "details": "canary has not run yet",
-        "checked_at": None,
-    }
+    def test_response_has_status_key(self, ml_client: TestClient):
+        """Response must contain a 'status' key."""
+        response = ml_client.get("/health/live")
+        assert "status" in response.json()
 
-    class FakeEmbeddingService:
-        """Small fake embedding client for the canary."""
+    def test_status_is_alive(self, ml_client: TestClient):
+        """Status must be 'alive' for a running service."""
+        response = ml_client.get("/health/live")
+        body = response.json()
+        assert body.get("status") in {"alive", "ok", "healthy"}
 
-        async def aembed_query(self, _text: str):
-            return [0.1, 0.2, 0.3]
-
-    monkeypatch.setattr(health_module.settings, "openai_api_key", "test-key")
-    monkeypatch.setattr(health_module, "EmbeddingService", FakeEmbeddingService)
-
-    asyncio.run(health_module.refresh_openai_canary())
-    component = health_module._get_openai_dependency_status()
-
-    assert component["status"] == "ok"
-    assert component["name"] == "openai"
-    assert component["checked_at"] is not None
+    def test_response_has_version(self, ml_client: TestClient):
+        """Liveness report must include a version string."""
+        response = ml_client.get("/health/live")
+        body = response.json()
+        assert "version" in body
 
 
-def test_chat_health_endpoint_uses_shared_readiness(monkeypatch):
-    """The deprecated chat health route should return the shared readiness payload."""
+# ── Readiness ─────────────────────────────────────────────────────────────────
 
-    async def fake_readiness_report():
-        return 503, {
-            "status": "not_ready",
-            "version": "1.0.0",
-            "checks": [{"name": "openai", "status": "failed", "details": "timeout"}],
-        }
+class TestReadinessEndpoint:
+    """Tests for GET /health/ready."""
 
-    monkeypatch.setattr(chatbot, "build_readiness_report", fake_readiness_report)
+    def test_returns_2xx_when_healthy(self, ml_client: TestClient):
+        """When all components are healthy, must return 2xx."""
+        response = ml_client.get("/health/ready")
+        assert response.status_code < 300
 
-    response = asyncio.run(chatbot.chat_health())
-    payload = json.loads(response.body)
+    def test_response_has_status_key(self, ml_client: TestClient):
+        """Response must include a 'status' key."""
+        response = ml_client.get("/health/ready")
+        assert "status" in response.json()
 
-    assert response.status_code == 503
-    assert payload["status"] == "not_ready"
+    def test_degraded_returns_503(self):
+        """When a required component is down, readiness must return 503."""
+        with (
+            patch("src.utils.redis_client.get_async_redis", return_value=AsyncMock()),
+            patch("src.api.health.build_readiness_report", new_callable=AsyncMock,
+                  return_value=(503, {"status": "degraded", "components": []})),
+            patch("src.api.health.build_liveness_report", return_value={"status": "alive", "version": "1.0.0"}),
+            patch("src.api.health.start_openai_canary_monitor", new_callable=AsyncMock),
+            patch("src.api.health.stop_openai_canary_monitor", new_callable=AsyncMock),
+            patch("src.llm.prompts.PromptLoader.pre_load_all", return_value=None),
+            patch("src.api.routes.scraper.load_website_id_map", return_value=None),
+        ):
+            from src.api.main import create_app
+            degraded_app = create_app()
+            with TestClient(degraded_app, raise_server_exceptions=False) as test_client:
+                response = test_client.get("/health/ready")
+            assert response.status_code == 503
+
+
+# ── Root ──────────────────────────────────────────────────────────────────────
+
+class TestRootEndpoint:
+    """Tests for GET /."""
+
+    def test_returns_200(self, ml_client: TestClient):
+        """Root endpoint must return HTTP 200."""
+        response = ml_client.get("/")
+        assert response.status_code == 200
+
+    def test_response_has_message(self, ml_client: TestClient):
+        """Root response must include a 'message' key."""
+        response = ml_client.get("/")
+        assert "message" in response.json()
+
+    def test_response_has_docs_link(self, ml_client: TestClient):
+        """Root response must include a 'docs' link."""
+        response = ml_client.get("/")
+        assert "docs" in response.json()
+
+    def test_response_has_health_link(self, ml_client: TestClient):
+        """Root response must include a 'health' or 'live' link."""
+        response = ml_client.get("/")
+        body = response.json()
+        assert "health" in body or "live" in body

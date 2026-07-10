@@ -1,16 +1,16 @@
 # Graph Report - finsight  (2026-07-10)
 
 ## Corpus Check
-- 507 files · ~296,457 words
+- 519 files · ~302,536 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 4690 nodes · 8684 edges · 323 communities (288 shown, 35 thin omitted)
-- Extraction: 80% EXTRACTED · 20% INFERRED · 0% AMBIGUOUS · INFERRED: 1754 edges (avg confidence: 0.57)
+- 4979 nodes · 9036 edges · 327 communities (293 shown, 34 thin omitted)
+- Extraction: 80% EXTRACTED · 20% INFERRED · 0% AMBIGUOUS · INFERRED: 1804 edges (avg confidence: 0.57)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `2d110cf9`
+- Built from commit: `c6627c49`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -256,26 +256,26 @@
 ## God Nodes (most connected - your core abstractions)
 1. `User` - 103 edges
 2. `cn()` - 80 edges
-3. `useAuth()` - 57 edges
-4. `Tier` - 56 edges
+3. `Tier` - 57 edges
+4. `useAuth()` - 57 edges
 5. `ChatService` - 47 edges
 6. `YFinanceDataSource` - 45 edges
 7. `ContextManager` - 43 edges
 8. `WeeklySummaryCompiler` - 42 edges
 9. `QueryService` - 41 edges
-10. `FallbackAsyncOpenAI` - 40 edges
+10. `ScrapeOutput` - 41 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `client()` --calls--> `TestClient`  [INFERRED]
-  backend/tests/conftest.py → ml/tests/api/test_market_insights_endpoints.py
-- `client()` --calls--> `TestClient`  [INFERRED]
-  backend/tests/test_auth.py → ml/tests/api/test_market_insights_endpoints.py
-- `client()` --calls--> `TestClient`  [INFERRED]
-  backend/tests/test_chat_titles.py → ml/tests/api/test_market_insights_endpoints.py
 - `ChatSessionCreate` --uses--> `ChatService`  [INFERRED]
   backend/app/api/routes/chat.py → ml/src/services/chat_service.py
 - `Session` --uses--> `ChatService`  [INFERRED]
   backend/app/api/routes/chat.py → ml/src/services/chat_service.py
+- `User` --uses--> `ChatService`  [INFERRED]
+  backend/app/api/routes/chat.py → ml/src/services/chat_service.py
+- `UUID` --uses--> `ChatService`  [INFERRED]
+  backend/app/api/routes/chat.py → ml/src/services/chat_service.py
+- `create_message()` --calls--> `StreamingResponse`  [INFERRED]
+  backend/app/api/routes/chat.py → ml/src/api/routes/chatbot.py
 
 ## Import Cycles
 - 1-file cycle: `backend/app/api/routes/admin/__init__.py -> backend/app/api/routes/admin/__init__.py`
@@ -297,27 +297,27 @@
 - 1-file cycle: `ml/src/services/weaviate/service.py -> ml/src/services/weaviate/service.py`
 - 1-file cycle: `ml/src/services/weaviate/collections.py -> ml/src/services/weaviate/collections.py`
 
-## Communities (323 total, 35 thin omitted)
+## Communities (327 total, 34 thin omitted)
 
 ### Community 0 - "Community 0"
-Cohesion: 0.07
-Nodes (42): QueryAnalysisError, Raised when LLM-based query analysis fails., IDataSource, IQueryService, Interface for data source implementations., Validate that the identifier exists., Interface for query analysis service., ExpandedQuery (+34 more)
+Cohesion: 0.06
+Nodes (50): ABC, QueryAnalysisError, Raised when LLM-based query analysis fails., ICache, IDataSource, ILLMClient, IQueryService, IRAGService (+42 more)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.07
-Nodes (27): IChatService, Any, ChatService, _build_domain_refusal_message(), Check if the user message is asking about the bot's identity or capabilities., Handle end-of-turn updates and post-processing., Persist session history + state after stream completion., Return a beautifully formatted, user-friendly markdown explanation of the chatbo (+19 more)
+Cohesion: 0.05
+Nodes (43): DomainGuard, Async domain classifier for the financial chatbot.      Wraps an OpenAI struct, IChatService, MessageManager, ChatOpenAI, Any, BaseMessage, ChatOpenAI (+35 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.03
-Nodes (64): AttachmentResult, AttachmentUploadResponse, chatApi, ChatMessage, ChatSession, CreateSessionRequest, handleStreamAuthRetry(), performStreamFetch() (+56 more)
+Nodes (63): AttachmentItem(), ChatBody(), ChatBodyProps, ChatMessageItem(), ChatMessageItemProps, ErrorMessageProps, MessageBubble(), MessageBubbleProps (+55 more)
 
 ### Community 3 - "Community 3"
-Cohesion: 0.06
-Nodes (37): authApi, AuthResponse, ChangePasswordCredentials, clearVisitingUser(), ForgotPasswordCredentials, isRegisteredUserError(), LoginCredentials, ResetPasswordCredentials (+29 more)
+Cohesion: 0.05
+Nodes (54): AnswerCreate, authApi, AuthResponse, ChangePasswordCredentials, clearVisitingUser(), ForgotPasswordCredentials, isRegisteredUserError(), LoginCredentials (+46 more)
 
 ### Community 4 - "Community 4"
 Cohesion: 0.07
-Nodes (42): PlaywrightCrawlingContext, PlaywrightCrawlingContext, PlaywrightBrowserController, PlaywrightBrowserPlugin, Article, ArticleMetadata, Secondary metadata for articles., Unified article representation across all scrapers. (+34 more)
+Nodes (32): PlaywrightCrawlingContext, PlaywrightCrawlingContext, Any, ArticlePageContent, BofAPrivateBankScraper, _contains_hint(), _fetch_pdf_text(), main() (+24 more)
 
 ### Community 5 - "Community 5"
 Cohesion: 0.05
@@ -325,23 +325,23 @@ Nodes (34): AsyncClient, BackendChatHistoryMessage, ChatHistoryService, Backend-
 
 ### Community 6 - "Community 6"
 Cohesion: 0.06
-Nodes (31): yFinance data source implementation., Return the shared browser-impersonated session., Create a ticker instance using the configured HTTP transport., Run synchronous yFinance work under the shared concurrency cap., Fetch comprehensive stock data for a ticker (TTL-cached, FIX-007)., Validate if a ticker exists and has data., Get currency symbol from code., Synchronous data fetch orchestrator. (+23 more)
+Nodes (37): Tests for the yFinance data source transport configuration., Real-time price fetches should use the shared ticker builder., The ticker factory should reuse one browser-impersonated session., The ticker factory should fall back to default yfinance transport., The data source should cap concurrent yFinance work., test_build_ticker_falls_back_without_curl_cffi(), test_build_ticker_uses_shared_browser_session(), test_get_real_time_price_uses_ticker_builder() (+29 more)
 
 ### Community 7 - "Community 7"
-Cohesion: 0.10
-Nodes (23): TrialJoinModalProps, TrialLimitModalProps, PDFViewerModalProps, DashboardHeaderProps, InsightCard(), InsightStatusChangeHandler, formatDate(), PROFILE_SUBSCRIPTION_PATH (+15 more)
+Cohesion: 0.07
+Nodes (36): storeVisitingUser(), VisitingUser, visitingUsersApi, EmailGateModal(), EmailGateModalProps, ModalView, TrialJoinModal(), TrialJoinModalProps (+28 more)
 
 ### Community 8 - "Community 8"
-Cohesion: 0.05
-Nodes (45): getStoredVisitingUser(), createCheckoutSession(), Tier, ProtectedRoute(), ProtectedRouteProps, PublicRoute(), PublicRouteProps, useAuth() (+37 more)
+Cohesion: 0.06
+Nodes (40): getStoredVisitingUser(), createCheckoutSession(), Tier, tiersApi, TierWelcomeModal(), PricingError(), PricingErrorProps, PricingHeader() (+32 more)
 
 ### Community 9 - "Community 9"
-Cohesion: 0.07
-Nodes (30): AttachmentFile(), AttachmentFileProps, AttachmentLockedPopover(), AttachmentLockedPopoverProps, FEATURES, TextareaContainer(), TextareaContainerProps, BottomNav() (+22 more)
+Cohesion: 0.04
+Nodes (44): AttachmentFile(), AttachmentFileProps, AttachmentLockedPopover(), AttachmentLockedPopoverProps, FEATURES, TextareaContainer(), TextareaContainerProps, AdminSidebarSectionProps (+36 more)
 
 ### Community 10 - "Community 10"
-Cohesion: 0.07
-Nodes (52): bulk_ingest_scraping_sub_urls(), bulk_ingest_scraping_urls(), delete_ingested_pdf(), download_pdf_from_url(), extract_name_from_url(), ingested_pdf_list(), list_scraping_history(), list_scraping_sub_urls() (+44 more)
+Cohesion: 0.06
+Nodes (57): bulk_ingest_scraping_sub_urls(), bulk_ingest_scraping_urls(), delete_ingested_pdf(), download_pdf_from_url(), extract_name_from_url(), ingested_pdf_list(), list_scraping_history(), list_scraping_sub_urls() (+49 more)
 
 ### Community 11 - "Community 11"
 Cohesion: 0.06
@@ -349,19 +349,19 @@ Nodes (50): anyio_backend(), client(), FakeRedis, MockTickerService, Unit tests 
 
 ### Community 12 - "Community 12"
 Cohesion: 0.09
-Nodes (38): DailySummaryCompiler, Daily Compiler Service for Market Insights.  Dynamically scans the global stoc, Initialise compiler with required network dependencies.          Args:, Retrieve cached daily summary globally by tier or compile and cache a new one., Asynchronously compiles, caches, and logs audit entries for a tier report under, Fetch 1-month yFinance prices, scan movers, and harvest news in parallel., Retrieve top 5-7 key global financial market events from today via OpenAI web se, Executes the global market scanning, filtering, news harvesting, and AI synthesi (+30 more)
+Nodes (33): DailySummaryCompiler, Daily Compiler Service for Market Insights.  Dynamically scans the global stoc, Initialise compiler with required network dependencies.          Args:, Retrieve cached daily summary globally by tier or compile and cache a new one., Asynchronously compiles, caches, and logs audit entries for a tier report under, Fetch 1-month yFinance prices, scan movers, and harvest news in parallel., Retrieve top 5-7 key global financial market events from today via OpenAI web se, Executes the global market scanning, filtering, news harvesting, and AI synthesi (+25 more)
 
 ### Community 13 - "Community 13"
 Cohesion: 0.06
-Nodes (31): AnswerCreate, OnboardingApi, Question, OnboardingOption, useOnboardingActions(), useOnboardingHelpers(), useOnboardingNavigation(), useOnboardingQuestions() (+23 more)
+Nodes (19): Tests for portfolio stress-test endpoints.    GET  /api/v1/portfolio/stress-test, An empty portfolio array must fail Pydantic validation (422)., Request without 'portfolio' key must return 422., Negative weight values must be rejected by validation., When PortfolioService returns an error dict, endpoint raises HTTP 400., Request without 'scenarios' key should still succeed., Request with a specific scenarios list should be accepted., Tests for GET /api/v1/portfolio/stress-test/scenarios. (+11 more)
 
 ### Community 14 - "Community 14"
 Cohesion: 0.05
-Nodes (55): BaseModel, MessageMetadata, Optional metadata attached to a request., Structured metadata for a conversation message., Event emitted during streaming response., RequestMetadata, StreamEvent, DailyStockHighlightTier1 (+47 more)
+Nodes (58): BaseModel, Dynamic yFinance endpoint mapping., Result of ticker resolution for a company name., TickerResolution, YFinanceMapping, MessageMetadata, Optional metadata attached to a request., Structured metadata for a conversation message. (+50 more)
 
 ### Community 15 - "Community 15"
-Cohesion: 0.14
-Nodes (39): Request, Response, Session, User, ChangePasswordRequest, create_access_token(), create_refresh_token(), hash_password() (+31 more)
+Cohesion: 0.08
+Nodes (51): Request, Response, Session, User, ChangePasswordRequest, create_access_token(), create_refresh_token(), hash_password() (+43 more)
 
 ### Community 16 - "Community 16"
 Cohesion: 0.08
@@ -372,8 +372,8 @@ Cohesion: 0.12
 Nodes (28): AttachmentResult, AttachmentUploadResponse, ChatMessageCreate, ChatSessionCreate, Session, UploadFile, User, UUID (+20 more)
 
 ### Community 18 - "Community 18"
-Cohesion: 0.08
-Nodes (24): datetime, Build the Redis key for a scraper job (batch-specific)., Build the permanent Redis key for a scraper's last successful run., Read and deserialize a job from Redis.          Args:             name: Scrap, Persist a job to Redis with the configured TTL.          Args:             jo, Create a QUEUED job entry in Redis for the given scraper.          Args:, Transition a job from QUEUED to STARTED.          Called when the thread is as, Transition a job to IN_PROGRESS.          Called immediately before the scrape (+16 more)
+Cohesion: 0.07
+Nodes (26): datetime, Redis, Redis-backed job queue for scraper status tracking.  Each scraper job transiti, Build the Redis key for a scraper job (batch-specific)., Build the permanent Redis key for a scraper's last successful run., Read and deserialize a job from Redis.          Args:             name: Scrap, Persist a job to Redis with the configured TTL.          Args:             jo, Create a QUEUED job entry in Redis for the given scraper.          Args: (+18 more)
 
 ### Community 19 - "Community 19"
 Cohesion: 0.12
@@ -381,19 +381,19 @@ Nodes (25): PlaywrightCrawlingContext, Regression tests for the Wealth Deutsche 
 
 ### Community 20 - "Community 20"
 Cohesion: 0.12
-Nodes (40): AnswerCreate, Session, User, Session, Tier, AnswerCreate, Session, OnboardingQuestion (+32 more)
+Nodes (28): AnswerCreate, Session, User, Session, UserProfile, calculate_cip_profile_endpoint(), get_questions_by_tier(), Calculate CIP (Customer Investment Profile) based on user's answers.     Compar (+20 more)
 
 ### Community 21 - "Community 21"
 Cohesion: 0.15
 Nodes (13): Theme, ThemeContext, ThemeContextType, ThemeProvider(), useTheme(), TradingViewCalendar(), TradingViewCryptoNews(), TradingViewHeatmap() (+5 more)
 
 ### Community 22 - "Community 22"
-Cohesion: 0.11
-Nodes (10): Any, Store document with proper metadata and deduplication.          Args:, Delete document by URL.          Args:             url: Document URL to delet, Delete document by document_id.          Args:             document_id: Uniqu, Delete documents matching metadata filters.          Args:             filter, Update metadata for a document.          Args:             document_id: Uniqu, Get statistics about stored documents.          Returns:             Dictiona, Check if document already exists by URL.          Returns:             True i (+2 more)
+Cohesion: 0.07
+Nodes (24): RAGError, Raised when document retrieval or ingestion fails., IRAGService, Any, RAGService, Store document with proper metadata and deduplication.          Args:, RAG service implementing IRAGService interface., Initialize RAG service. (+16 more)
 
 ### Community 23 - "Community 23"
-Cohesion: 0.05
-Nodes (42): ScrollToTop(), AlertContext, AlertContextType, formatNotificationTime(), getNotificationCardStyle(), HeaderLayoutProps, MobileDrawerContentProps, MobileMenuProps (+34 more)
+Cohesion: 0.06
+Nodes (35): AlertContext, AlertContextType, formatNotificationTime(), getNotificationCardStyle(), HeaderLayoutProps, MobileDrawerContentProps, MobileMenuProps, NotificationItem() (+27 more)
 
 ### Community 24 - "Community 24"
 Cohesion: 0.08
@@ -404,44 +404,44 @@ Cohesion: 0.14
 Nodes (15): PlaywrightCrawlingContext, BarronsScraper, get_config(), main(), Barron's Markets News Scraper Using Crawlee Python with PlaywrightCrawler  Or, Handle Markets listing page., Find Markets link on homepage., Route context dynamically to correct page handler method. (+7 more)
 
 ### Community 26 - "Community 26"
-Cohesion: 0.14
-Nodes (39): _apply_status_update(), list_insights(), _parse_insight_uuid(), Update insight status and record an admin review.     Path: /api/v1/admin/insig, Manually trigger daily/weekly insights sync from ML API.     Path: /api/v1/admi, Fetch all market insights for admin review.     Path: /api/v1/admin/insights, trigger_insights_sync(), update_insight_status() (+31 more)
+Cohesion: 0.11
+Nodes (47): _apply_status_update(), list_insights(), _parse_insight_uuid(), Update insight status and record an admin review.     Path: /api/v1/admin/insig, Manually trigger daily/weekly insights sync from ML API.     Path: /api/v1/admi, Fetch all market insights for admin review.     Path: /api/v1/admin/insights, trigger_insights_sync(), update_insight_status() (+39 more)
 
 ### Community 27 - "Community 27"
-Cohesion: 0.15
-Nodes (16): datetime, PlaywrightCrawlingContext, is_within_lookback(), parse_date(), _parse_regex_dates(), Date-based article filtering utility.  Used by all scrapers to skip articles t, Best-effort parsing of a date string into a timezone-aware datetime.      Trie, Return ``True`` if the article was published within the last *lookback_days*. (+8 more)
+Cohesion: 0.10
+Nodes (22): datetime, PlaywrightCrawlingContext, is_within_lookback(), parse_date(), _parse_regex_dates(), Date-based article filtering utility.  Used by all scrapers to skip articles t, Best-effort parsing of a date string into a timezone-aware datetime.      Trie, Return ``True`` if the article was published within the last *lookback_days*. (+14 more)
 
 ### Community 28 - "Community 28"
-Cohesion: 0.09
-Nodes (3): AdminRoute(), AdminRouteProps, Loader()
+Cohesion: 0.08
+Nodes (4): AdminRoute(), AdminRouteProps, ProtectedRouteProps, Loader()
 
 ### Community 29 - "Community 29"
-Cohesion: 0.08
-Nodes (23): IQueryService, QueryExpansionResult, QueryService, Route query to fast or full LLM chain based on complexity signals., Get data source (lazy init if not provided)., Analyze query to extract intent, entities and specific requirements., Invoke the appropriate LLM chain and extract content., Validate parsed LLM response and ensure follow-ups exist. (+15 more)
+Cohesion: 0.07
+Nodes (21): IQueryService, QueryService, Route query to fast or full LLM chain based on complexity signals., Get data source (lazy init if not provided)., Analyze query to extract intent, entities and specific requirements., Invoke the appropriate LLM chain and extract content., Validate parsed LLM response and ensure follow-ups exist., Resolve tickers if company names found but no tickers. (+13 more)
 
 ### Community 30 - "Community 30"
-Cohesion: 0.10
-Nodes (11): Retrieve relevant document chunks for a query.          Args:             que, Fetch data for a given identifier., Analyze and expand a user query., Full pipeline: analyze query and fetch data., Build a formatted LLM context string for a response., Resolve a company name to a ticker symbol., Resolve multiple company names in parallel., Process a chat message and return response. (+3 more)
+Cohesion: 0.07
+Nodes (14): Retrieve relevant document chunks for a query.          Args:             que, Get value from cache., Set value in cache with optional TTL., Generate a structured response matching the schema., Fetch data for a given identifier., Analyze and expand a user query., Full pipeline: analyze query and fetch data., Build a formatted LLM context string for a response. (+6 more)
 
 ### Community 31 - "Community 31"
 Cohesion: 0.10
 Nodes (35): _build_checked_component_status(), _build_component_status(), build_liveness_report(), build_readiness_report(), _check_prompt_catalog(), _check_redis_dependency(), _check_required_config(), _check_weaviate_dependency() (+27 more)
 
 ### Community 32 - "Community 32"
-Cohesion: 0.08
-Nodes (27): RAGError, Raised when document retrieval or ingestion fails., Initialise with a fresh WeaviateService connection., Any, Initialize RAG service., SearchResult, Generate embeddings and ingest chunks into Weaviate., Create a local text splitter with document-type-aware sizes. (+19 more)
+Cohesion: 0.10
+Nodes (19): Initialise with a fresh WeaviateService connection., Any, Generate embeddings and ingest chunks into Weaviate., Create a local text splitter with document-type-aware sizes., Chunk document content using a caller-provided splitter., Ingest chunks using explicit batching with insert_many.         Args:, Create Weaviate DataObjects from chunks., Main service for interacting with Weaviate vector database.     Handles documen (+11 more)
 
 ### Community 33 - "Community 33"
-Cohesion: 0.09
-Nodes (19): Article, BeautifulSoupCrawlingContext, EconomicTimesScraper, main(), Handle listing pages — extract article links., Helper to process stories and enqueue article requests., Handle article pages — extract full news content., Extract published date from meta tags or visible elements. (+11 more)
+Cohesion: 0.08
+Nodes (21): Article, BeautifulSoupCrawlingContext, ArticleMetadata, Secondary metadata for articles., EconomicTimesScraper, main(), Handle listing pages — extract article links., Helper to process stories and enqueue article requests. (+13 more)
 
 ### Community 34 - "Community 34"
-Cohesion: 0.09
-Nodes (28): Base, Attachment, ChatMessage, ChatSession, MessageAttachment, UsageCounter, ComplianceDisclosure, ComplianceGroup (+20 more)
+Cohesion: 0.12
+Nodes (26): Enum, Base, Attachment, ChatMessage, ChatSession, MessageAttachment, UsageCounter, ComplianceDisclosure (+18 more)
 
 ### Community 35 - "Community 35"
-Cohesion: 0.10
-Nodes (41): ChatRequest, ChatResponse, ConversationHistoryResponse, ChatRequest, ChatResponse, ConversationHistoryResponse, ConversationMessage, Core Pydantic schemas for the API.  Contains request and response models for all (+33 more)
+Cohesion: 0.09
+Nodes (42): ChatRequest, ChatResponse, ConversationHistoryResponse, IChatService, Interface for chat service., Clear conversation history for a session., ChatRequest, ChatResponse (+34 more)
 
 ### Community 36 - "Community 36"
 Cohesion: 0.12
@@ -449,91 +449,91 @@ Nodes (23): Raised when yFinance data fetching fails., YFinanceError, EventType,
 
 ### Community 37 - "Community 37"
 Cohesion: 0.07
-Nodes (21): Context Management for Chat Service., Configuration package., _load_env_int(), _load_retrieval_config(), QueryIntelligenceConfig, Configuration for the Financial Intelligence system., Load the first valid integer from environment variables., Load retrieval configuration from YAML file with environment variable overrides. (+13 more)
+Nodes (21): Configuration package., _load_env_int(), _load_retrieval_config(), QueryIntelligenceConfig, Configuration for the Financial Intelligence system., Load the first valid integer from environment variables., Load retrieval configuration from YAML file with environment variable overrides., Configuration for query intelligence components. (+13 more)
 
 ### Community 38 - "Community 38"
-Cohesion: 0.06
-Nodes (33): AlertPayload, InsightResult, MarketEvent, Pydantic models and enumerations for the Market Insights pipeline.  Defines the, A primitive market event detected by the trigger layer., Fully classified insight produced by the LLM engine., Dispatchable alert ready for delivery to the user tier queue., Request body for manual scan trigger. (+25 more)
+Cohesion: 0.05
+Nodes (39): AlertPayload, EventType, InsightCategory, InsightResult, InsightTopic, MarketEvent, Pydantic models and enumerations for the Market Insights pipeline.  Defines the, A primitive market event detected by the trigger layer. (+31 more)
 
 ### Community 39 - "Community 39"
 Cohesion: 0.10
 Nodes (27): RAGService, delete_document(), get_rag_service(), get_rag_stats(), get_scrapper_service(), Scraper API route handlers., Scrape content from PDF via S3 URL.      - **s3_url**: S3 URL or HTTPS S3 URL, Store document content in vector database for RAG.      - **url**: Document UR (+19 more)
 
 ### Community 40 - "Community 40"
-Cohesion: 0.11
-Nodes (20): PlaywrightCrawlingContext, dismiss_overlays(), get_config(), InvestingComScraper, _is_article_url(), main(), Investing.com Stock Market News Scraper.  Using Crawlee Python with Playwright, Detect and handle Cloudflare challenge pages. (+12 more)
+Cohesion: 0.12
+Nodes (18): PlaywrightCrawlingContext, dismiss_overlays(), get_config(), InvestingComScraper, _is_article_url(), main(), Investing.com Stock Market News Scraper.  Using Crawlee Python with Playwright, Detect and handle Cloudflare challenge pages. (+10 more)
 
 ### Community 41 - "Community 41"
-Cohesion: 0.19
-Nodes (23): Session, User, datetime, Session, Tier, User, ChangeSource, ChangeType (+15 more)
+Cohesion: 0.14
+Nodes (29): Session, User, Session, datetime, Session, Tier, User, ChangeSource (+21 more)
 
 ### Community 42 - "Community 42"
-Cohesion: 0.14
-Nodes (11): OpenAIClient, OpenAI LLM client implementation., Stream response chunks from the LLM.          Args:             prompt: The i, OpenAI LLM client using LangChain.      Provides methods for text generation,, Initialize OpenAI client with optional settings.          Args:             s, Get or create ChatOpenAI instance (lazy initialization).          Returns:, Initialize ChatOpenAI instance.          Returns:             Configured Chat, Generate a response from the LLM.          Args:             prompt: The inpu (+3 more)
+Cohesion: 0.07
+Nodes (20): BaseLLMClient, Base LLM client abstract class., Abstract base class for LLM clients.      Provides a consistent interface for, Get the underlying LLM instance.          Returns:             The LLM instan, Generate a response from the LLM.          Args:             prompt: The inpu, Generate a structured response from the LLM.          Args:             promp, Stream response chunks from the LLM.          Args:             prompt: The i, OpenAIClient (+12 more)
 
 ### Community 43 - "Community 43"
-Cohesion: 0.11
-Nodes (15): Any, User document upload service., Process a document upload by sending it to OpenAI and storing the reference., Delete a file from OpenAI's servers. Safe to call with None for non-OpenAI files, Store image as base64 in Redis. No OpenAI upload needed., Upload spreadsheet to OpenAI Files API for native analysis., Upload PDF/Word document to OpenAI Files API and store file_id in Redis., Validate filename and tier entitlements, returning the extension. (+7 more)
+Cohesion: 0.09
+Nodes (18): Any, AsyncOpenAI, FallbackAsyncOpenAI, User document upload service., Process a document upload by sending it to OpenAI and storing the reference., Delete a file from OpenAI's servers. Safe to call with None for non-OpenAI files, Store image as base64 in Redis. No OpenAI upload needed., Upload PDF/Word document to OpenAI Files API and store file_id in Redis. (+10 more)
 
 ### Community 44 - "Community 44"
-Cohesion: 0.19
-Nodes (8): main(), ManInstituteScraper, Man Institute scraper — Crawlee BeautifulSoupCrawler implementation.  Uses Cra, Return stripped text of the first match, or None., Instantiate the scraper and run it., Scrapes research articles from the Man Institute listing page., Run the full pipeline synchronously (wraps async internally)., Crawlee-based async pipeline.
+Cohesion: 0.22
+Nodes (7): main(), ManInstituteScraper, Return stripped text of the first match, or None., Instantiate the scraper and run it., Scrapes research articles from the Man Institute listing page., Run the full pipeline synchronously (wraps async internally)., Crawlee-based async pipeline.
 
 ### Community 45 - "Community 45"
-Cohesion: 0.15
-Nodes (15): Collection, Structured result from a vector search or RAG retrieval., SearchResult, Any, datetime, RecursiveCharacterTextSplitter, Weaviate schema definition for DocumentChunks collection.  This module defines t, Weaviate schema definition for the DocumentChunks collection. (+7 more)
+Cohesion: 0.10
+Nodes (22): Collection, Structured result from a vector search or RAG retrieval., SearchResult, Any, datetime, RecursiveCharacterTextSplitter, Weaviate schema definition for DocumentChunks collection.  This module defines t, Weaviate schema definition for the DocumentChunks collection. (+14 more)
 
 ### Community 46 - "Community 46"
 Cohesion: 0.06
 Nodes (30): [2026-04-07], [2026-04-08], [2026-04-08], [2026-04-09], [2026-04-10], [2026-04-13], [2026-04-16], [2026-04-27] (+22 more)
 
 ### Community 47 - "Community 47"
-Cohesion: 0.06
-Nodes (57): AsyncIOScheduler, CronTrigger, datetime, ScraperJobQueue, datetime, IngestionReport, ScraperJobQueue, StoredArticleRecord (+49 more)
+Cohesion: 0.16
+Nodes (21): AsyncIOScheduler, ScraperJobQueue, get_max_workers(), Read the maximum number of parallel scraper workers from config.      The valu, _build_trigger(), _log_execution_summary(), main(), Standalone Scraper Scheduler.  This module reads the scraper configurations an (+13 more)
 
 ### Community 48 - "Community 48"
 Cohesion: 0.50
 Nodes (3): Tests for the latest scheduler snapshot publisher., Latest snapshot should send a POST request with sequential IDs in payload., test_publish_scheduler_snapshot_sends_api_request()
 
 ### Community 49 - "Community 49"
-Cohesion: 0.12
-Nodes (20): build_dispatcher(), dispatch_batch(), NotificationDispatcher, Dispatcher & Tier Logic Layer for Market Insights.  Handles deduplication via, Retrieve and drain the immediate alert queue for a user atomically.          G, Retrieve (non-destructively) the weekly summary for a user.          Args:, Retrieve (non-destructively) the daily summary for a user.          Args:, Check whether this ticker+topic pair was already alerted today.          Uses (+12 more)
+Cohesion: 0.10
+Nodes (22): build_dispatcher(), dispatch_batch(), NotificationDispatcher, Dispatcher & Tier Logic Layer for Market Insights.  Handles deduplication via, Retrieve and drain the immediate alert queue for a user atomically.          G, Retrieve (non-destructively) the weekly summary for a user.          Args:, Retrieve (non-destructively) the daily summary for a user.          Args:, Check whether this ticker+topic pair was already alerted today.          Uses (+14 more)
 
 ### Community 50 - "Community 50"
 Cohesion: 0.07
 Nodes (17): FakeSearchResult, Tests for the current RAG service contract., Duplicate documents should be skipped when replacement is disabled., Duplicate documents should be deleted before replacement., Minimal stand-in for Weaviate search results., URL deletion should delegate to the vector service., Stats should be returned directly from the vector service., Duplicate checks should fail open when the lookup errors. (+9 more)
 
 ### Community 51 - "Community 51"
-Cohesion: 0.07
-Nodes (24): PendingApprovalQueue(), PendingApprovalQueueProps, ScraperRunLogs(), ScraperRunLogsProps, SyncControlCenter(), SyncControlCenterProps, AdminInsightsFilters(), AdminInsightsFiltersProps (+16 more)
+Cohesion: 0.05
+Nodes (30): ScrapingURLResponse, ActivePipelines(), ActivePipelinesProps, MetricsGrid(), MetricsGridProps, PendingApprovalQueue(), PendingApprovalQueueProps, ScraperRunLogs() (+22 more)
 
 ### Community 52 - "Community 52"
 Cohesion: 0.09
 Nodes (26): datetime, Session, Event, archive_expired_insights(), CronService, CronService =========== Manages all scheduled background jobs for the backend., Return how many seconds remain until the next occurrence of *hour*:*minute* IST., Return seconds until the next weekly run day at *hour*:*minute* IST. (+18 more)
 
 ### Community 53 - "Community 53"
-Cohesion: 0.33
-Nodes (3): Any, Write the full output to a JSON file., Convert to a JSON-serialisable dictionary.
+Cohesion: 0.06
+Nodes (35): BrowserPool, Any, PlaywrightBrowserController, PlaywrightBrowserController, PlaywrightBrowserPlugin, Article, Write the full output to a JSON file., Unified article representation across all scrapers. (+27 more)
 
 ### Community 54 - "Community 54"
 Cohesion: 0.07
 Nodes (28): 1. Chat Orchestration (Sequence Diagram), 1. Environment Setup, 1. Tiered Insight Delivery Architecture, 2. Query Intelligence Pipeline, 2. Run with Docker (Recommended), 2. Video Ingestion & Retrieval (RAG) Pipeline, 3. Local Development, 3. RAG Ingestion Flow (+20 more)
 
 ### Community 55 - "Community 55"
-Cohesion: 0.16
-Nodes (20): _make_upload_file(), Endpoint-function tests for user upload workflow., Size violations should return explicit size flags for client UX., ValueError with doc-limit semantics should map to 403., Build a fake UploadFile object for endpoint tests., Endpoint should process multiple files in one call., Tier 0/1/2 should be blocked before file processing., Tier limit should reject too many files in one upload request. (+12 more)
+Cohesion: 0.11
+Nodes (24): FakeUploadFile, _make_upload_file(), Endpoint-function tests for user upload workflow., Size violations should return explicit size flags for client UX., ValueError with doc-limit semantics should map to 403., Minimal async UploadFile-compatible test double., Return file bytes once., No-op close for test compatibility. (+16 more)
 
 ### Community 56 - "Community 56"
 Cohesion: 0.07
 Nodes (28): devDependencies, autoprefixer, eslint, @eslint/js, eslint-plugin-import, eslint-plugin-react, eslint-plugin-react-hooks, eslint-plugin-react-refresh (+20 more)
 
 ### Community 57 - "Community 57"
-Cohesion: 0.09
-Nodes (31): datetime, IngestionReport, RAGService, StoredArticleRecord, _accumulate_ingestion_results(), _build_stored_article_record(), _cleanup_old_scraper_data(), _collect_source_counts() (+23 more)
+Cohesion: 0.13
+Nodes (23): datetime, RAGService, StoredArticleRecord, _accumulate_ingestion_results(), _build_stored_article_record(), _cleanup_old_scraper_data(), _collect_source_counts(), _ingest_article() (+15 more)
 
 ### Community 58 - "Community 58"
-Cohesion: 0.10
-Nodes (25): client, handleUnauthorizedError(), contentApi, MarketInsight, MarketInsightsResponse, PreviewSubscriptionResponse, tiersApi, ArchiveView() (+17 more)
+Cohesion: 0.17
+Nodes (19): contentApi, ArchiveView(), ArchiveViewProps, CarouselCard(), CarouselCardProps, formatPriceChange(), getFaviconUrl(), getGroupDateLabel() (+11 more)
 
 ### Community 59 - "Community 59"
 Cohesion: 0.08
@@ -552,16 +552,16 @@ Cohesion: 0.08
 Nodes (24): Comparative Analysis Query, CORE PRINCIPLES, CRITICAL REMINDERS, Edge Case — Entertainment Request (REJECT), Edge Case — General Knowledge No Financial Decision (REJECT), Edge Case — General Tech Explanation With Finance Mention (REJECT), Edge Case — Legitimate Cross-Domain (ACCEPT), Edge Case — Personal Finance Concept (ACCEPT) (+16 more)
 
 ### Community 63 - "Community 63"
-Cohesion: 0.12
-Nodes (12): MetricsGrid(), MetricsGridProps, PricingTier, getPrice(), ICON_MAP, PricingCardsProps, TierCard(), TierIconType (+4 more)
+Cohesion: 0.06
+Nodes (18): Tests for notification endpoints.    GET  /api/v1/notifications   POST /api/v1/n, Tests for the notifications listing endpoint (GET /api/v1/notifications)., Unauthenticated requests must be rejected., Authenticated user receives 200., Endpoint returns a JSON array (not a wrapped object)., A fresh user with no targeted notifications should get an empty array., Endpoint accepts a limit query parameter., Limit above 100 must be rejected (422). (+10 more)
 
 ### Community 64 - "Community 64"
 Cohesion: 0.12
-Nodes (23): Case O: RAG connection failure fallback.      Verify that when Weaviate search, test_case_o_rag_connection_failure_fallback(), ITickerService, Interface for ticker resolution service., LLMEngine, Classifies market events into the 30-topic taxonomy.      Uses OpenAI beta str, Initialise the engine with an optional API key override.          Args:, MarketInsightsRAGClient (+15 more)
+Nodes (21): Case O: RAG connection failure fallback.      Verify that when Weaviate search, test_case_o_rag_connection_failure_fallback(), LLMEngine, Classifies market events into the 30-topic taxonomy.      Uses OpenAI beta str, Initialise the engine with an optional API key override.          Args:, MarketInsightsRAGClient, Retrieves Vector DB context for a triggered market event.      Reuses the shared, Release the underlying Weaviate connection. (+13 more)
 
 ### Community 65 - "Community 65"
 Cohesion: 0.10
-Nodes (25): AppError, Response Generation Logic., Generate response with retry logic and optional attached files., Remove markdown code blocks from LLM output before returning to user., Stream response content and tool statuses., Stream responses for attachment-bearing prompts using Responses API., Parse stream event and return response payload., Generate a response using Responses API with mixed attachments. (+17 more)
+Nodes (23): Context Management for Chat Service., Response Generation Logic., Generate response with retry logic and optional attached files., Remove markdown code blocks from LLM output before returning to user., Stream response content and tool statuses., Stream responses for attachment-bearing prompts using Responses API., Parse stream event and return response payload., Generate a response using Responses API with mixed attachments. (+15 more)
 
 ### Community 66 - "Community 66"
 Cohesion: 0.12
@@ -596,36 +596,36 @@ Cohesion: 0.10
 Nodes (19): compilerOptions, allowImportingTsExtensions, erasableSyntaxOnly, lib, module, moduleDetection, moduleResolution, noEmit (+11 more)
 
 ### Community 74 - "Community 74"
-Cohesion: 0.13
-Nodes (19): anyio_backend(), get_mock_download_data(), get_sample_raw_alerts(), get_sample_report(), Unit tests for the Daily Summary Compiler service.  Tests cache retrieval, dyn, Generates 20 rows of mock Close and Volume data for list of tickers., Test that compiler returns cached report on a Redis cache hit., Test cache miss compiles, fetches yFinance news and history, runs LLM, and cache (+11 more)
+Cohesion: 0.11
+Nodes (24): DailyStockHighlight, Stock-specific highlight for the daily report., AlertPayload, DailySummaryReport, DataFrame, anyio_backend(), get_mock_download_data(), get_sample_raw_alerts() (+16 more)
 
 ### Community 75 - "Community 75"
-Cohesion: 0.09
-Nodes (17): User, UpgradePlanModal(), UpgradePlanModalProps, isProfileTab(), PROFILE_TAB_IDS, PROFILE_TOKENS_PATH, profilePath(), ProfileTabId (+9 more)
+Cohesion: 0.07
+Nodes (22): User, ChatInput(), ChatInputProps, UpgradePlanModal(), UpgradePlanModalProps, useAlert(), InsightSectionProps, isProfileTab() (+14 more)
 
 ### Community 76 - "Community 76"
-Cohesion: 0.17
-Nodes (15): main(), Backend cron runner ===================  Usage ----- # Run the scheduler fo, Immediately execute a single insights sync and print a summary., run_test_sync(), _build_insight(), _coerce_trend_type(), _create_admin_notification(), _fetch_for_tier() (+7 more)
+Cohesion: 0.50
+Nodes (4): main(), Backend cron runner ===================  Usage ----- # Run the scheduler fo, Immediately execute a single insights sync and print a summary., run_test_sync()
 
 ### Community 77 - "Community 77"
-Cohesion: 0.52
-Nodes (6): Session, Sync tiers and entitlements., seed_tiers(), _sync_entitlements(), _sync_tier_entitlements(), _sync_tiers()
+Cohesion: 0.15
+Nodes (11): Session, Entitlements, Tier, TierEntitlement, seed_database(), Sync tiers and entitlements., seed_tiers(), _sync_entitlements() (+3 more)
 
 ### Community 78 - "Community 78"
 Cohesion: 0.14
 Nodes (10): ChatMarkdownProps, markdownComponents, ParsedMarkdown, CopyButtonProps, FollowUpButtons(), SourcesPanelProps, VoiceButton(), VoiceButtonProps (+2 more)
 
 ### Community 79 - "Community 79"
-Cohesion: 0.24
-Nodes (10): IngestedPDFMetadata, PDFViewerModal(), IngestionMode, StatusState, IngestionLayoutProps, PDFIngestion(), useIngestion(), useIngestionActions() (+2 more)
+Cohesion: 0.14
+Nodes (14): adminApi, IngestedPDFMetadata, ScrapeResponse, ScrapingURLUpdate, PDFViewerModal(), DocumentsListProps, IngestionMode, StatusState (+6 more)
 
 ### Community 80 - "Community 80"
-Cohesion: 0.21
-Nodes (12): BaseException, build_chromium_launch_args(), build_retry_decision(), classify_failure(), FailureCategory, Shared resilience helpers for scraper reliability.  This module centralises re, Return the stable Chromium launch argument list for Docker environments., Classify a scraper exception into an actionable reliability category.      Ord (+4 more)
+Cohesion: 0.17
+Nodes (14): BaseException, build_chromium_launch_args(), build_retry_decision(), classify_failure(), detect_bot_block(), FailureCategory, Shared resilience helpers for scraper reliability.  This module centralises re, Return the stable Chromium launch argument list for Docker environments. (+6 more)
 
 ### Community 81 - "Community 81"
-Cohesion: 0.13
-Nodes (11): BaseDataSource, Abstract base class defining the interface for all data sources.      This provi, Return the name of the data source., Fetch data based on a query.          Args:             identifier: The search i, Validate if a query/ticker is valid.          Args:             identifier: The, Convert fetched data to LangChain Documents for vector storage.          Args:, Validate that the data source connection is working.          Returns:, Return common metadata fields for this source.          Returns:             Dic (+3 more)
+Cohesion: 0.12
+Nodes (12): BaseDataSource, Abstract base class for data sources., Abstract base class defining the interface for all data sources.      This provi, Return the name of the data source., Fetch data based on a query.          Args:             identifier: The search i, Validate if a query/ticker is valid.          Args:             identifier: The, Convert fetched data to LangChain Documents for vector storage.          Args:, Validate that the data source connection is working.          Returns: (+4 more)
 
 ### Community 82 - "Community 82"
 Cohesion: 0.11
@@ -636,20 +636,20 @@ Cohesion: 0.05
 Nodes (23): DomainDecision, _fast_reject(), Domain Guardrail — Financial domain classification module.  Single-responsibil, Return True if the message should be blocked immediately (Layer 1).      Perso, Structured output from the financial domain classifier.      All fields are gu, Return True if the guardrail should block this query.          Block only when, Classify whether ``message`` is within the financial domain.          Args:, Fetch recent conversation turns for reference resolution context. (+15 more)
 
 ### Community 84 - "Community 84"
-Cohesion: 0.09
-Nodes (21): Raised when ticker resolution fails or is highly ambiguous., TickerResolutionError, ITickerService, ChatOpenAI, JsonDict, Get ticker service (lazy init if not provided)., FakeChain, FakePrompt (+13 more)
+Cohesion: 0.15
+Nodes (9): FakeChain, FakePrompt, FakeRedisClient, Tests for bounded ticker resolution concurrency., Minimal Redis double for ticker cache operations., Return a fake runnable chain that emits deterministic JSON., Track concurrent LLM work without calling a real model., Ticker resolution should honor the configured concurrency cap. (+1 more)
 
 ### Community 85 - "Community 85"
-Cohesion: 0.17
-Nodes (13): Tier feature resolution logic (Trust but Verify)., Backfill missing flags from older tier payload contracts., Resolves tier features from overrides, cache, or backend API., Resolve final feature set for a user tier.          Priority:         1. Requ, Fetch tier definition from the master database via Backend API., TierFeatureResolver, get_static_policy(), Tier policy definitions and feature flags. (+5 more)
+Cohesion: 0.15
+Nodes (14): Tier feature resolution logic (Trust but Verify)., Backfill missing flags from older tier payload contracts., Resolves tier features from overrides, cache, or backend API., Initialize the resolver., Resolve final feature set for a user tier.          Priority:         1. Requ, Fetch tier definition from the master database via Backend API., TierFeatureResolver, get_static_policy() (+6 more)
 
 ### Community 86 - "Community 86"
-Cohesion: 0.08
-Nodes (27): _expand_env_vars(), load_scraper_config(), Unified article schema used by all scrapers.  Every scraper outputs articles c, Expand environment variables in the format ${VAR:-DEFAULT} or ${VAR}.      If, Load per-scraper settings from ``config/scraper_config.yaml``.      Falls back, build_camoufox_pool(), Shared Camoufox browser plugin for stealthed Firefox automation.  Camoufox is, Instantiate a BrowserPool backed by a single CamoufoxPlugin.      Returns: (+19 more)
+Cohesion: 0.09
+Nodes (24): _expand_env_vars(), load_scraper_config(), Unified article schema used by all scrapers.  Every scraper outputs articles c, Expand environment variables in the format ${VAR:-DEFAULT} or ${VAR}.      If, Load per-scraper settings from ``config/scraper_config.yaml``.      Falls back, get_config(), main(), Deutsche Bank Outlooks Scraper Using Crawlee Python with PlaywrightCrawler  O (+16 more)
 
 ### Community 87 - "Community 87"
-Cohesion: 0.39
-Nodes (17): create_question(), create_standalone_question(), delete_answer(), delete_question(), get_all_questions(), get_user_answers(), MappingUpdate, update_answer() (+9 more)
+Cohesion: 0.28
+Nodes (26): create_question(), create_standalone_question(), delete_answer(), delete_question(), get_all_questions(), get_user_answers(), MappingUpdate, update_answer() (+18 more)
 
 ### Community 88 - "Community 88"
 Cohesion: 0.29
@@ -660,12 +660,12 @@ Cohesion: 0.18
 Nodes (10): createPortalSession(), PasswordMessage, useAutoClearError(), usePasswordChange(), usePasswordForm(), usePasswordMeta(), useSubscription(), useSubscriptionState() (+2 more)
 
 ### Community 90 - "Community 90"
-Cohesion: 0.16
-Nodes (16): _configure_openapi_upload_schema_compat(), create_app(), lifespan(), main(), _mask_identifier(), FastAPI Application Entry Point.  Production-ready API for financial query int, Application lifespan handler., Create and configure the FastAPI application. (+8 more)
+Cohesion: 0.13
+Nodes (17): _configure_openapi_upload_schema_compat(), create_app(), lifespan(), main(), _mask_identifier(), FastAPI Application Entry Point.  Production-ready API for financial query int, Application lifespan handler., Create and configure the FastAPI application. (+9 more)
 
 ### Community 91 - "Community 91"
-Cohesion: 0.14
-Nodes (10): TradingViewChart(), TradingViewChartProps, TradingViewTechnicalAnalysis(), TradingViewTickerTape(), TierWelcomeModal(), Dashboard(), KpiCardProps, kpiData (+2 more)
+Cohesion: 0.15
+Nodes (9): TradingViewChart(), TradingViewChartProps, TradingViewTechnicalAnalysis(), TradingViewTickerTape(), Dashboard(), KpiCardProps, kpiData, useDashboardAnimations() (+1 more)
 
 ### Community 92 - "Community 92"
 Cohesion: 0.10
@@ -680,12 +680,12 @@ Cohesion: 0.24
 Nodes (15): create_compliance_group(), create_disclosure(), delete_compliance_group(), delete_disclosure(), get_compliance_groups(), Create a new compliance group., List all compliance groups., Delete a compliance group and its disclosures. (+7 more)
 
 ### Community 95 - "Community 95"
-Cohesion: 0.19
-Nodes (8): JefferiesScraper, main(), Jefferies Insights scraper — Crawlee PlaywrightCrawler implementation.  Uses C, Derive a human-readable category name from the URL., Instantiate the scraper and run it., Scrapes insight articles from the Jefferies website.      Iterates through mul, Run the full scraping pipeline synchronously., Crawlee-based async pipeline.
+Cohesion: 0.22
+Nodes (7): JefferiesScraper, main(), Derive a human-readable category name from the URL., Instantiate the scraper and run it., Scrapes insight articles from the Jefferies website.      Iterates through mul, Run the full scraping pipeline synchronously., Crawlee-based async pipeline.
 
 ### Community 96 - "Community 96"
-Cohesion: 0.18
-Nodes (10): Initialize the resolver., Initialise with an optional Redis client injection (for testing).          Arg, Redis, Any, Redis, get_async_redis(), Redis client helpers., Build Redis client options with production-friendly timeouts. (+2 more)
+Cohesion: 0.07
+Nodes (16): Unit tests for core security utilities.  Tests hash_password, verify_password, c, A freshly created token must not be expired., Token expiry should be within ±60 seconds of the configured window., Decoding with a wrong secret must raise JWTError., Unit tests for create_refresh_token., create_refresh_token must return a JWT string., Refresh token must include an 'exp' claim., The 'sub' claim must be intact after encode→decode. (+8 more)
 
 ### Community 97 - "Community 97"
 Cohesion: 0.14
@@ -700,20 +700,20 @@ Cohesion: 0.12
 Nodes (15): anyio_backend(), Unit tests for the Market Insights notification pipeline.  Tests event detecti, Test standard 30-topic classification via LLM engine., Test TTL-based alert deduplication logic., Test daily cap enforcement for premium tiers and weekly summary for basic tiers., Configure anyio backend to use asyncio., Test yfinance-based scanning and event triggers., Test graceful recovery when a yfinance call fails. (+7 more)
 
 ### Community 100 - "Community 100"
-Cohesion: 0.12
-Nodes (11): ABC, Abstract base class for data sources., BaseLLMClient, Base LLM client abstract class., Abstract base class for LLM clients.      Provides a consistent interface for, Get the underlying LLM instance.          Returns:             The LLM instan, Generate a response from the LLM.          Args:             prompt: The inpu, Generate a structured response from the LLM.          Args:             promp (+3 more)
+Cohesion: 0.08
+Nodes (16): Tests for onboarding endpoints.    GET  /api/v1/onboarding/questions   POST /api, Tests for GET /api/v1/onboarding/questions., Unauthenticated requests must be rejected., Authenticated request returns 200 (with questions) or 400         (if no questio, When questions exist, response must be a JSON array., Endpoint must never return a 5xx status., Tests for POST /api/v1/onboarding/answers., Unauthenticated answer submission must be rejected. (+8 more)
 
 ### Community 101 - "Community 101"
-Cohesion: 0.32
-Nodes (4): GlobalWebSocket(), useWebSocket(), WebSocketHookResult, apiSlice
+Cohesion: 0.10
+Nodes (24): TestClient, Shared pytest configuration and fixtures for the backend test suite.  Uses in-me, admin_client(), auth_client(), client(), _compile_array_sqlite(), _create_tables(), db() (+16 more)
 
 ### Community 102 - "Community 102"
-Cohesion: 0.15
-Nodes (9): _build_rate_limit_identity(), Build a stable request identity for shared rate limiting., Request, RateLimitError, Enforce the limit with in-memory state if Redis is unavailable., Raised when a request exceeds the configured rate limit., Create a stable Redis key without storing raw client identifiers., Acquire permission to make a request or raise immediately. (+1 more)
+Cohesion: 0.13
+Nodes (14): _build_rate_limit_identity(), Build a stable request identity for shared rate limiting., Request, RateLimiter, RateLimitError, Rate limiting utilities for API calls., Enforce the limit with in-memory state if Redis is unavailable., Decorator for retrying async functions with exponential backoff. (+6 more)
 
 ### Community 103 - "Community 103"
-Cohesion: 0.16
-Nodes (11): Any, Get conversation history from Redis., Update conversation history in Redis., Service to handle session state and history management., Build a normalized history record that preserves old and new readers., Initialize session service., Get full session state from Redis., Save full session state to Redis with TTL. (+3 more)
+Cohesion: 0.09
+Nodes (23): get_user_upload_service(), Get UserUploadService instance., Any, Any, Redis, Get conversation history from Redis., Update conversation history in Redis., Clear conversation history and session state. (+15 more)
 
 ### Community 104 - "Community 104"
 Cohesion: 0.21
@@ -724,20 +724,20 @@ Cohesion: 0.20
 Nodes (10): Any, LLMResponseParser, parse_llm_json(), Centralized JSON parsing utilities for LLM responses., Quick utility to parse LLM JSON response.      Args:         response: Raw LLM r, Parse and clean JSON responses from LLM.      Handles common issues like:     -, Parse LLM response to JSON dictionary.          Args:             response: Raw, Parse LLM response, returning default on failure.          Args:             res (+2 more)
 
 ### Community 106 - "Community 106"
-Cohesion: 0.05
-Nodes (35): _bootstrap_container(), get_chat_history_service(), get_chat_service(), get_query_service(), get_rag_service(), get_ticker_service(), get_user_upload_service(), FastAPI dependency injection.  Provides service instances to API routes using (+27 more)
+Cohesion: 0.07
+Nodes (28): _bootstrap_container(), get_chat_history_service(), get_chat_service(), get_query_service(), get_rag_service(), get_ticker_service(), FastAPI dependency injection.  Provides service instances to API routes using, Get chat service instance with RAG enabled. (+20 more)
 
 ### Community 107 - "Community 107"
 Cohesion: 0.13
-Nodes (13): anyio_backend(), mock_session_manager(), mock_settings(), mock_vector_store(), Test configuration and fixtures for RAG system tests., Force anyio tests onto asyncio in this environment., Mock settings for testing., Sample document for testing. (+5 more)
+Nodes (13): Test configuration and fixtures for RAG system tests., anyio_backend(), mock_session_manager(), mock_settings(), mock_vector_store(), Force anyio tests onto asyncio in this environment., Mock settings for testing., Sample document for testing. (+5 more)
 
 ### Community 108 - "Community 108"
-Cohesion: 0.07
-Nodes (23): ChatHistorySidebar(), ConversationItem(), ConversationItemProps, ConversationListProps, DeleteSessionModalProps, extractFirst30Words(), SidebarHeaderProps, SidebarLayout() (+15 more)
+Cohesion: 0.14
+Nodes (13): ProtectedRoute(), ScrollToTop(), useHeaderState(), Sidebar(), DashboardHeader(), Link, LinkProps, Navigate() (+5 more)
 
 ### Community 109 - "Community 109"
 Cohesion: 0.16
-Nodes (13): _build_user_prompt(), _call_tavily(), _ClassificationOutput, LLM Reasoning Engine for Market Insights classification.  Classifies a trigger, Classify a market event using context + optional web-search fallback., Invoke OpenAI structured output and return the parsed schema.          Args:, Fetch live web context via Tavily when RAG is insufficient.          Falls bac, Build the full user-turn prompt for the LLM classification call.      Args: (+5 more)
+Nodes (15): LLMError, Raised when the LLM provider fails or returns invalid data., _build_user_prompt(), _call_tavily(), _ClassificationOutput, LLM Reasoning Engine for Market Insights classification.  Classifies a trigger, Classify a market event using context + optional web-search fallback., Invoke OpenAI structured output and return the parsed schema.          Args: (+7 more)
 
 ### Community 110 - "Community 110"
 Cohesion: 0.17
@@ -748,16 +748,16 @@ Cohesion: 0.13
 Nodes (18): User, DataFrame, CrisisResult, get_stress_scenarios(), PortfolioAsset, Get the metadata for all available historical and hypothetical stress testing sc, Run a portfolio stress test against historical crises or custom selected scenari, run_stress_test() (+10 more)
 
 ### Community 112 - "Community 112"
-Cohesion: 0.31
-Nodes (10): _update_basic_fields(), _update_monthly_price(), _update_product_details(), update_tier(), _update_yearly_price(), Session, Tier, User (+2 more)
+Cohesion: 0.39
+Nodes (9): _update_basic_fields(), _update_monthly_price(), _update_product_details(), update_tier(), _update_yearly_price(), Session, Tier, User (+1 more)
 
 ### Community 113 - "Community 113"
 Cohesion: 0.28
 Nodes (7): _build_rag_query(), _filter_and_serialise(), RAG & Data Retrieval Layer for the Market Insights pipeline.  Wraps the existing, Compose a natural-language RAG query from the event context.      A richer query, Filter chunks below the relevance threshold and serialise to dicts.      Args:, Retrieve the top-N most relevant chunks for a market event.          Builds a ri, MarketEvent
 
 ### Community 114 - "Community 114"
-Cohesion: 0.09
-Nodes (29): Enum, DataQuality, IntentCategory, Type definitions and type aliases for the application., Categories for query intent classification., Data quality levels for financial context., Validation status for ticker resolution., Represents a yFinance endpoint configuration. (+21 more)
+Cohesion: 0.25
+Nodes (7): DataQuality, IntentCategory, Type definitions and type aliases for the application., Categories for query intent classification., Data quality levels for financial context., Represents a yFinance endpoint configuration., YFinanceEndpoint
 
 ### Community 115 - "Community 115"
 Cohesion: 0.20
@@ -768,36 +768,36 @@ Cohesion: 0.18
 Nodes (13): get_active_jobs(), get_job_status_by_website(), load_map_from_backend_api(), load_map_from_manual_config(), load_website_id_map(), map_frequency_to_days(), Scraper mapping utilities for Website IDs., Initialise the website ID↔scraper name maps. (+5 more)
 
 ### Community 117 - "Community 117"
-Cohesion: 0.06
-Nodes (22): ScraperResult, S3Downloader, PDFMetadata, PDFScraper, PDF scraping utilities., Downloads PDF (from HTTP or S3) and returns (content, temp_file_path)., Tiered extraction logic (PyPDF2 -> pdfplumber -> OCR). Runs in executor., Extracts metadata using pypdf. Runs in executor. (+14 more)
+Cohesion: 0.10
+Nodes (13): ScraperResult, S3Downloader, PDFMetadata, PDFScraper, PDF scraping utilities., Downloads PDF (from HTTP or S3) and returns (content, temp_file_path)., Tiered extraction logic (PyPDF2 -> pdfplumber -> OCR). Runs in executor., Extracts metadata using pypdf. Runs in executor. (+5 more)
 
 ### Community 118 - "Community 118"
 Cohesion: 0.19
 Nodes (13): AttachmentRead, AttachmentResult, AttachmentUploadResponse, ChatMessage, ChatMessageBase, ChatMessageCreate, ChatSession, ChatSessionBase (+5 more)
 
 ### Community 119 - "Community 119"
-Cohesion: 0.21
-Nodes (9): confirm_step(), Ask user for confirmation., run(), clear_existing_data(), create_question(), Clear all existing onboarding questions, options, answers, and reset onboarding, Create a new question with its options., seed_cip_questions() (+1 more)
+Cohesion: 0.19
+Nodes (12): Session, confirm_step(), Ask user for confirmation., run(), clear_existing_data(), create_question(), link_question_to_tier(), Clear all existing onboarding questions, options, answers, and reset onboarding (+4 more)
 
 ### Community 120 - "Community 120"
-Cohesion: 0.25
-Nodes (6): metadata, Providers(), AlertProvider(), AppDispatch, RootState, store
+Cohesion: 0.20
+Nodes (9): metadata, Providers(), GlobalWebSocket(), AlertProvider(), useWebSocket(), apiSlice, AppDispatch, RootState (+1 more)
 
 ### Community 121 - "Community 121"
 Cohesion: 0.17
 Nodes (8): Check if this is a comparative analysis., Get a concise summary of the analysis., Convert result to a standard citation format., Complete response from a RAG retrieval turn., Combine all result contents into a single string., Get all results formatted as citations., SearchResponse, Any
 
 ### Community 122 - "Community 122"
-Cohesion: 0.15
-Nodes (5): FrequencySetting(), HandleUpdate, statusDisplayComponent(), TableRowComponent(), useFrequencySetting()
+Cohesion: 0.12
+Nodes (6): WebSocketHookResult, FrequencySetting(), HandleUpdate, statusDisplayComponent(), TableRowComponent(), useFrequencySetting()
 
 ### Community 123 - "Community 123"
-Cohesion: 0.07
-Nodes (30): BrowserPool, Any, PlaywrightCrawlingContext, Scrapper service exports., main(), MorganStanleyScraper, Morgan Stanley Insights scraper — Crawlee PlaywrightCrawler + Camoufox.  Uses, Run the full pipeline synchronously. (+22 more)
+Cohesion: 0.18
+Nodes (9): PlaywrightCrawlingContext, main(), Run the full pipeline synchronously., Crawlee-based async pipeline., Handle market-news listing page — extract and enqueue articles., Handle article detail pages., Instantiate the scraper and run it., Scrapes market-news articles from Seeking Alpha.      Pipeline:     1. Load m (+1 more)
 
 ### Community 124 - "Community 124"
-Cohesion: 0.05
-Nodes (38): DomainGuard, Async domain classifier for the financial chatbot.      Wraps an OpenAI struct, IChatService, Interface for chat service., Clear conversation history for a session., get_prompt(), PromptLoader, Prompt loading utilities for LLM interactions. (+30 more)
+Cohesion: 0.08
+Nodes (27): Raised when ticker resolution fails or is highly ambiguous., TickerResolutionError, Validation status for ticker resolution., ValidationStatus, ITickerService, get_prompt(), PromptLoader, Prompt loading utilities for LLM interactions. (+19 more)
 
 ### Community 125 - "Community 125"
 Cohesion: 0.22
@@ -812,12 +812,12 @@ Cohesion: 0.18
 Nodes (7): FakeRedisClient, Tests for the Redis-backed rate limiter., Minimal async Redis double for rate-limiter tests., The limiter should reject excess traffic immediately., The limiter should also enforce token budgets when provided., test_rate_limiter_rejects_second_request(), test_rate_limiter_uses_token_budget()
 
 ### Community 128 - "Community 128"
-Cohesion: 0.10
+Cohesion: 0.11
 Nodes (14): MessageManager, Message and Session Logic Manager., Build a summary string of the session context., Update session state based on the latest turn's analysis., Manages chat history, session state logic, and query enrichment., Update conversation history., Extract a brief topic from intent or query text., Get conversation history as LangChain messages. (+6 more)
 
 ### Community 129 - "Community 129"
-Cohesion: 0.17
-Nodes (11): Tests for application health helpers., Readiness should report healthy when every dependency check passes., The deprecated chat health route should return the shared readiness payload., Readiness should fail when a dependency check fails., Liveness should only report that the process is up., A successful OpenAI canary should update the cached dependency result., test_build_liveness_report_returns_alive(), test_build_readiness_report_returns_not_ready() (+3 more)
+Cohesion: 0.08
+Nodes (20): ml_client(), Tests for the ML service health check endpoints.    GET /health/live   GET /heal, Root endpoint must return HTTP 200., Root response must include a 'message' key., Root response must include a 'docs' link., Root response must include a 'health' or 'live' link., TestClient for the ML FastAPI app.      Mocks Redis, Weaviate, and OpenAI so no, Tests for GET /health/live. (+12 more)
 
 ### Community 130 - "Community 130"
 Cohesion: 0.17
@@ -840,16 +840,16 @@ Cohesion: 0.24
 Nodes (4): Job, CronService, Register an async job (callable with no args)., register_job()
 
 ### Community 135 - "Community 135"
-Cohesion: 0.23
-Nodes (11): Logger, Any, _apply_logging_config(), get_logger(), load_logging_config(), Logging utilities with YAML configuration support., Get or create a logger with the given name.      Args:         name: Logger n, Load logging configuration from YAML file. (+3 more)
+Cohesion: 0.07
+Nodes (28): Logger, Any, _apply_logging_config(), get_logger(), load_logging_config(), Logging utilities with YAML configuration support., Get or create a logger with the given name.      Args:         name: Logger n, Load logging configuration from YAML file. (+20 more)
 
 ### Community 136 - "Community 136"
 Cohesion: 0.17
 Nodes (11): Regression tests for the BofA PDF selection rules., Generic insights pages should keep HTML content and skip PDF extraction., Cookie and privacy PDFs must never be downloaded., Privacy boilerplate should fail validation even if a PDF was downloaded., Validated market outlook PDFs should still be accepted., Market outlook pages should remain eligible for PDF extraction., test_cookie_and_privacy_pdfs_are_blocked(), test_general_articles_are_not_allowed_for_pdf_extraction() (+3 more)
 
 ### Community 137 - "Community 137"
-Cohesion: 0.33
-Nodes (3): Roughly estimate the number of tokens the file will consume in the context windo, Extract text from a spreadsheet file for token estimation and inline injection., Extract text from a document file for validation and estimation.
+Cohesion: 0.17
+Nodes (6): Upload spreadsheet to OpenAI Files API for native analysis., Roughly estimate the number of tokens the file will consume in the context windo, Extract text from a spreadsheet file for token estimation and inline injection., Extract text from a document file for validation and estimation., Heuristic to detect blatant non-financial/technical content.          Checks f, Calculate density of technical syntax characters in text.          Financial t
 
 ### Community 138 - "Community 138"
 Cohesion: 0.21
@@ -859,9 +859,13 @@ Nodes (11): _build_tables(), is_loaded(), _load(), _normalize(), Static ticker l
 Cohesion: 0.16
 Nodes (7): Convert to formatted context string for LLM.          Args:             include_, Get symbol for currency code., Build the current market data section., Build the company overview section., Build the valuation metrics section., Build the performance section., Build the financial summaries section.
 
+### Community 140 - "Community 140"
+Cohesion: 0.06
+Nodes (17): Any, Session, Session, Config, _fetch_live_data(), get_market_insights(), Market insights endpoint powered by tradingview-ta.  Returns real-time technic, Fetch live analysis from TradingView and return serialisable dicts. (+9 more)
+
 ### Community 141 - "Community 141"
-Cohesion: 0.22
-Nodes (6): IRAGService, RAGService, RAG service implementing IRAGService interface., Async context manager entry., Async context manager exit., Close RAG service connections.
+Cohesion: 0.11
+Nodes (14): TestClient, Tests for GET /api/v1/market/insights.  All TradingView network calls are mocked, Score values must be integers between 0 and 100., Recommendation field must be one of the known values., Market insights must be public — no authentication required., Integration tests for the /market/insights endpoint., Endpoint returns HTTP 200 regardless of TradingView availability., Response body must contain a 'data' list. (+6 more)
 
 ### Community 142 - "Community 142"
 Cohesion: 0.18
@@ -876,16 +880,16 @@ Cohesion: 0.29
 Nodes (7): scripts, build, dev, lint, preview, start, test
 
 ### Community 145 - "Community 145"
-Cohesion: 0.36
-Nodes (5): ConnectionManager, startup_event(), sync_and_broadcast_jobs(), websocket_endpoint(), WebSocket
+Cohesion: 0.10
+Nodes (13): AttachmentResult, AttachmentUploadResponse, chatApi, ChatMessage, ChatSession, CreateSessionRequest, handleStreamAuthRetry(), performStreamFetch() (+5 more)
 
 ### Community 146 - "Community 146"
-Cohesion: 0.20
-Nodes (9): Tests for the yFinance data source transport configuration., Real-time price fetches should use the shared ticker builder., The ticker factory should reuse one browser-impersonated session., The ticker factory should fall back to default yfinance transport., The data source should cap concurrent yFinance work., test_build_ticker_falls_back_without_curl_cffi(), test_build_ticker_uses_shared_browser_session(), test_get_real_time_price_uses_ticker_builder() (+1 more)
+Cohesion: 0.15
+Nodes (19): CronTrigger, IngestionReport, datetime, IngestionReport, ScraperWatchdog, _ingest_and_log_results(), Helper to count articles, ingest to Weaviate, and update job status.      Extr, Holder for the global ScraperWatchdog instance to avoid global statement. (+11 more)
 
 ### Community 147 - "Community 147"
-Cohesion: 0.12
-Nodes (18): FastAPI exception handlers., Setup exception handlers for FastAPI application.      Args:         app: Fas, setup_exception_handlers(), ChatbotException, DatabaseConnectionError, DatabaseError, DataSourceError, Centralized exception hierarchy for the application.  This ensures consistent er (+10 more)
+Cohesion: 0.21
+Nodes (12): AppError, DatabaseConnectionError, DatabaseError, DataSourceError, Centralized exception hierarchy for the application.  This ensures consistent er, Raised when a service fails to perform its primary function., Raised when request validation fails., Base class for database-related errors. (+4 more)
 
 ### Community 148 - "Community 148"
 Cohesion: 0.20
@@ -900,32 +904,32 @@ Cohesion: 0.12
 Nodes (15): 1. Portfolio Stress-Testing Sandbox, 1. Set up environment, 2. Start all services, 2. Weekly Email Briefings, 3. Run database migrations, 4. Seed initial data (Local Development), ⚙️ AI Engine (FreeLLMAPI), 📄 Detailed Documentation (+7 more)
 
 ### Community 151 - "Community 151"
-Cohesion: 0.36
-Nodes (8): ComplianceDisclosureBase, ComplianceDisclosureCreate, ComplianceDisclosureResponse, ComplianceDisclosureUpdate, ComplianceGroupBase, ComplianceGroupCreate, ComplianceGroupResponse, Config
+Cohesion: 0.31
+Nodes (9): ComplianceDisclosureBase, ComplianceDisclosureCreate, ComplianceDisclosureResponse, ComplianceDisclosureUpdate, ComplianceGroupBase, ComplianceGroupCreate, ComplianceGroupResponse, Config (+1 more)
 
 ### Community 152 - "Community 152"
-Cohesion: 0.27
-Nodes (7): Wait for Weaviate to be ready (async — FIX-011)., Close Weaviate connection., Manages the Weaviate client lifecycle (Singleton pattern)., Get or create Weaviate client instance., Create and connect a new Weaviate client., WeaviateClientManager, WeaviateClient
+Cohesion: 0.16
+Nodes (9): AdminInsightsFilters(), AdminInsightsFiltersProps, STATUSES, TrendType, EmptyState(), ErrorState(), LoadingState(), InsightStatusChangePayload (+1 more)
 
 ### Community 153 - "Community 153"
 Cohesion: 0.22
 Nodes (8): clean_response_text(), extract_json_from_response(), LLM utility functions., Clean LLM response text by removing artifacts.      Args:         text: Raw resp, Truncate text to maximum length with suffix.      Args:         text: Text to tr, Extract JSON from LLM response that may contain markdown code blocks.      Args:, truncate_text(), Any
 
 ### Community 154 - "Community 154"
-Cohesion: 0.24
-Nodes (9): PlaywrightCrawlingContext, find_link_and_navigate(), get_config(), _handle_article(), _handle_homepage(), _handle_insights_hub(), _handle_outlooks_list(), Goldman Sachs Outlooks Scraper Using Crawlee Python with PlaywrightCrawler  O (+1 more)
+Cohesion: 0.28
+Nodes (8): PlaywrightCrawlingContext, find_link_and_navigate(), get_config(), _handle_homepage(), _handle_insights_hub(), _handle_outlooks_list(), Goldman Sachs Outlooks Scraper Using Crawlee Python with PlaywrightCrawler  O, Scan all <a> tags on the current page for one whose visible text contains     a
 
 ### Community 155 - "Community 155"
 Cohesion: 0.31
 Nodes (8): Path, _get_output_files(), _get_scraper_name(), Utility script to safely wipe and recreate the DocumentChunks collection. Use t, Return saved scraper output files that can be re-ingested., Derive scraper name from the output filename., Wipe, recreate, and repopulate the main Weaviate collection., refresh_weaviate_schema()
 
 ### Community 156 - "Community 156"
-Cohesion: 0.29
-Nodes (4): FakeUploadFile, Minimal async UploadFile-compatible test double., Return file bytes once., No-op close for test compatibility.
+Cohesion: 0.17
+Nodes (15): datetime, ScraperJobQueue, cleanup_memory(), collect_scraper_jobs(), is_scraper_due(), load_config(), parse_run_time(), Helper utilities for the scraper scheduler.  Includes environment-aware config (+7 more)
 
 ### Community 157 - "Community 157"
-Cohesion: 0.11
-Nodes (17): BaseScraper, ScraperResult, BaseScraper, Base abstract class for all scraper implementations., Standardized output for all scrapers., Abstract base class for all scrapers., Return True if this scraper can handle the given URL., Scrape the given URL and return a ScraperResult. (+9 more)
+Cohesion: 0.15
+Nodes (12): BaseScraper, ScraperResult, BaseScraper, Base abstract class for all scraper implementations., Standardized output for all scrapers., Abstract base class for all scrapers., Return True if this scraper can handle the given URL., Scrape the given URL and return a ScraperResult. (+4 more)
 
 ### Community 158 - "Community 158"
 Cohesion: 0.09
@@ -948,20 +952,20 @@ Cohesion: 0.56
 Nodes (8): Session, User, NotificationResponse, _base_visible_notifications_query(), list_notifications(), mark_notification_read(), _serialize_notification(), _user_audience_filters()
 
 ### Community 163 - "Community 163"
-Cohesion: 0.38
-Nodes (6): Any, _fetch_live_data(), get_market_insights(), Market insights endpoint powered by tradingview-ta.  Returns real-time technic, Fetch live analysis from TradingView and return serialisable dicts., Return real-time technical analysis insights for dashboard symbols.      Falls
+Cohesion: 0.16
+Nodes (8): AWS S3 utility for downloading PDF files., Check if a string is a valid S3 URL starting with s3://.          Args:, Utility class for downloading files from S3., Initialize S3 client using project settings., Create the boto3 S3 client only when S3 download support is actually used., Parse an s3:// URL or an S3 HTTPS object URL into bucket and key components., Download an S3 object to a local temporary path.          Args:             s, S3Downloader
 
 ### Community 164 - "Community 164"
-Cohesion: 0.24
-Nodes (6): adminApi, ScrapeResponse, ScrapingURLResponse, ScrapingURLUpdate, ActivePipelines(), ActivePipelinesProps
+Cohesion: 0.17
+Nodes (9): rate_limiter(), Unit tests for the ML service rate limiter.  Tests the local in-memory fallback, Tests for the Redis-backed rate limiting path., When Redis count is within limit, acquire must not raise., When Redis returns count > requests_per_minute, RateLimitError raised., Returns a RateLimiter instance with a mocked Redis that always fails,     forcin, Returns a RateLimiter backed by a fully mocked functional Redis.     Used for te, redis_rate_limiter() (+1 more)
 
 ### Community 165 - "Community 165"
-Cohesion: 0.25
-Nodes (7): main(), Schwab Learn page scraper — Crawlee PlaywrightCrawler + Camoufox.  Uses ``Camo, Instantiate the scraper and run it., Scrapes articles from the Charles Schwab Learn page.      Pipeline:     1. Lo, Run the full pipeline synchronously., Crawlee-based async pipeline., SchwabScraper
+Cohesion: 0.31
+Nodes (6): main(), Instantiate the scraper and run it., Scrapes articles from the Charles Schwab Learn page.      Pipeline:     1. Lo, Run the full pipeline synchronously., Crawlee-based async pipeline., SchwabScraper
 
 ### Community 166 - "Community 166"
-Cohesion: 0.33
-Nodes (3): Return upload guardrail settings for the given tier., Resolve the context window for configured model with safe fallback., Expose limits for route-level validations.
+Cohesion: 0.17
+Nodes (7): Tests for the in-memory (local) rate limiting path., Requests within the limit must not raise., After exceeding requests_per_minute, RateLimitError must be raised., RateLimitError raised from local path must include retry_after_seconds., Rate limits must be isolated per identifier (user)., Token quota must be enforced when accumulated token usage exceeds the limit., TestRateLimiterLocalFallback
 
 ### Community 167 - "Community 167"
 Cohesion: 0.40
@@ -976,12 +980,12 @@ Cohesion: 0.50
 Nodes (3): __dirname, __filename, nextConfig
 
 ### Community 170 - "Community 170"
-Cohesion: 0.50
-Nodes (3): AsyncOpenAI, FallbackAsyncOpenAI, Initialize with Redis and OpenAI clients.
+Cohesion: 0.18
+Nodes (6): Any, Check the LLM response for hallucinated numbers.          Extracts dollar amou, Estimate response confidence based on data sources.          Args:, Run all postprocessing checks.          Args:             response_text: LLM-, Format citations into a standard UI-ready source format.          Args:, Validate financial data for sanity.          Args:             financial_cont
 
 ### Community 172 - "Community 172"
 Cohesion: 0.20
-Nodes (6): ILLMClient, Abstract interfaces for dependency injection.  These interfaces define contrac, Interface for LLM client implementations., Generate a text response from the LLM., Generate a structured response matching the schema., Stream response chunks from the LLM.
+Nodes (6): Get list of available scraper types.          Returns:             List of sc, Main service for scraping PDF content.      This service provides PDF scraping, Scrape URL and store in vector database., Initialize scrapper service., Scrape multiple URLs concurrently with rate limiting.          Args:, ScrapperService
 
 ### Community 173 - "Community 173"
 Cohesion: 0.33
@@ -1040,8 +1044,8 @@ Cohesion: 0.50
 Nodes (3): __getattr__(), API module for Financial Intelligence., Lazy-load the FastAPI application objects on demand.
 
 ### Community 191 - "Community 191"
-Cohesion: 0.50
-Nodes (3): OpenAPI schema tests for upload route., Upload request body should expose binary file items for Swagger UI., test_upload_openapi_schema_uses_binary_file_items()
+Cohesion: 0.20
+Nodes (6): Unit tests for the RateLimitError exception class., RateLimitError must be an Exception subclass., Constructor message must be retrievable., retry_after_seconds must be stored on the exception., retry_after_seconds defaults to None if not provided., TestRateLimitError
 
 ### Community 193 - "Community 193"
 Cohesion: 0.29
@@ -1075,9 +1079,13 @@ Nodes (4): Confidence Calibration, Professional Lexicon, Respectful Engagement, 
 Cohesion: 0.50
 Nodes (4): Conversation Continuity, Handling Ambiguity, Natural Transitions, Remember Context
 
+### Community 202 - "Community 202"
+Cohesion: 0.25
+Nodes (7): FastAPI exception handlers., Setup exception handlers for FastAPI application.      Args:         app: Fas, setup_exception_handlers(), ChatbotException, Base class for all application errors., Exception, FastAPI
+
 ### Community 204 - "Community 204"
-Cohesion: 0.29
-Nodes (4): client(), db(), Test creating a chat session with a custom title provided by user, test_chat_session_with_custom_title()
+Cohesion: 0.25
+Nodes (9): StoredArticleRecord, Determine the output file path for a scraper run.      Temporary outputs (test, _resolve_output_file(), _call_function_scraper(), _execute_scraper_loop(), Execute the scraper retry/repair loop., Execute a single scraper and optionally ingest its data into Weaviate.      Ar, Invoke a function-based (standalone async main) scraper.      Args:         s (+1 more)
 
 ### Community 205 - "Community 205"
 Cohesion: 0.50
@@ -1089,43 +1097,39 @@ Nodes (3): AdminScrapingPage(), MainTab, TabButton()
 
 ### Community 270 - "Community 270"
 Cohesion: 0.25
-Nodes (5): ICache, Interface for cache implementations., Get value from cache., Set value in cache with optional TTL., Delete value from cache.
+Nodes (7): dismiss_overlays(), Utility functions for scrapers., Sanitize string for use as a filename., Save scraped articles to JSON output file., Close cookie banners and modals., safe_filename(), save_results()
+
+### Community 275 - "Community 275"
+Cohesion: 0.25
+Nodes (5): Tests for _make_bucket_key to verify privacy properties., Generated key must not expose the raw identifier., Key generation must be deterministic., Different routes must not share the same bucket key., TestBucketKeyGeneration
 
 ### Community 283 - "Community 283"
 Cohesion: 0.40
 Nodes (4): 1. Portfolio Stress-Testing Workflow, 2. Weekly Email Briefings Delivery Workflow, 3. Real-Time Market Scanner Workflow, Finsight Application Workflows
 
-### Community 315 - "Community 315"
-Cohesion: 0.50
-Nodes (3): Session, get_scraping_urls(), Fetch all scraping URLs. Accessible by all authenticated users.
-
-### Community 316 - "Community 316"
-Cohesion: 0.50
-Nodes (3): Session, get_all_tiers(), Fetch all pricing tiers for frontend pricing cards.
-
-### Community 319 - "Community 319"
-Cohesion: 0.50
-Nodes (3): Rate limiting utilities for API calls., Decorator for retrying async functions with exponential backoff., with_retry()
+### Community 306 - "Community 306"
+Cohesion: 0.33
+Nodes (4): ExpandedQuery, Get only high-priority expanded queries., Get queries that use a specific data source., A single dynamically generated query expansion.
 
 ## Knowledge Gaps
 - **528 isolated node(s):** `Session`, `Config`, `Config`, `Config`, `Config` (+523 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **35 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **34 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `User` connect `Community 26` to `Community 162`, `Community 34`, `Community 168`, `Community 41`, `Community 10`, `Community 76`, `Community 15`, `Community 112`, `Community 17`, `Community 111`, `Community 20`, `Community 52`, `Community 87`?**
-  _High betweenness centrality (0.067) - this node is a cross-community bridge._
-- **Why does `ChatService` connect `Community 1` to `Community 128`, `Community 65`, `Community 5`, `Community 106`, `Community 16`, `Community 17`, `Community 124`?**
+- **Why does `User` connect `Community 26` to `Community 162`, `Community 34`, `Community 168`, `Community 41`, `Community 10`, `Community 15`, `Community 112`, `Community 17`, `Community 111`, `Community 20`, `Community 52`, `Community 87`?**
+  _High betweenness centrality (0.065) - this node is a cross-community bridge._
+- **Why does `ChatService` connect `Community 1` to `Community 128`, `Community 65`, `Community 35`, `Community 5`, `Community 106`, `Community 16`, `Community 17`, `Community 124`?**
   _High betweenness centrality (0.063) - this node is a cross-community bridge._
-- **Why does `Enum` connect `Community 114` to `Community 34`, `Community 38`, `Community 41`, `Community 15`, `Community 80`, `Community 20`, `Community 151`?**
+- **Why does `Enum` connect `Community 34` to `Community 38`, `Community 41`, `Community 15`, `Community 80`, `Community 156`, `Community 114`, `Community 18`, `Community 87`, `Community 151`, `Community 124`?**
   _High betweenness centrality (0.036) - this node is a cross-community bridge._
 - **Are the 100 inferred relationships involving `User` (e.g. with `MappingUpdate` and `ScrapeURLRequest`) actually correct?**
   _`User` has 100 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 2 inferred relationships involving `cn()` (e.g. with `NotificationItem()` and `DashboardHeader()`) actually correct?**
   _`cn()` has 2 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 51 inferred relationships involving `Tier` (e.g. with `MappingUpdate` and `AnswerUpdate`) actually correct?**
-  _`Tier` has 51 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 52 inferred relationships involving `Tier` (e.g. with `MappingUpdate` and `AnswerUpdate`) actually correct?**
+  _`Tier` has 52 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `Run migrations in 'offline' mode.      This configures the context with just a`, `Run migrations in 'online' mode.      In this scenario we need to create an En`, `Upgrade schema for course versioning.      DB state when this runs:       - c` to the rest of the system?**
-  _1658 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _1800 weakly-connected nodes found - possible documentation gaps or missing edges._

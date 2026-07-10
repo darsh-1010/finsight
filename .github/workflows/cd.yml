@@ -1,0 +1,193 @@
+##############################################################################
+# Finsight — Continuous Deployment Pipeline
+#
+# Triggered: only on push to `main` after CI passes.
+#
+# Stages:
+#   1. build-and-push  → Build Docker images and push to GitHub Container
+#                        Registry (ghcr.io) with both :sha and :latest tags.
+#   2. deploy          → Template step — uncomment the block matching your
+#                        deployment target (SSH / AWS ECS / Railway).
+#
+# Required GitHub Secrets:
+#   GHCR_TOKEN         → Personal Access Token with packages:write scope
+#                        (or use GITHUB_TOKEN if your repo allows it)
+#
+# Optional Secrets (only needed for chosen deploy method):
+#   DEPLOY_HOST        → VPS/EC2 hostname (SSH deploy)
+#   DEPLOY_USER        → SSH username (SSH deploy)
+#   DEPLOY_SSH_KEY     → Private SSH key PEM (SSH deploy)
+#   AWS_ACCESS_KEY_ID  → (AWS ECS deploy)
+#   AWS_SECRET_ACCESS_KEY → (AWS ECS deploy)
+#   AWS_REGION         → (AWS ECS deploy)
+#   RAILWAY_TOKEN      → (Railway deploy)
+##############################################################################
+
+name: CD
+
+on:
+  push:
+    branches: [main]
+  # Also allow manual trigger from the GitHub Actions UI
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false  # Never cancel an in-flight deployment
+
+permissions:
+  contents: read
+  packages: write   # needed to push to ghcr.io
+
+env:
+  PYTHON_VERSION: "3.11"
+  REGISTRY: ghcr.io
+  IMAGE_OWNER: ${{ github.repository_owner }}
+
+##############################################################################
+# 1. BUILD AND PUSH IMAGES
+##############################################################################
+jobs:
+  build-and-push:
+    name: "Build & Push (${{ matrix.service }})"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - service: backend
+            dockerfile: Dockerfile.backend
+          - service: ml
+            dockerfile: Dockerfile.ml
+          - service: frontend
+            dockerfile: Dockerfile.frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/finsight-${{ matrix.service }}
+          tags: |
+            type=sha,prefix=sha-,format=short
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=ref,event=branch
+          labels: |
+            org.opencontainers.image.title=finsight-${{ matrix.service }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # Layer cache stored in GitHub Actions cache for faster rebuilds
+          cache-from: type=gha,scope=${{ matrix.service }}-prod
+          cache-to: type=gha,mode=max,scope=${{ matrix.service }}-prod
+          # Build args available to the Dockerfile
+          build-args: |
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+            GIT_COMMIT=${{ github.sha }}
+
+      - name: Output image digest
+        run: echo "Image pushed with digest ${{ steps.meta.outputs.digest }}"
+
+##############################################################################
+# 2. DEPLOY (choose ONE block and uncomment it)
+##############################################################################
+  deploy:
+    name: "Deploy"
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    environment: production   # enables required approval gate in GitHub UI
+    steps:
+      - uses: actions/checkout@v4
+
+      # ────────────────────────────────────────────────────────────────────
+      # OPTION A — SSH / Docker Compose on a VPS or EC2 instance
+      # Required secrets: DEPLOY_HOST, DEPLOY_USER, DEPLOY_SSH_KEY
+      # ────────────────────────────────────────────────────────────────────
+      # - name: Deploy via SSH
+      #   uses: appleboy/ssh-action@v1.0.3
+      #   with:
+      #     host: ${{ secrets.DEPLOY_HOST }}
+      #     username: ${{ secrets.DEPLOY_USER }}
+      #     key: ${{ secrets.DEPLOY_SSH_KEY }}
+      #     script: |
+      #       cd /opt/finsight
+      #       echo "${{ secrets.GITHUB_TOKEN }}" | \
+      #         docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      #       docker compose pull
+      #       docker compose up -d --remove-orphans
+      #       docker image prune -f
+
+      # ────────────────────────────────────────────────────────────────────
+      # OPTION B — AWS ECS (update service to force new task definition)
+      # Required secrets: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION
+      # Required env vars below: ECS_CLUSTER, ECS_SERVICE_BACKEND, etc.
+      # ────────────────────────────────────────────────────────────────────
+      # - name: Configure AWS credentials
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws-region: ${{ secrets.AWS_REGION }}
+      #
+      # - name: Force ECS deployment (backend)
+      #   run: |
+      #     aws ecs update-service \
+      #       --cluster finsight-prod \
+      #       --service finsight-backend \
+      #       --force-new-deployment
+      #
+      # - name: Force ECS deployment (ml)
+      #   run: |
+      #     aws ecs update-service \
+      #       --cluster finsight-prod \
+      #       --service finsight-ml \
+      #       --force-new-deployment
+
+      # ────────────────────────────────────────────────────────────────────
+      # OPTION C — Railway
+      # Required secret: RAILWAY_TOKEN
+      # ────────────────────────────────────────────────────────────────────
+      # - name: Deploy to Railway
+      #   uses: bervProject/railway-deploy@v1.0.0
+      #   with:
+      #     railway_token: ${{ secrets.RAILWAY_TOKEN }}
+      #     service: finsight-backend
+
+      # ────────────────────────────────────────────────────────────────────
+      # DEFAULT (no-op) — build + push only, no auto-deploy
+      # Remove or replace this step once a deploy target is configured above
+      # ────────────────────────────────────────────────────────────────────
+      - name: Deployment summary
+        run: |
+          echo "✅ Images built and pushed to ghcr.io successfully."
+          echo ""
+          echo "ℹ️  No deployment target is configured yet."
+          echo "   Edit .github/workflows/cd.yml and uncomment one of:"
+          echo "   • OPTION A — SSH / Docker Compose"
+          echo "   • OPTION B — AWS ECS"
+          echo "   • OPTION C — Railway"
+          echo ""
+          echo "📦 Images available at:"
+          echo "   ghcr.io/${{ env.IMAGE_OWNER }}/finsight-backend:latest"
+          echo "   ghcr.io/${{ env.IMAGE_OWNER }}/finsight-ml:latest"
+          echo "   ghcr.io/${{ env.IMAGE_OWNER }}/finsight-frontend:latest"

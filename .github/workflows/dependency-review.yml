@@ -1,0 +1,45 @@
+##############################################################################
+# Finsight — Dependency Review
+#
+# Blocks PRs that introduce new dependencies with known CVEs.
+# Uses GitHub's built-in dependency review API — no external tokens needed.
+#
+# How it works:
+#   - Diffs the dependency manifest between base and head of the PR
+#   - Fails if any newly-added package has an advisory with the configured
+#     severity or higher
+#
+# Requires: GitHub Advanced Security (enabled by default on public repos;
+#           requires GHAS license for private repos).
+##############################################################################
+
+name: "Dependency Review"
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+  pull-requests: write   # allows the action to post a PR comment summary
+
+jobs:
+  dependency-review:
+    name: "Dependency Review"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Dependency review
+        uses: actions/dependency-review-action@v4
+        with:
+          # Block PRs that introduce packages with HIGH or CRITICAL advisories
+          fail-on-severity: high
+          # Allow advisories that have no known fix yet
+          allow-ghsas: []
+          # Post a summary comment on the PR with the full dependency diff
+          comment-summary-in-pr: always
+          # Don't fail if the base commit has no dependency snapshot
+          # (useful on first setup)
+          deny-licenses: []

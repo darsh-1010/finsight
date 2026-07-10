@@ -650,8 +650,8 @@
     "semantic_hash": ""
   },
   "backend/tests/conftest.py": {
-    "mtime": 1783673804.9576347,
-    "ast_hash": "3988aa2dfccaaf24473c394588605319",
+    "mtime": 1783686887.636889,
+    "ast_hash": "14939741408be4a6f6392547c59dab5d",
     "semantic_hash": ""
   },
   "backend/tests/test_auth.py": {
@@ -1440,8 +1440,8 @@
     "semantic_hash": ""
   },
   "ml/src/api/health.py": {
-    "mtime": 1783414325.0158515,
-    "ast_hash": "170df0787fe5be65074fc8fc74a0732a",
+    "mtime": 1783678968.4669178,
+    "ast_hash": "0463f6df7cacfd28cabdd5a3898a493e",
     "semantic_hash": ""
   },
   "ml/src/api/main.py": {
@@ -1945,8 +1945,8 @@
     "semantic_hash": ""
   },
   "ml/tests/api/test_health.py": {
-    "mtime": 1783673809.874818,
-    "ast_hash": "59056b9d63b57f0a7869014e7c8e2acc",
+    "mtime": 1783685144.3660593,
+    "ast_hash": "0c8ee271dd14f06293e613aac53714d9",
     "semantic_hash": ""
   },
   "ml/tests/api/test_market_insights_edge_cases.py": {
@@ -2090,8 +2090,8 @@
     "semantic_hash": ""
   },
   "docker-compose.yml": {
-    "mtime": 1783673805.2761288,
-    "ast_hash": "6c864b8a85d96ba5090dc194e44a7f63",
+    "mtime": 1783682842.0793052,
+    "ast_hash": "713100f8f41af48206464bdde218d7e7",
     "semantic_hash": ""
   },
   "frontend/.github/workflows/deploy.yml": {
@@ -2360,8 +2360,8 @@
     "semantic_hash": ""
   },
   "docker-compose.local.yml": {
-    "mtime": 1783673805.261949,
-    "ast_hash": "353e33cbc1a6cef7b57d55863ebcbd1c",
+    "mtime": 1783682822.1350267,
+    "ast_hash": "5176d59fa6950df4107c986725184785",
     "semantic_hash": ""
   },
   "frontend/next-env.d.ts": {
@@ -2637,6 +2637,86 @@
   "frontend/src/app/(public)/page.tsx": {
     "mtime": 1783673806.912918,
     "ast_hash": "c76bd571ceda11f226d4c2b71d3c13de",
+    "semantic_hash": ""
+  },
+  "backend/tests/services/__init__.py": {
+    "mtime": 1783685031.2658608,
+    "ast_hash": "1c2ba4184f451a1a67c77d67167c058f",
+    "semantic_hash": ""
+  },
+  "backend/tests/services/test_security.py": {
+    "mtime": 1783685016.1572447,
+    "ast_hash": "0f4eafe2f097839373ed6c31d233ba6c",
+    "semantic_hash": ""
+  },
+  "backend/tests/test_market.py": {
+    "mtime": 1783684889.715962,
+    "ast_hash": "572b5fe31b6e16e2adb0dd4f8ac07c53",
+    "semantic_hash": ""
+  },
+  "backend/tests/test_notifications.py": {
+    "mtime": 1783686164.7787373,
+    "ast_hash": "da0d3b8c1c27a7846bd6e01355bb4d74",
+    "semantic_hash": ""
+  },
+  "backend/tests/test_onboarding.py": {
+    "mtime": 1783686878.3316798,
+    "ast_hash": "38f1e76e574aeace2ef4efb7179e0e9e",
+    "semantic_hash": ""
+  },
+  "backend/tests/test_portfolio.py": {
+    "mtime": 1783684918.322358,
+    "ast_hash": "06cd6045f1755a7662be19ab620a3abc",
+    "semantic_hash": ""
+  },
+  "ml/src/services/scrapper/utils.py": {
+    "mtime": 1783678951.9704864,
+    "ast_hash": "cb619902ba0a046a41b2b0241277d75b",
+    "semantic_hash": ""
+  },
+  "ml/tests/api/__init__.py": {
+    "mtime": 1783685094.200466,
+    "ast_hash": "7dc8e127941fcae9feae031904808b7f",
+    "semantic_hash": ""
+  },
+  "ml/tests/services/__init__.py": {
+    "mtime": 1783685194.4452727,
+    "ast_hash": "5fbfbc6b3e2ff0b4a52c9b6d36e28818",
+    "semantic_hash": ""
+  },
+  "ml/tests/services/test_rate_limiter.py": {
+    "mtime": 1783685877.8395233,
+    "ast_hash": "d39d5bc380480acef24857f0dcfcf220",
+    "semantic_hash": ""
+  },
+  "ml/tests/utils/__init__.py": {
+    "mtime": 1783685377.5197766,
+    "ast_hash": "67a5c88891a9cb189533c06088155bb9",
+    "semantic_hash": ""
+  },
+  "ml/tests/utils/test_logger.py": {
+    "mtime": 1783685863.3650737,
+    "ast_hash": "9691c16b6d9206f2d9489e5a567263e5",
+    "semantic_hash": ""
+  },
+  ".github/workflows/cd.yml": {
+    "mtime": 1783685305.1821818,
+    "ast_hash": "3d9c25e37637525bdcea7bf828f0a7cd",
+    "semantic_hash": ""
+  },
+  ".github/workflows/ci.yml": {
+    "mtime": 1783685543.5586944,
+    "ast_hash": "351b8f72f00384b1c5ba0f50c354201f",
+    "semantic_hash": ""
+  },
+  ".github/workflows/codeql.yml": {
+    "mtime": 1783685320.0703733,
+    "ast_hash": "b0f6975befd5d88cf008fdab862268af",
+    "semantic_hash": ""
+  },
+  ".github/workflows/dependency-review.yml": {
+    "mtime": 1783685339.7738452,
+    "ast_hash": "bba276ef12941b22e6db123244d6061e",
     "semantic_hash": ""
   }
 }

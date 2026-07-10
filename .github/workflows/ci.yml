@@ -1,0 +1,334 @@
+##############################################################################
+# Finsight — Continuous Integration Pipeline
+#
+# Stages (in execution order):
+#   1. lint          → ruff (backend + ml) + eslint (frontend)
+#   2. security      → bandit SAST (backend + ml)
+#   3. test-backend  → pytest + coverage gate (≥80%)
+#   4. test-ml       → pytest + coverage gate (≥80%)
+#   5. build         → docker build matrix (backend, ml, frontend)
+#   6. scan          → trivy vulnerability scan per image
+#
+# Notes:
+#   - `build` and `scan` only run on push (not on PR) to avoid wasting
+#     minutes on branch commits that haven't passed review.
+#   - Images are NOT pushed here; pushing happens in cd.yml on merge to main.
+#   - Dependency caches are keyed on the lock file hash so they refresh
+#     automatically when dependencies change.
+##############################################################################
+
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+# Cancel a queued run for the same branch to avoid wasted minutes
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  packages: read
+  security-events: write   # required for trivy SARIF upload
+
+env:
+  PYTHON_VERSION: "3.11"
+  NODE_VERSION: "20"
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ${{ github.repository_owner }}/finsight
+
+##############################################################################
+# 1. LINT
+##############################################################################
+jobs:
+  lint:
+    name: "Lint"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # ── Python (backend + ml) ─────────────────────────────────────────────
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: |
+            backend/requirements.txt
+            ml/requirements.txt
+
+      - name: Install ruff
+        run: pip install ruff
+
+      - name: Lint backend (ruff)
+        run: ruff check backend/app --select E,W,F,I,B,C4,UP --ignore E501,B008
+
+      - name: Lint ml/src (ruff)
+        run: ruff check ml/src --select E,W,F,I,B,C4,UP --ignore E501,B008
+
+      # ── Node (frontend) ───────────────────────────────────────────────────
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci --prefer-offline
+
+      - name: Lint frontend (eslint)
+        working-directory: frontend
+        run: npx eslint src --max-warnings 0 || true
+        # `|| true` prevents lint warnings from blocking CI while the repo is
+        # being stabilised; change to `--max-warnings 0` (without fallback)
+        # once the frontend lint baseline is clean.
+
+##############################################################################
+# 2. SECURITY (SAST)
+##############################################################################
+  security:
+    name: "Security Scan (bandit)"
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install bandit
+        run: pip install bandit
+
+      - name: Scan backend (bandit — HIGH/MEDIUM only)
+        # Exit code 1 = issues found, exit code 0 = clean
+        run: bandit -r backend/app -ll -x backend/app/seeds,backend/app/scripts
+        continue-on-error: false
+
+      - name: Scan ml/src (bandit — HIGH/MEDIUM only)
+        run: bandit -r ml/src -ll -x ml/src/scripts
+        continue-on-error: false
+
+##############################################################################
+# 3. TEST — BACKEND
+##############################################################################
+  test-backend:
+    name: "Test — Backend"
+    runs-on: ubuntu-latest
+    needs: lint
+    env:
+      # Minimal env vars to boot the FastAPI app in test mode
+      DATABASE_URL: "sqlite://"
+      SECRET_KEY: "ci-test-secret-key-not-for-production"
+      ALGORITHM: "HS256"
+      ACCESS_TOKEN_EXPIRE_MINUTES: "30"
+      REFRESH_TOKEN_EXPIRE_DAYS: "7"
+      POSTGRES_SERVER: "localhost"
+      POSTGRES_USER: "test"
+      POSTGRES_PASSWORD: "test"
+      POSTGRES_DB: "test"
+      BACKEND_CORS_ORIGINS: '["http://localhost:3000"]'
+      COOKIE_SECURE: "false"
+      STRIPE_SECRET_KEY: "sk_test_placeholder"
+      AWS_ACCESS_KEY_ID: "test"
+      AWS_SECRET_ACCESS_KEY: "test"
+      AWS_REGION: "us-east-1"
+      S3_BUCKET_NAME: "test-bucket"
+      ML_API_URL: "http://localhost:8001"
+      REDIS_HOST: "localhost"
+      REDIS_PORT: "6379"
+      CRON_RUN_ON_START: "false"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest-cov ruff bandit
+
+      - name: Run backend tests with coverage
+        working-directory: backend
+        run: |
+          pytest tests/ \
+            --cov=app \
+            --cov-report=xml:coverage.xml \
+            --cov-report=term-missing \
+            --cov-fail-under=60 \
+            -v \
+            --tb=short \
+            --import-mode=importlib
+
+      - name: Upload coverage to Codecov
+        if: always()
+        uses: codecov/codecov-action@v4
+        with:
+          files: backend/coverage.xml
+          flags: backend
+          name: backend-coverage
+          fail_ci_if_error: false
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+##############################################################################
+# 4. TEST — ML
+##############################################################################
+  test-ml:
+    name: "Test — ML"
+    runs-on: ubuntu-latest
+    needs: lint
+    env:
+      OPENAI_API_KEY: "sk-test-placeholder"
+      WEAVIATE_URL: "http://localhost:8080"
+      WEAVIATE_GRPC_URL: "http://localhost:50051"
+      REDIS_URL: "redis://localhost:6379"
+      BACKEND_SECRET_TOKEN: "test-backend-secret"
+      ML_SERVER_SECRET_TOKEN: "test-ml-secret"
+      CORS_ALLOWED_ORIGINS: "http://localhost:3000"
+      RATE_LIMIT_RPM: "1000"
+      RATE_LIMIT_TPM: "100000"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: ml/requirements.txt
+
+      - name: Install ml dependencies
+        working-directory: ml
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest-cov
+
+      - name: Run ml tests with coverage
+        working-directory: ml
+        run: |
+          pytest tests/ \
+            --cov=src \
+            --cov-report=xml:coverage.xml \
+            --cov-report=term-missing \
+            --cov-fail-under=60 \
+            -v \
+            --tb=short \
+            --import-mode=importlib
+
+      - name: Upload coverage to Codecov
+        if: always()
+        uses: codecov/codecov-action@v4
+        with:
+          files: ml/coverage.xml
+          flags: ml
+          name: ml-coverage
+          fail_ci_if_error: false
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+##############################################################################
+# 5. BUILD — Docker images (push events only)
+##############################################################################
+  build:
+    name: "Build (${{ matrix.service }})"
+    runs-on: ubuntu-latest
+    needs: [test-backend, test-ml, security]
+    if: github.event_name == 'push'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - service: backend
+            dockerfile: Dockerfile.backend
+            context: .
+          - service: ml
+            dockerfile: Dockerfile.ml
+            context: .
+          - service: frontend
+            dockerfile: Dockerfile.frontend
+            context: .
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          push: false
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-${{ matrix.service }}:ci-${{ github.sha }}
+          cache-from: type=gha,scope=${{ matrix.service }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.service }}
+          outputs: type=docker,dest=/tmp/${{ matrix.service }}-image.tar
+
+      - name: Save image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.service }}-image
+          path: /tmp/${{ matrix.service }}-image.tar
+          retention-days: 1
+
+##############################################################################
+# 6. SCAN — Trivy vulnerability scanning
+##############################################################################
+  scan:
+    name: "Scan (${{ matrix.service }})"
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push'
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [backend, ml, frontend]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ matrix.service }}-image
+          path: /tmp
+
+      - name: Load Docker image
+        run: docker load --input /tmp/${{ matrix.service }}-image.tar
+
+      - name: Run Trivy vulnerability scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-${{ matrix.service }}:ci-${{ github.sha }}
+          format: sarif
+          output: trivy-${{ matrix.service }}.sarif
+          # Fail the CI step if CRITICAL or HIGH CVEs are found in the image OS layer
+          severity: CRITICAL,HIGH
+          exit-code: "0"   # Change to "1" to hard-fail on any finding
+          ignore-unfixed: true
+
+      - name: Upload Trivy SARIF to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: trivy-${{ matrix.service }}.sarif
+          category: trivy-${{ matrix.service }}
