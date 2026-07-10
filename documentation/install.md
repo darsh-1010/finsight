@@ -113,3 +113,45 @@ VITE_API_BASE_URL=http://localhost:8000/api/v1
 npm run dev
 ```
 The app will open at `http://localhost:5173`.
+
+---
+
+## 4. AI Engine Configuration (FreeLLMAPI)
+
+Finsight utilizes **FreeLLMAPI** as its primary language model engine for chatbot functionality, query intelligence, and market insights. 
+
+### Local Gateway Details
+FreeLLMAPI runs as a local container gateway on port `3001` (or `3003` under custom configurations) and automatically routes requests to available free-tier providers.
+
+### Model Selection & Configuration
+Because FreeLLMAPI routes requests dynamically and features a custom model catalog, the Finsight environment is configured to use the `auto` routing model. This ensures that the engine automatically maps queries to the best available working model upstream (e.g. Mistral, Qwen, or Llama models) without manual key management.
+
+To configure Finsight to use FreeLLMAPI, ensure your root `.env` file has the following configurations:
+
+```ini
+# LLM Provider Gateway
+OPENAI_API_KEY=freellmapi-<your-key-here>
+OPENAI_API_BASE=http://localhost:3001/v1
+OPENAI_BASE_URL=http://localhost:3001/v1
+
+# Target Models (set to auto-route)
+OPENAI_MODEL_5_MINI=auto
+GPT_4O_MINI=auto
+GPT_4_1=auto
+GPT_5_MINI=auto
+
+# Tier-Specific Models
+ML_TIER_0_MODEL=auto
+ML_TIER_1_MODEL=auto
+ML_TIER_2_MODEL=auto
+ML_TIER_3_MODEL=auto
+ML_TIER_4_MODEL=auto
+ML_TIER_5_MODEL=auto
+```
+
+### Checking Available Catalog Models
+To view a list of all models supported by the running FreeLLMAPI gateway:
+```bash
+curl -H "Authorization: Bearer <your-key>" http://localhost:3001/v1/models
+```
+Specific catalog models (such as `mistral-large-3` or `llama-3.3-70b`) can be supplied directly in `.env` if desired, though `auto` is recommended for general resilience.
