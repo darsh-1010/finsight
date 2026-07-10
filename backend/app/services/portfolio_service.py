@@ -45,6 +45,7 @@ class PortfolioService:
             logger.error("[PORTFOLIO_FETCH_FAIL] Failed to fetch data: %s", exc)
             return pd.DataFrame()
 
+
 STRESS_SCENARIOS = {
     # 1. Historical Crashes
     "1987_Black_Monday": {
@@ -53,7 +54,7 @@ STRESS_SCENARIOS = {
         "start": "1987-10-19",
         "end": "1987-11-30",
         "description": "Single-day flash equity crash and aftermath",
-        "type": "historical"
+        "type": "historical",
     },
     "1990_Nikkei_Collapse": {
         "name": "1990 Nikkei Collapse",
@@ -61,7 +62,7 @@ STRESS_SCENARIOS = {
         "start": "1989-12-29",
         "end": "1992-08-18",
         "description": "Bursting of the Japanese asset price bubble",
-        "type": "historical"
+        "type": "historical",
     },
     "2000_Dotcom_Bubble": {
         "name": "2000 Dot-com Bubble",
@@ -69,7 +70,7 @@ STRESS_SCENARIOS = {
         "start": "2000-03-10",
         "end": "2002-10-09",
         "description": "Growth and technology stock bubble collapse",
-        "type": "historical"
+        "type": "historical",
     },
     "2001_Sept_11": {
         "name": "Post-9/11 Shock",
@@ -77,7 +78,7 @@ STRESS_SCENARIOS = {
         "start": "2001-09-10",
         "end": "2001-09-21",
         "description": "Market reaction to the September 11 terrorist attacks",
-        "type": "historical"
+        "type": "historical",
     },
     "2008_Crash": {
         "name": "2008 Financial Crisis",
@@ -85,7 +86,7 @@ STRESS_SCENARIOS = {
         "start": "2007-10-09",
         "end": "2009-03-09",
         "description": "Subprime mortgage collapse and banking crisis",
-        "type": "historical"
+        "type": "historical",
     },
     "2010_Flash_Crash": {
         "name": "2010 Flash Crash",
@@ -93,7 +94,7 @@ STRESS_SCENARIOS = {
         "start": "2010-05-06",
         "end": "2010-05-10",
         "description": "High-frequency algorithmic trading disruption",
-        "type": "historical"
+        "type": "historical",
     },
     "2011_Euro_Debt": {
         "name": "2011 Eurozone Debt Crisis",
@@ -101,7 +102,7 @@ STRESS_SCENARIOS = {
         "start": "2011-05-02",
         "end": "2011-10-04",
         "description": "Sovereign debt defaults and European banking panic",
-        "type": "historical"
+        "type": "historical",
     },
     "2015_China_Crash": {
         "name": "2015 Chinese Equity Crash",
@@ -109,7 +110,7 @@ STRESS_SCENARIOS = {
         "start": "2015-06-12",
         "end": "2015-08-26",
         "description": "Bursting of the leveraged mainland Chinese stock bubble",
-        "type": "historical"
+        "type": "historical",
     },
     "2016_Brexit_Shock": {
         "name": "2016 Brexit Shock",
@@ -117,7 +118,7 @@ STRESS_SCENARIOS = {
         "start": "2016-06-23",
         "end": "2016-06-27",
         "description": "Surprise UK EU referendum vote sell-off",
-        "type": "historical"
+        "type": "historical",
     },
     "2018_Vol_Implosion": {
         "name": "2018 Volatility Implosion",
@@ -125,7 +126,7 @@ STRESS_SCENARIOS = {
         "start": "2018-02-01",
         "end": "2018-02-09",
         "description": "Short volatility product unwind (Volpocalypse)",
-        "type": "historical"
+        "type": "historical",
     },
     "2018_Growth_Selloff": {
         "name": "2018 Growth Sell-off",
@@ -133,7 +134,7 @@ STRESS_SCENARIOS = {
         "start": "2018-10-01",
         "end": "2018-12-24",
         "description": "Fed rate hiking policy concerns and growth stock drop",
-        "type": "historical"
+        "type": "historical",
     },
     "2020_COVID": {
         "name": "2020 COVID-19 Dip",
@@ -141,7 +142,7 @@ STRESS_SCENARIOS = {
         "start": "2020-02-19",
         "end": "2020-03-23",
         "description": "Initial global pandemic lockdowns and market shock",
-        "type": "historical"
+        "type": "historical",
     },
     "2022_Growth_Correction": {
         "name": "2022 Growth Correction",
@@ -149,7 +150,7 @@ STRESS_SCENARIOS = {
         "start": "2022-01-03",
         "end": "2022-06-16",
         "description": "Post-COVID inflation surge and growth valuation drop",
-        "type": "historical"
+        "type": "historical",
     },
     "2023_Banking_Panic": {
         "name": "2023 Regional Banking Panic",
@@ -157,9 +158,8 @@ STRESS_SCENARIOS = {
         "start": "2023-03-08",
         "end": "2023-03-24",
         "description": "Silicon Valley Bank default and regional bank sell-off",
-        "type": "historical"
+        "type": "historical",
     },
-
     # 2. Monetary & Inflation Shocks
     "1973_Stagflation": {
         "name": "1970s Oil Stagflation",
@@ -167,7 +167,7 @@ STRESS_SCENARIOS = {
         "start": "1973-10-16",
         "end": "1974-12-31",
         "description": "High inflation, supply shocks, and stagnation",
-        "type": "historical"
+        "type": "historical",
     },
     "1979_Volcker_Rates": {
         "name": "Volcker Rate Hikes",
@@ -175,7 +175,7 @@ STRESS_SCENARIOS = {
         "start": "1979-10-01",
         "end": "1981-06-30",
         "description": "Double-digit Fed fund rates to curb runaway inflation",
-        "type": "historical"
+        "type": "historical",
     },
     "1994_Bond_Massacre": {
         "name": "1994 Bond Massacre",
@@ -183,7 +183,7 @@ STRESS_SCENARIOS = {
         "start": "1994-02-01",
         "end": "1994-11-30",
         "description": "Unscheduled rate hikes leading to bond price drops",
-        "type": "historical"
+        "type": "historical",
     },
     "2013_Taper_Tantrum": {
         "name": "2013 Taper Tantrum",
@@ -191,7 +191,7 @@ STRESS_SCENARIOS = {
         "start": "2013-05-22",
         "end": "2013-09-05",
         "description": "Panic over Fed signaling quantitative easing tapering",
-        "type": "historical"
+        "type": "historical",
     },
     "2022_Fed_Tightening": {
         "name": "2022 Fed Rate Hike Cycle",
@@ -199,7 +199,7 @@ STRESS_SCENARIOS = {
         "start": "2022-03-16",
         "end": "2022-12-30",
         "description": "Fastest interest rate hike cycle in decades",
-        "type": "historical"
+        "type": "historical",
     },
     "2023_Fed_Pivot": {
         "name": "2023 Fed Pivot Speculation",
@@ -207,9 +207,8 @@ STRESS_SCENARIOS = {
         "start": "2023-11-01",
         "end": "2024-01-31",
         "description": "Speculation over peak interest rates and future cuts",
-        "type": "historical"
+        "type": "historical",
     },
-
     # 3. Geopolitical & Commodity Shocks
     "1973_OPEC_Embargo": {
         "name": "1973 OPEC Oil Embargo",
@@ -217,7 +216,7 @@ STRESS_SCENARIOS = {
         "start": "1973-10-16",
         "end": "1974-03-18",
         "description": "Energy sector surge and shipping cost inflation",
-        "type": "historical"
+        "type": "historical",
     },
     "1990_Gulf_War": {
         "name": "1990 Gulf War Shock",
@@ -225,7 +224,7 @@ STRESS_SCENARIOS = {
         "start": "1990-08-02",
         "end": "1990-10-31",
         "description": "Iraq invasion of Kuwait and oil price spike",
-        "type": "historical"
+        "type": "historical",
     },
     "2003_Iraq_Invasion": {
         "name": "2003 Iraq Invasion",
@@ -233,7 +232,7 @@ STRESS_SCENARIOS = {
         "start": "2003-03-20",
         "end": "2003-04-30",
         "description": "War onset and defense sector outperformance",
-        "type": "historical"
+        "type": "historical",
     },
     "2014_Oil_Collapse": {
         "name": "2014 Oil Price Collapse",
@@ -241,7 +240,7 @@ STRESS_SCENARIOS = {
         "start": "2014-06-20",
         "end": "2015-01-31",
         "description": "US shale surge and OPEC price war, energy drop",
-        "type": "historical"
+        "type": "historical",
     },
     "2018_Trade_War": {
         "name": "2018 US-China Trade War",
@@ -249,7 +248,7 @@ STRESS_SCENARIOS = {
         "start": "2018-03-22",
         "end": "2018-12-24",
         "description": "Bilateral tariff escalation and supply chain friction",
-        "type": "historical"
+        "type": "historical",
     },
     "2022_Ukraine_Invasion": {
         "name": "2022 Ukraine Invasion",
@@ -257,7 +256,7 @@ STRESS_SCENARIOS = {
         "start": "2022-02-24",
         "end": "2022-04-30",
         "description": "Russia invasion onset and commodity spike",
-        "type": "historical"
+        "type": "historical",
     },
     "2023_Gaza_Conflict": {
         "name": "2023 Israel-Gaza War",
@@ -265,9 +264,8 @@ STRESS_SCENARIOS = {
         "start": "2023-10-07",
         "end": "2023-11-30",
         "description": "Gaza conflict escalation and regional risk premium",
-        "type": "historical"
+        "type": "historical",
     },
-
     # 4. Currency & Sovereign Debt
     "1992_Black_Wednesday": {
         "name": "1992 Black Wednesday",
@@ -275,7 +273,7 @@ STRESS_SCENARIOS = {
         "start": "1992-09-16",
         "end": "1992-09-30",
         "description": "GBP exits European Exchange Rate Mechanism",
-        "type": "historical"
+        "type": "historical",
     },
     "1994_Tequila_Crisis": {
         "name": "1994 Mexican Peso Crisis",
@@ -283,7 +281,7 @@ STRESS_SCENARIOS = {
         "start": "1994-12-20",
         "end": "1995-03-31",
         "description": "Mexican Peso devaluation and Tequila effect contagion",
-        "type": "historical"
+        "type": "historical",
     },
     "1997_Asian_Contagion": {
         "name": "1997 Asian Financial Crisis",
@@ -291,7 +289,7 @@ STRESS_SCENARIOS = {
         "start": "1997-07-02",
         "end": "1997-12-31",
         "description": "Thai Baht float trigger and East Asian devaluations",
-        "type": "historical"
+        "type": "historical",
     },
     "1998_Russian_Default": {
         "name": "1998 Russian Ruble Crisis",
@@ -299,7 +297,7 @@ STRESS_SCENARIOS = {
         "start": "1998-08-17",
         "end": "1998-10-15",
         "description": "Russian sovereign default and LTCM hedge fund collapse",
-        "type": "historical"
+        "type": "historical",
     },
     "2001_Argentina_Default": {
         "name": "2001 Argentinian Debt Crisis",
@@ -307,7 +305,7 @@ STRESS_SCENARIOS = {
         "start": "2001-11-30",
         "end": "2002-02-28",
         "description": "Corralito runs, peg removal, and sovereign default",
-        "type": "historical"
+        "type": "historical",
     },
     "2012_Euro_Bailout": {
         "name": "2012 Greece PSI Default",
@@ -315,7 +313,7 @@ STRESS_SCENARIOS = {
         "start": "2012-03-09",
         "end": "2012-05-31",
         "description": "Greek sovereign debt restructuring and default",
-        "type": "historical"
+        "type": "historical",
     },
     "2015_Swiss_depeg": {
         "name": "2015 Swiss Franc Spike",
@@ -323,7 +321,7 @@ STRESS_SCENARIOS = {
         "start": "2015-01-15",
         "end": "2015-01-22",
         "description": "SNB removes Euro peg, Swiss Franc surges 30%",
-        "type": "historical"
+        "type": "historical",
     },
     "2014_Ruble_Crisis": {
         "name": "2014 Russian Ruble Crisis",
@@ -331,58 +329,73 @@ STRESS_SCENARIOS = {
         "start": "2014-12-01",
         "end": "2014-12-31",
         "description": "Russian Ruble currency collapse from sanctions & oil",
-        "type": "historical"
+        "type": "historical",
     },
-
     # 5. Hypothetical & Sector Shocks
     "Hypothetical_AI_Bubble_Burst": {
         "name": "AI Tech Bubble Burst",
         "category": "Hypothetical Shocks",
         "description": "High-growth AI/tech stocks experience severe correction while value stocks hold steady",
         "type": "synthetic",
-        "shifts": {"TECH": -0.45, "DEFENSIVES": 0.05, "OTHER": -0.15}
+        "shifts": {"TECH": -0.45, "DEFENSIVES": 0.05, "OTHER": -0.15},
     },
     "Hypothetical_Real_Estate_Crash": {
         "name": "Commercial Real Estate Crash",
         "category": "Hypothetical Shocks",
         "description": "Sovereign yield spike triggers commercial real estate valuations collapse",
         "type": "synthetic",
-        "shifts": {"REITS": -0.35, "FINANCIALS": -0.15, "OTHER": -0.05}
+        "shifts": {"REITS": -0.35, "FINANCIALS": -0.15, "OTHER": -0.05},
     },
     "Hypothetical_Green_Transition": {
         "name": "Sudden Green Regulation Shock",
         "category": "Hypothetical Shocks",
         "description": "Aggressive carbon pricing impacts oil/gas assets while boosting renewables",
         "type": "synthetic",
-        "shifts": {"RENEWABLES": 0.30, "ENERGY": -0.40, "OTHER": 0.0}
+        "shifts": {"RENEWABLES": 0.30, "ENERGY": -0.40, "OTHER": 0.0},
     },
     "Hypothetical_Supply_Chain_Freeze": {
         "name": "Global Supply Chain Freeze",
         "category": "Hypothetical Shocks",
         "description": "Geopolitical friction closes shipping lanes, spiking transport and goods inflation",
         "type": "synthetic",
-        "shifts": {"INDUSTRIALS": -0.20, "TECH": -0.15, "GOLD": 0.10, "OTHER": -0.05}
+        "shifts": {"INDUSTRIALS": -0.20, "TECH": -0.15, "GOLD": 0.10, "OTHER": -0.05},
     },
     "Hypothetical_Stagflation_Regime": {
         "name": "Modern Stagflation Regime",
         "category": "Hypothetical Shocks",
         "description": "Commodity shortages combine with wage spirals and high interest rates",
         "type": "synthetic",
-        "shifts": {"COMMODITIES": 0.25, "EQUITIES": -0.20, "BONDS": -0.10, "OTHER": -0.05}
-    }
+        "shifts": {
+            "COMMODITIES": 0.25,
+            "EQUITIES": -0.20,
+            "BONDS": -0.10,
+            "OTHER": -0.05,
+        },
+    },
 }
 
 
 def _classify_sector(ticker: str) -> str:
     ticker = ticker.upper().strip()
-    tech_tickers = {"AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "NVDA", "NFLX", "META", "QQQ", "SMH"}
+    tech_tickers = {
+        "AAPL",
+        "MSFT",
+        "GOOGL",
+        "AMZN",
+        "TSLA",
+        "NVDA",
+        "NFLX",
+        "META",
+        "QQQ",
+        "SMH",
+    }
     reit_tickers = {"VNQ", "O", "AMT", "PLD", "CCI", "EQIX", "WY", "PSA"}
     energy_tickers = {"XLE", "XOM", "CVX", "COP", "SLB", "EOG", "PXD"}
     renewables_tickers = {"ICLN", "TAN", "ENPH", "FSLR", "NEE", "RUN"}
     commodity_tickers = {"GLD", "SLV", "USO", "UNG", "DBC", "PDBC", "IAU"}
     defensive_tickers = {"XLP", "XLV", "XLU", "PG", "JNJ", "KO", "PEP", "WMT", "LLY"}
     bond_tickers = {"BND", "TLT", "IEF", "SHY", "LQD", "HYG", "AGG"}
-    
+
     if ticker in tech_tickers:
         return "TECH"
     elif ticker in reit_tickers:
@@ -434,7 +447,9 @@ class PortfolioService:
             return pd.DataFrame()
 
     @staticmethod
-    def calculate_stress_test(portfolio: list[dict], scenarios: list[str] = None) -> dict:
+    def calculate_stress_test(
+        portfolio: list[dict], scenarios: list[str] = None
+    ) -> dict:
         """
         Calculate stress test performance for selected historical and synthetic crises.
         Expects a list of dicts: [{"ticker": "AAPL", "weight": 0.6}, ...]
@@ -538,11 +553,15 @@ class PortfolioService:
                     if ticker in daily_returns.columns:
                         sector = _classify_sector(ticker)
                         shift = shifts.get(sector, shifts.get("OTHER", 0.0))
-                        
+
                         # Calculate daily shift multiplier factor
                         # e.g., (1 + shift) total return multiplier over baseline
-                        factor = (1.0 + shift) ** (1.0 / num_days) if (1.0 + shift) > 0 else 0.0
-                        
+                        factor = (
+                            (1.0 + shift) ** (1.0 / num_days)
+                            if (1.0 + shift) > 0
+                            else 0.0
+                        )
+
                         # Apply daily factor shift to baseline asset returns
                         asset_daily = (1 + daily_returns[ticker]) * factor - 1
                         port_daily_return += asset_daily * weight

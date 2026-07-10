@@ -1,5 +1,4 @@
 from .audit_logs import AuditLog
-from .brokers import Broker, BrokerClick
 from .chat import ChatMessage, ChatSession, UsageCounter
 from .compliance import ComplianceDisclosure, ComplianceGroup, DisclosureType
 from .insights import Insight, MarketInsightReview

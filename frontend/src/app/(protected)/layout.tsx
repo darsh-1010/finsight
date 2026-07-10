@@ -22,7 +22,6 @@ const PAGE_TITLES: Record<string, string> = {
   '/admin/chatbot': 'Chatbot Management',
   '/admin/scraping': 'Scraping Management',
   '/admin/insights': 'Insights Review',
-  '/admin/brokers': 'Brokers',
 };
 
 /**

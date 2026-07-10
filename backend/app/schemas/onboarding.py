@@ -105,7 +105,13 @@ class ChoiceQuestionCreate(BaseQuestionCreate):
 
 
 QuestionCreate = Annotated[
-    TextQuestionCreate | NumberQuestionCreate | EmailQuestionCreate | PhoneQuestionCreate | DateQuestionCreate | FileQuestionCreate | ChoiceQuestionCreate,
+    TextQuestionCreate
+    | NumberQuestionCreate
+    | EmailQuestionCreate
+    | PhoneQuestionCreate
+    | DateQuestionCreate
+    | FileQuestionCreate
+    | ChoiceQuestionCreate,
     Field(discriminator="question_type"),
 ]
 

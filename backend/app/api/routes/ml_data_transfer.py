@@ -31,9 +31,7 @@ router = APIRouter(
 @router.get("/chat-history/{session_id}", response_model=list[ChatMessageSchema])
 def get_ml_chat_history(
     session_id: uuid.UUID,
-    limit: int | None = Query(
-        6, description="Dynamic limit to get the last N chats"
-    ),
+    limit: int | None = Query(6, description="Dynamic limit to get the last N chats"),
     db: Session = Depends(deps.get_db),
 ):
     session = db.query(ChatSession).filter(ChatSession.session_id == session_id).first()

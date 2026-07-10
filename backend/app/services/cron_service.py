@@ -14,9 +14,8 @@ IST = UTC+5:30, so 06:00 IST == 00:30 UTC.
 
 import asyncio
 import logging
-import os
-from pathlib import Path
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader
 from sqlalchemy.orm import Session
@@ -238,9 +237,7 @@ async def _run_weekly_email_briefing_job(stop_event: asyncio.Event) -> None:
 
                 # Fetch all active users who have an email
                 users = (
-                    db.query(User)
-                    .filter(User.is_active, User.email.isnot(None))
-                    .all()
+                    db.query(User).filter(User.is_active, User.email.isnot(None)).all()
                 )
                 ses_service = SESService()
 

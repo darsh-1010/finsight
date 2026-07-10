@@ -77,11 +77,6 @@ const adminSubItems = [
     path: '/admin/scraping',
   },
   {
-    label: 'Brokers Management',
-    icon: <Briefcase size={16} />,
-    path: '/admin/brokers',
-  },
-  {
     label: 'Insights Review',
     icon: <Newspaper size={16} />,
     path: '/admin/insights',

@@ -1,6 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-import type { BrokerResponse, BrokerCreate, BrokerUpdate, BrokersUploadResponse } from '@/api/brokers';
 import type { TokenTransactionList, TokenUsage } from '@/api/tokens';
 import type { ScrapingURLResponse, IngestedPDFMetadata } from '@/api/admin';
 
@@ -103,7 +102,7 @@ const baseQueryWithReauth: typeof baseQuery = async (args, api, extraOptions) =>
 export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['Broker', 'TokenUsage', 'Notification', 'AdminInsight', 'ScrapingURL', 'ScrapingHistory', 'ScrapingSubURL', 'IngestedPDF'],
+  tagTypes: ['TokenUsage', 'Notification', 'AdminInsight', 'ScrapingURL', 'ScrapingHistory', 'ScrapingSubURL', 'IngestedPDF'],
   endpoints: (builder) => ({
     getNotifications: builder.query<NotificationResponse[], { limit?: number; unreadOnly?: boolean } | void>({
       query: (arg) => {
@@ -148,45 +147,6 @@ export const apiSlice = createApi({
       },
       providesTags: ['TokenUsage'],
     }),
-    getBrokers: builder.query<BrokerResponse[], void>({
-      query: () => '/admin/brokers/',
-      providesTags: ['Broker'],
-    }),
-    createBroker: builder.mutation<BrokerResponse, BrokerCreate>({
-      query: (data) => ({
-        url: '/admin/brokers/',
-        method: 'POST',
-        body: data,
-      }),
-      invalidatesTags: ['Broker'],
-    }),
-    updateBroker: builder.mutation<BrokerResponse, { id: number; data: BrokerUpdate }>({
-      query: ({ id, data }) => ({
-        url: `/admin/brokers/${id}`,
-        method: 'PUT',
-        body: data,
-      }),
-      invalidatesTags: ['Broker'],
-    }),
-    deleteBroker: builder.mutation<{ message: string }, number>({
-      query: (id) => ({
-        url: `/admin/brokers/${id}`,
-        method: 'DELETE',
-      }),
-      invalidatesTags: ['Broker'],
-    }),
-    uploadBrokersCsv: builder.mutation<BrokersUploadResponse, File>({
-      query: (file) => {
-        const formData = new FormData();
-        formData.append('file', file);
-        return {
-          url: '/admin/brokers/upload',
-          method: 'POST',
-          body: formData,
-        };
-      },
-      invalidatesTags: ['Broker'],
-    }),
     getScrapingURLs: builder.query<ScrapingURLResponse[], void>({
       query: () => '/admin/scraping/urls',
       providesTags: ['ScrapingURL'],
@@ -218,13 +178,8 @@ export const {
   useMarkNotificationReadMutation,
   useGetAdminInsightsQuery,
   useUpdateAdminInsightStatusMutation,
-  useGetBrokersQuery,
   useGetTokenUsageQuery,
   useGetTokenTransactionsQuery,
-  useCreateBrokerMutation,
-  useUpdateBrokerMutation,
-  useDeleteBrokerMutation,
-  useUploadBrokersCsvMutation,
   useGetScrapingURLsQuery,
   useGetScrapingHistoryQuery,
   useGetScrapingSubURLsQuery,

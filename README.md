@@ -15,8 +15,8 @@ finsight/
 ├── docker-compose.yml      ← Single compose file for all services
 ├── Dockerfile.backend      ← BE image (FastAPI, Python 3.12)
 ├── Dockerfile.ml           ← ML image (FastAPI, Python 3.11, Playwright, Camoufox)
-├── Dockerfile.frontend     ← FE image (Vite build → Nginx serve)
-├── nginx.conf              ← Nginx config for the React SPA
+├── Dockerfile.frontend     ← FE image (Next.js standalone production build)
+├── nginx.conf              ← Nginx config for the web proxy
 │
 ├── backend/                ← FastAPI Backend (auth, DB, Stripe, chat proxy)
 │   ├── app/
@@ -30,7 +30,7 @@ finsight/
 │   ├── requirements.txt
 │   └── ...
 │
-└── frontend/               ← React + Vite + TypeScript frontend (Violet/Lavender theme)
+└── frontend/               ← Next.js + React + Tailwind + TypeScript frontend (Violet/Lavender theme)
     ├── src/
     ├── package.json
     └── ...
@@ -94,7 +94,7 @@ docker compose exec backend python -m app.seeds.seed_tier_token_configs
 
 | Service | URL | Description |
 |---|---|---|
-| **Frontend** | http://localhost:5173 | React SPA (Vite Local Dev) |
+| **Frontend** | http://localhost | Next.js Server (Docker standalone) |
 | **Backend API** | http://localhost:8001 | FastAPI BE |
 | **Backend Docs** | http://localhost:8001/docs | Swagger UI |
 | **ML API** | http://localhost:8002 | FastAPI ML (mapped port) |

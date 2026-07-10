@@ -3,8 +3,7 @@ from pydantic import BaseModel, Field
 
 from app.api import deps
 from app.models.users import User
-from app.services.portfolio_service import PortfolioService, STRESS_SCENARIOS
-from app.models.users import User
+from app.services.portfolio_service import STRESS_SCENARIOS, PortfolioService
 
 router = APIRouter(prefix="/api/v1/portfolio", tags=["Portfolio"])
 
@@ -17,8 +16,12 @@ class PortfolioAsset(BaseModel):
 
 
 class StressTestRequest(BaseModel):
-    portfolio: list[PortfolioAsset] = Field(..., min_length=1, description="List of assets in the portfolio")
-    scenarios: list[str] | None = Field(None, description="Optional list of stress scenario IDs to execute")
+    portfolio: list[PortfolioAsset] = Field(
+        ..., min_length=1, description="List of assets in the portfolio"
+    )
+    scenarios: list[str] | None = Field(
+        None, description="Optional list of stress scenario IDs to execute"
+    )
 
 
 class CrisisResult(BaseModel):

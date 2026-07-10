@@ -48,9 +48,7 @@ def _apply_status_update(
         action_url = f"/market_insights?tab={tab}&insightId={item.id}"
 
         notification_title = (
-            item.alert_message
-            if item.alert_message
-            else "New Market Insight Available"
+            item.alert_message if item.alert_message else "New Market Insight Available"
         )
         notification = Notification(
             title=notification_title,

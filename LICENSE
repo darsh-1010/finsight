@@ -1,44 +1,35 @@
-Copyright (c) 2024 Darsh. All Rights Reserved.
+Copyright (c) 2024-2026 Darsh. All Rights Reserved.
 
 PROPRIETARY AND CONFIDENTIAL
 
-This software and all associated source code, documentation, assets, and
-intellectual property (collectively, the "Software") are the exclusive property
-of the copyright holder identified above.
+This software, source code, design elements, graphics, algorithms, compiled binaries, documentation, and all associated assets (collectively, the "Software") are the exclusive, sole, and proprietary intellectual property of the copyright holder identified above.
 
-NO LICENCE IS GRANTED — EXPRESS, IMPLIED, OR OTHERWISE.
+NO LICENSE OR RIGHT IS GRANTED — EXPRESS, IMPLIED, BY ESTOPPEL, OR OTHERWISE.
 
-1. RESTRICTIONS
-   You may NOT, under any circumstances:
-   - Copy, reproduce, duplicate, or distribute the Software or any portion thereof.
-   - Modify, adapt, translate, reverse-engineer, decompile, or disassemble the Software.
-   - Sublicense, sell, rent, lease, transfer, or otherwise make the Software available
-     to any third party.
-   - Use the Software, in whole or in part, for any commercial, non-commercial,
-     educational, research, or personal purpose without the explicit prior written
-     permission of the copyright holder.
+1. ABSOLUTE RESTRICTIONS
+   You are strictly prohibited from, and may not authorize any third party to:
+   - Copy, reproduce, duplicate, store, distribute, publish, or transmit the Software or any portion thereof in any form or by any means.
+   - Modify, adapt, translate, enhance, create derivative works from, reverse-engineer, decompile, de-obfuscate, or disassemble the Software or any portion thereof.
+   - Sublicense, sell, resell, rent, lease, distribute, transfer, assign, host, outsource, or otherwise commercially exploit the Software or make it available to any third party.
+   - Use the Software for any commercial, non-commercial, educational, research, personal, staging, or production purpose without the explicit, prior written permission and bilateral agreement signed by the copyright holder.
+   - Use the Software, including any of its code, data, structures, or outputs, for the purposes of training, fine-tuning, testing, or validating any machine learning models, artificial intelligence systems, neural networks, or large language models (LLMs).
+   - Scrape, mine, parse, extract, or collect data or code from the Software using automated systems, scripts, web scrapers, or indexers.
 
-2. PERMITTED USE
-   Access to this repository is provided solely for review purposes where explicitly
-   authorised in writing by the copyright holder. Any such authorisation is personal,
-   non-transferable, and revocable at any time.
+2. ABUSE & PUBLIC HOSTING
+   - Under no circumstances may this Software or any derivatives be placed in a public version control system, public repository (e.g., GitHub, GitLab), or public hosting environment. 
+   - All copies of the repository for private development must remain strictly private, and all access keys, API secrets, and source code must be protected with industry-standard security measures.
 
 3. CONFIDENTIALITY
-   The Software constitutes confidential information. You must treat it with the same
-   degree of care as your own confidential information, but in no case less than
-   reasonable care.
+   The Software contains valuable trade secrets and confidential information of the copyright holder. You must maintain the Software in strict confidence and prevent unauthorized disclosure or use thereof, utilizing at least the same degree of care as you employ for your own most sensitive confidential information, and in no event less than a reasonable standard of care.
 
-4. ENFORCEMENT
-   Unauthorized use, reproduction, or distribution of this Software, or any portion
-   of it, may result in severe civil and criminal penalties, and will be prosecuted to
-   the maximum extent possible under applicable law.
+4. REMEDIES & INJUNCTIVE RELIEF
+   You acknowledge that a breach of this License Agreement would cause irreparable harm to the copyright holder for which monetary damages alone would be inadequate. Accordingly, in the event of any actual or threatened breach, the copyright holder shall be entitled to seek immediate injunctive relief, specific performance, and other equitable remedies from any court of competent jurisdiction, without the necessity of posting a bond or proving actual damages, in addition to any other rights or remedies available at law.
 
-5. NO WARRANTY
-   THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND. THE COPYRIGHT
-   HOLDER DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-   WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
-   NON-INFRINGEMENT.
+5. GOVERNING LAW & JURISDICTION
+   This Agreement, and any dispute, controversy, or claim arising out of or in connection with it or its subject matter, shall be governed by, and construed in accordance with, the laws of the State of Delaware, United States, without regard to its conflict of law principles. Any legal action, suit, or proceeding arising out of or relating to this Agreement shall be instituted exclusively in the state or federal courts located in the State of Delaware.
 
-6. CONTACT
-   To request permission to use this Software, contact the copyright holder directly
-   via the contact information associated with this repository.
+6. NO WARRANTY
+   THE SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS, IMPLIED, OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, SYSTEM INTEGRATION, ACCURACY, AND NON-INFRINGEMENT. THE ENTIRE RISK AS TO THE QUALITY, PERFORMANCE, AND USE OF THE SOFTWARE IS WITH YOU.
+
+7. CONTACT
+   To request permission to license or use this Software, contact the copyright holder directly.
