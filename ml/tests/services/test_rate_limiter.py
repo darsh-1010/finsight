@@ -101,66 +101,54 @@ class TestRateLimitError:
 class TestRateLimiterLocalFallback:
     """Tests for the in-memory (local) rate limiting path."""
 
-    def test_acquire_within_limit_does_not_raise(self, rate_limiter):
+    @pytest.mark.asyncio
+    async def test_acquire_within_limit_does_not_raise(self, rate_limiter):
         """Requests within the limit must not raise."""
-        async def run():
-            await rate_limiter.acquire("user_1", route="/api/v1/chat")
+        await rate_limiter.acquire("user_1", route="/api/v1/chat")
 
-        asyncio.get_event_loop().run_until_complete(run())
-
-    def test_acquire_exceeds_rpm_raises_rate_limit_error(self, rate_limiter):
+    @pytest.mark.asyncio
+    async def test_acquire_exceeds_rpm_raises_rate_limit_error(self, rate_limiter):
         """After exceeding requests_per_minute, RateLimitError must be raised."""
         from src.utils.rate_limiter import RateLimitError
 
-        async def run():
-            for _ in range(5):  # exhaust the limit
-                await rate_limiter.acquire("user_burst", route="/api/v1/chat/msg")
-            # This one should fail
+        for _ in range(5):  # exhaust the limit
+            await rate_limiter.acquire("user_burst", route="/api/v1/chat/msg")
+        # This one should fail
+        with pytest.raises(RateLimitError):
             await rate_limiter.acquire("user_burst", route="/api/v1/chat/msg")
 
-        with pytest.raises(RateLimitError):
-            asyncio.get_event_loop().run_until_complete(run())
-
-    def test_rate_limit_error_has_retry_after(self, rate_limiter):
+    @pytest.mark.asyncio
+    async def test_rate_limit_error_has_retry_after(self, rate_limiter):
         """RateLimitError raised from local path must include retry_after_seconds."""
         from src.utils.rate_limiter import RateLimitError
 
-        async def run():
-            for _ in range(5):
-                await rate_limiter.acquire("user_retry", route="/api/v1/chat/stream")
+        for _ in range(5):
             await rate_limiter.acquire("user_retry", route="/api/v1/chat/stream")
 
         with pytest.raises(RateLimitError) as exc_info:
-            asyncio.get_event_loop().run_until_complete(run())
+            await rate_limiter.acquire("user_retry", route="/api/v1/chat/stream")
 
         assert exc_info.value.retry_after_seconds is not None
         assert exc_info.value.retry_after_seconds >= 1
 
-    def test_different_identifiers_are_isolated(self, rate_limiter):
+    @pytest.mark.asyncio
+    async def test_different_identifiers_are_isolated(self, rate_limiter):
         """Rate limits must be isolated per identifier (user)."""
-        from src.utils.rate_limiter import RateLimitError
+        # Fill up user A's quota
+        for _ in range(5):
+            await rate_limiter.acquire("user_a", route="/api/v1/chat/q")
+        # user B must still be able to make a request without raising
+        await rate_limiter.acquire("user_b", route="/api/v1/chat/q")
 
-        async def run():
-            # Fill up user A's quota
-            for _ in range(5):
-                await rate_limiter.acquire("user_a", route="/api/v1/chat/q")
-            # user B must still be able to make a request
-            await rate_limiter.acquire("user_b", route="/api/v1/chat/q")
-
-        # Should not raise — user_b has not hit their limit
-        asyncio.get_event_loop().run_until_complete(run())
-
-    def test_token_limit_enforced(self, rate_limiter):
+    @pytest.mark.asyncio
+    async def test_token_limit_enforced(self, rate_limiter):
         """Token quota must be enforced when accumulated token usage exceeds the limit."""
         from src.utils.rate_limiter import RateLimitError
 
-        async def run():
-            # Accumulate tokens across requests: 6 * 200 = 1200 > tokens_per_minute (1000)
+        # Accumulate tokens across requests: 6 * 200 = 1200 > tokens_per_minute (1000)
+        with pytest.raises(RateLimitError):
             for _ in range(6):
                 await rate_limiter.acquire("user_toks", tokens=200, route="/api/v1/chat/tok")
-
-        with pytest.raises(RateLimitError):
-            asyncio.get_event_loop().run_until_complete(run())
 
 
 # ── Redis-backed path ─────────────────────────────────────────────────────────
@@ -168,14 +156,13 @@ class TestRateLimiterLocalFallback:
 class TestRateLimiterRedisPath:
     """Tests for the Redis-backed rate limiting path."""
 
-    def test_redis_path_does_not_raise_within_limit(self, redis_rate_limiter):
+    @pytest.mark.asyncio
+    async def test_redis_path_does_not_raise_within_limit(self, redis_rate_limiter):
         """When Redis count is within limit, acquire must not raise."""
-        async def run():
-            await redis_rate_limiter.acquire("user_ok", route="/api/v1/chat/ok")
+        await redis_rate_limiter.acquire("user_ok", route="/api/v1/chat/ok")
 
-        asyncio.get_event_loop().run_until_complete(run())
-
-    def test_redis_path_raises_when_count_exceeds_limit(self):
+    @pytest.mark.asyncio
+    async def test_redis_path_raises_when_count_exceeds_limit(self):
         """When Redis returns count > requests_per_minute, RateLimitError raised."""
         from src.utils.rate_limiter import RateLimitError, RateLimiter
 
@@ -188,11 +175,9 @@ class TestRateLimiterRedisPath:
             limiter = RateLimiter(requests_per_minute=10, tokens_per_minute=5000, window_seconds=60)
             limiter._redis = mock_redis
 
-        async def run():
+        with pytest.raises(RateLimitError):
             await limiter.acquire("user_over", route="/api/v1/chat/over")
 
-        with pytest.raises(RateLimitError):
-            asyncio.get_event_loop().run_until_complete(run())
 
 
 # ── Bucket key generation ─────────────────────────────────────────────────────

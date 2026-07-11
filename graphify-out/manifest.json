@@ -350,8 +350,8 @@
     "semantic_hash": ""
   },
   "backend/app/api/routes/payments.py": {
-    "mtime": 1783673803.7713263,
-    "ast_hash": "d38f72e0bbe2cf1116f4427bd26cdb90",
+    "mtime": 1783736862.5211105,
+    "ast_hash": "d28240604068726e516170a706155c49",
     "semantic_hash": ""
   },
   "backend/app/api/routes/scraping.py": {
@@ -450,8 +450,8 @@
     "semantic_hash": ""
   },
   "backend/app/models/tiers.py": {
-    "mtime": 1783673803.981388,
-    "ast_hash": "ebc224f8eaf3ea0bacaeac7da95ff5f6",
+    "mtime": 1783736848.6680646,
+    "ast_hash": "ca1fac7f993181b485b7e50d2951f8d9",
     "semantic_hash": ""
   },
   "backend/app/models/users.py": {
@@ -1440,8 +1440,8 @@
     "semantic_hash": ""
   },
   "ml/src/api/health.py": {
-    "mtime": 1783678968.4669178,
-    "ast_hash": "0463f6df7cacfd28cabdd5a3898a493e",
+    "mtime": 1783738906.6443691,
+    "ast_hash": "cb149d8b64d93de8aec020fbea8285e6",
     "semantic_hash": ""
   },
   "ml/src/api/main.py": {
@@ -1945,8 +1945,8 @@
     "semantic_hash": ""
   },
   "ml/tests/api/test_health.py": {
-    "mtime": 1783685144.3660593,
-    "ast_hash": "0c8ee271dd14f06293e613aac53714d9",
+    "mtime": 1783738732.4902217,
+    "ast_hash": "541cd1b4f9b0ab38d79ad6bc37cbe0ac",
     "semantic_hash": ""
   },
   "ml/tests/api/test_market_insights_edge_cases.py": {
@@ -2040,8 +2040,8 @@
     "semantic_hash": ""
   },
   "ml/tests/services/weaviate/test_live_cleanup.py": {
-    "mtime": 1783673810.227842,
-    "ast_hash": "665de28442960d4df1316a0a5868b785",
+    "mtime": 1783738722.957433,
+    "ast_hash": "0a6823ddc862bea188b70c105e3a33a9",
     "semantic_hash": ""
   },
   "ml/tests/services/weaviate/test_weaviate_schema.py": {
@@ -2650,8 +2650,8 @@
     "semantic_hash": ""
   },
   "backend/tests/test_market.py": {
-    "mtime": 1783684889.715962,
-    "ast_hash": "572b5fe31b6e16e2adb0dd4f8ac07c53",
+    "mtime": 1783736876.5557842,
+    "ast_hash": "56c01a51f364130b85f25d005c9d180c",
     "semantic_hash": ""
   },
   "backend/tests/test_notifications.py": {
@@ -2685,8 +2685,8 @@
     "semantic_hash": ""
   },
   "ml/tests/services/test_rate_limiter.py": {
-    "mtime": 1783685877.8395233,
-    "ast_hash": "d39d5bc380480acef24857f0dcfcf220",
+    "mtime": 1783739372.496723,
+    "ast_hash": "399f1dc5fffe04aea9282c087de07fd9",
     "semantic_hash": ""
   },
   "ml/tests/utils/__init__.py": {
@@ -2717,6 +2717,11 @@
   ".github/workflows/dependency-review.yml": {
     "mtime": 1783685339.7738452,
     "ast_hash": "bba276ef12941b22e6db123244d6061e",
+    "semantic_hash": ""
+  },
+  "backend/tests/test_payments.py": {
+    "mtime": 1783736887.2621386,
+    "ast_hash": "3c82d0a60230be46e291984abcd7ba73",
     "semantic_hash": ""
   }
 }

@@ -1,0 +1,8 @@
+[run]
+omit =
+    src/services/scrapper/*
+    src/scripts/*
+    src/utils/config_updater.py
+    src/data_sources/yfinance_source.py
+    src/llm/utils.py
+    src/utils/s3_utils.py

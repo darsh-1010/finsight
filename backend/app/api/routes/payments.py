@@ -42,14 +42,24 @@ def create_checkout_session(
 
     # We can automatically upgrade them here, or let the success page trigger it.
     # We'll upgrade them here so when they land on success, it's done.
-    tier = (
-        db.query(Tier)
-        .filter(
-            (Tier.stripe_monthly_price_id == request.price_id)
-            | (Tier.stripe_yearly_price_id == request.price_id)
-        )
-        .first()
-    )
+    # Parse the tier level from price_id (e.g., "mock_price_2" or "mock_yearly_2")
+    level = None
+    if request.price_id:
+        if "price_" in request.price_id:
+            try:
+                level = int(request.price_id.split("price_")[-1])
+            except ValueError:
+                pass
+        elif "yearly_" in request.price_id:
+            try:
+                level = int(request.price_id.split("yearly_")[-1])
+            except ValueError:
+                pass
+
+    tier = None
+    if level is not None:
+        tier = db.query(Tier).filter(Tier.level == level).first()
+
 
     if tier:
         # Update or create subscription locally

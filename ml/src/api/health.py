@@ -253,7 +253,20 @@ async def start_openai_canary_monitor() -> None:
     """Prime the cached OpenAI canary and start the background refresh loop."""
     global _openai_canary_task
     await refresh_openai_canary()
-    if _openai_canary_task is None or _openai_canary_task.done():
+
+    current_loop = asyncio.get_running_loop()
+    is_valid = False
+    if _openai_canary_task is not None and not _openai_canary_task.done():
+        try:
+            task_loop = _openai_canary_task.get_loop()
+            if task_loop is current_loop:
+                is_valid = True
+        except AttributeError:
+            pass
+
+    if not is_valid:
+        if _openai_canary_task is not None and not _openai_canary_task.done():
+            _openai_canary_task.cancel()
         _openai_canary_task = asyncio.create_task(
             _run_openai_canary_loop(),
             name=OPENAI_CANARY_TASK_NAME,
@@ -267,9 +280,16 @@ async def stop_openai_canary_monitor() -> None:
         return
 
     _openai_canary_task.cancel()
-    with suppress(asyncio.CancelledError):
-        await _openai_canary_task
+    try:
+        current_loop = asyncio.get_running_loop()
+        task_loop = _openai_canary_task.get_loop()
+        if task_loop is current_loop:
+            with suppress(asyncio.CancelledError):
+                await _openai_canary_task
+    except (RuntimeError, AttributeError):
+        pass
     _openai_canary_task = None
+
 
 
 async def build_readiness_report() -> tuple[int, dict[str, Any]]:

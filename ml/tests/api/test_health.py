@@ -34,7 +34,7 @@ def ml_client():
     with (
         patch("src.utils.redis_client.get_async_redis", return_value=AsyncMock()),
         patch("src.services.weaviate.client.WeaviateClientManager.__init__", return_value=None),
-        patch("src.api.health.build_readiness_report", new_callable=AsyncMock,
+        patch("src.api.main.build_readiness_report", new_callable=AsyncMock,
               return_value=(200, {"status": "ok", "components": []})),
         patch("src.api.health.build_liveness_report", return_value={"status": "alive", "version": "1.0.0"}),
         patch("src.api.health.start_openai_canary_monitor", new_callable=AsyncMock),
@@ -95,7 +95,7 @@ class TestReadinessEndpoint:
         """When a required component is down, readiness must return 503."""
         with (
             patch("src.utils.redis_client.get_async_redis", return_value=AsyncMock()),
-            patch("src.api.health.build_readiness_report", new_callable=AsyncMock,
+            patch("src.api.main.build_readiness_report", new_callable=AsyncMock,
                   return_value=(503, {"status": "degraded", "components": []})),
             patch("src.api.health.build_liveness_report", return_value={"status": "alive", "version": "1.0.0"}),
             patch("src.api.health.start_openai_canary_monitor", new_callable=AsyncMock),
@@ -108,6 +108,7 @@ class TestReadinessEndpoint:
             with TestClient(degraded_app, raise_server_exceptions=False) as test_client:
                 response = test_client.get("/health/ready")
             assert response.status_code == 503
+
 
 
 # ── Root ──────────────────────────────────────────────────────────────────────

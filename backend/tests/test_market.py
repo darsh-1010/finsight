@@ -120,3 +120,37 @@ class TestMarketInsights:
             response = client.get("/api/v1/market/insights")
         assert response.status_code != 401
         assert response.status_code != 403
+
+    def test_fetch_live_data_success(self):
+        """Test _fetch_live_data internal function successfully parses TradingView response."""
+        from app.api.routes.market import _fetch_live_data
+        from unittest.mock import MagicMock
+
+        mock_analysis = MagicMock()
+        mock_analysis.summary = {"RECOMMENDATION": "BUY"}
+        mock_analysis.indicators = {"close": 50000.0, "RSI": 60}
+
+        with patch("tradingview_ta.TA_Handler") as mock_handler:
+            mock_handler.return_value.get_analysis.return_value = mock_analysis
+            results = _fetch_live_data()
+
+        assert len(results) == 4
+        assert results[0]["symbol"] == "BTC"
+        assert results[0]["price"] == "$50,000.00"
+        assert results[0]["change"] == "1.0%"
+        assert results[0]["isPositive"] is True
+        assert results[0]["score"] == 75
+        assert results[0]["recommendation"] == "BUY"
+
+    def test_fetch_live_data_individual_fallback(self):
+        """Test _fetch_live_data falls back to mock value for individual failed symbol."""
+        from app.api.routes.market import _fetch_live_data
+
+        with patch("tradingview_ta.TA_Handler") as mock_handler:
+            mock_handler.return_value.get_analysis.side_effect = Exception("API offline")
+            results = _fetch_live_data()
+
+        assert len(results) == 4
+        assert results[0]["symbol"] == "BTC"
+        assert results[0]["price"] == "$98,450"  # fallback value
+
