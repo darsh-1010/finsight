@@ -705,8 +705,8 @@
     "semantic_hash": ""
   },
   "frontend/package.json": {
-    "mtime": 1783673805.5602257,
-    "ast_hash": "216bc6cfcd7703859cedb4e3b4ba54e7",
+    "mtime": 1783740763.7544463,
+    "ast_hash": "435216f8b95c08f59606bb2195e72096",
     "semantic_hash": ""
   },
   "frontend/postcss.config.js": {
