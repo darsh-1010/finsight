@@ -2723,5 +2723,10 @@
     "mtime": 1783736887.2621386,
     "ast_hash": "3c82d0a60230be46e291984abcd7ba73",
     "semantic_hash": ""
+  },
+  "documentation/product_features_simple.md": {
+    "mtime": 1783780349.7062674,
+    "ast_hash": "a1f1b8b43f42ce618280014ba4897fd2",
+    "semantic_hash": ""
   }
 }
