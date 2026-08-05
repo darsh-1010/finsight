@@ -25,7 +25,7 @@ from src.api.health import (
     stop_openai_canary_monitor,
 )
 from src.api.middleware.quota_middleware import QuotaMiddleware
-from src.api.routes import chatbot, market_insights, scraper, uploads
+from src.api.routes import chatbot, edgar, market_insights, scraper, uploads
 from src.llm.prompts import PromptLoader
 from src.services.market_insights.weekly_compiler import WeeklySummaryCompiler
 from src.utils.logger import get_logger, setup_logging
@@ -222,6 +222,12 @@ def create_app() -> FastAPI:
         market_insights.router,
         prefix="/api/v1",
         tags=["Market Insights"],
+    )
+
+    application.include_router(
+        edgar.router,
+        prefix="/api/v1",
+        tags=["SEC EDGAR"],
     )
 
     # Health check endpoint

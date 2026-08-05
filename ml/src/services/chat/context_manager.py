@@ -10,6 +10,8 @@ from weaviate.classes.query import Filter
 from config.settings import settings
 from src.core.interfaces import IQueryService, IRAGService
 from src.core.models import FinancialContext, QueryExpansionResult
+from src.services.knowledge_graph.graph_service import GraphService
+from src.services.rag.retrieval_grader import RetrievalGrader
 from src.utils.logger import get_logger
 from src.utils.perf_utils import timed
 
@@ -29,6 +31,8 @@ class ContextManager:
         self.rag_service = rag_service
         self.enable_rag = enable_rag
         self._current_phase1_task = None
+        self._retrieval_grader = RetrievalGrader()
+        self._graph_service = GraphService()
 
     @timed("context.get_context", warn_threshold_s=3.0)
     async def get_context(
@@ -378,10 +382,56 @@ class ContextManager:
                 )
             )
 
+        # ── Knowledge Graph query (runs in parallel with RAG tasks) ────
+        # Extract primary ticker from analysis for graph context resolution.
+        session_ticker = kwargs.get("session_ticker")
+        expansion = analysis_data.get("expansion", {})
+        graph_ticker_hint = session_ticker
+        if not graph_ticker_hint:
+            expanded_queries = expansion.get("expanded_queries", [])
+            if expanded_queries and isinstance(expanded_queries[0], dict):
+                graph_ticker_hint = expanded_queries[0].get("ticker")
+
+        graph_task = asyncio.create_task(self._get_graph_context(message, ticker_hint=graph_ticker_hint))
+        phase2_tasks.append(graph_task)
+
         results = await asyncio.gather(*phase2_tasks, return_exceptions=True)
-        return self._unpack_phase2_results(
+
+        # Pop graph result (always last).
+        graph_result = results.pop()
+        graph_ctx, graph_cits = "", []
+        if isinstance(graph_result, tuple) and len(graph_result) == 2:
+            graph_ctx = graph_result[0] or ""
+            graph_cits = graph_result[1] or []
+        elif isinstance(graph_result, Exception):
+            logger.warning("[CONTEXT_PHASE2] Graph query failed: %s", graph_result)
+
+        unpacked = self._unpack_phase2_results(
             results, query_was_expanded, should_fetch_articles, request_id
         )
+        unpacked["graph_ctx"] = graph_ctx
+        unpacked["graph_cits"] = graph_cits
+        return unpacked
+
+    @timed("graph.query", warn_threshold_s=3.0)
+    async def _get_graph_context(
+        self,
+        message: str,
+        *,
+        ticker_hint: str | None = None,
+    ) -> tuple[str | None, list[dict[str, Any]]]:
+        """Query the knowledge graph for relational context.
+
+        Degrades gracefully: returns (None, []) if Neo4j is unavailable,
+        the query doesn't need graph traversal, or any error occurs.
+        """
+        try:
+            return await self._graph_service.query(
+                message, ticker_hint=ticker_hint
+            )
+        except (ValueError, TypeError, RuntimeError, OSError) as exc:
+            logger.warning("[GRAPH] Graph query failed (non-fatal): %s", exc)
+            return None, []
 
     async def _get_expanded_vector(self, query: str) -> list[float] | None:
         """Utility to get vector for expanded query."""
@@ -445,6 +495,10 @@ class ContextManager:
                 analysis_data, session_summary
             )
 
+        # Knowledge graph context (if available from phase-2).
+        graph_ctx = retrieval_results.get("graph_ctx", "")
+        graph_cits = retrieval_results.get("graph_cits", [])
+
         combined_ctx, combined_cits = self._merge_contexts(
             fin_ctx,
             fin_cits,
@@ -452,6 +506,8 @@ class ContextManager:
             doc_cits=doc_cits,
             art_ctx=art_ctx,
             art_cits=art_cits,
+            graph_ctx=graph_ctx,
+            graph_cits=graph_cits,
         )
 
         use_web_search = not (fin_ctx and fin_ctx.strip())
@@ -517,7 +573,20 @@ class ContextManager:
                 logger.info("[RAG] No relevant documents found")
                 return None, []
 
-            logger.info("[RAG] Found %d relevant documents", len(results))
+            logger.info("[RAG] Found %d raw documents, running relevance grading...", len(results))
+
+            # ── Retrieval Grading ────────────────────────────────────
+            # LLM-based relevance filter: drops chunks that are topically
+            # adjacent but don't actually help answer the query.
+            try:
+                results = await self._retrieval_grader.grade_and_filter(message, results)
+                logger.info("[RAG] %d documents survived grading", len(results))
+            except (ValueError, TypeError, RuntimeError) as grade_exc:
+                # Fail-open: if grader breaks, use unfiltered results.
+                logger.warning("[RAG] Grading failed, using unfiltered: %s", grade_exc)
+
+            if not results:
+                return None, []
 
             context_parts, citations = [], []
             for position, doc in enumerate(results, 1):
@@ -768,10 +837,16 @@ class ContextManager:
         doc_citations = kwargs.get("doc_cits", [])
         article_context = kwargs.get("art_ctx")
         article_citations = kwargs.get("art_cits", [])
+        graph_context = kwargs.get("graph_ctx")
+        graph_citations = kwargs.get("graph_cits", [])
 
         parts = []
         if fin_context:
             parts.append(fin_context)
+        if graph_context:
+            parts.append(
+                f"\n[Knowledge Graph — Relational Data]\n{graph_context}"
+            )
         if doc_context:
             parts.append(
                 f"\n[Document Knowledge]\n<untrusted_data>\n{doc_context}\n</untrusted_data>"
@@ -783,7 +858,7 @@ class ContextManager:
 
         combined_str = "\n\n".join(parts)
 
-        # Deduplicate citations by URL across doc and article sources
+        # Deduplicate citations by URL across all sources
         combined_cits = fin_citations.copy()
 
         seen_urls = set()
@@ -791,7 +866,7 @@ class ContextManager:
             if url := cit.get("url"):
                 seen_urls.add(url)
 
-        for cit_list in [doc_citations, article_citations]:
+        for cit_list in [graph_citations, doc_citations, article_citations]:
             for cit in cit_list:
                 url = cit.get("url")
                 if not url or url not in seen_urls:

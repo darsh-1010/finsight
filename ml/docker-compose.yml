@@ -19,6 +19,12 @@ services:
       WEAVIATE_GRPC_URL: weaviate:50051
       WEAVIATE_API_KEY: ${WEAVIATE_API_KEY:-}
 
+      # Neo4j Knowledge Graph (use container name for Docker networking)
+      NEO4J_URI: bolt://neo4j:7687
+      NEO4J_USER: neo4j
+      NEO4J_PASSWORD: ${NEO4J_PASSWORD:-finsight2026}
+      NEO4J_DATABASE: neo4j
+
       # Redis Configuration (use container name for Docker networking)
       REDIS_URL: redis://redis:6379/0
       SESSION_TTL_SECONDS: 3600
@@ -40,6 +46,8 @@ services:
       weaviate:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      neo4j:
         condition: service_healthy
     networks:
       - aim-chatbot-network
@@ -161,6 +169,29 @@ services:
       retries: 5
       start_period: 30s
 
+  # Neo4j Knowledge Graph
+  neo4j:
+    image: neo4j:5-community
+    container_name: aim-chatbot-neo4j
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      NEO4J_AUTH: neo4j/${NEO4J_PASSWORD:-finsight2026}
+      NEO4J_PLUGINS: '[]'
+      NEO4J_server_memory_heap_initial__size: 256m
+      NEO4J_server_memory_heap_max__size: 512m
+    volumes:
+      - neo4j_data:/data
+    networks:
+      - aim-chatbot-network
+    healthcheck:
+      test: ["CMD", "neo4j", "status"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
   # Redis Cache
   redis:
     image: redis:7-alpine
@@ -180,6 +211,8 @@ services:
 
 volumes:
   weaviate_data_v2:
+    driver: local
+  neo4j_data:
     driver: local
   redis_data:
     driver: local
