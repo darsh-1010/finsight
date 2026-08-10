@@ -91,6 +91,8 @@ async def seed_graph(tickers: list[str] | None = None) -> dict[str, int]:
     tickers = tickers or DEFAULT_TICKERS
     client = GraphClient()
 
+    logger.info("[SEED] Starting knowledge graph seeding | tickers=%s", tickers)
+
     stats = {"companies": 0, "relationships": 0, "errors": 0}
 
     try:

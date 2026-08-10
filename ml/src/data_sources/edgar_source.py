@@ -82,7 +82,9 @@ class EdgarSource:
         ticker_upper = ticker.upper()
         for entry in data.values():
             if entry.get("ticker", "").upper() == ticker_upper:
-                return str(entry["cik_str"]).zfill(10)
+                cik = str(entry["cik_str"]).zfill(10)
+                logger.info("[EDGAR] Resolved %s → CIK %s", ticker, cik)
+                return cik
 
         logger.info("[EDGAR] No CIK found for ticker %s", ticker)
         return None
@@ -168,6 +170,7 @@ class EdgarSource:
         Caps output at `max_chars` to prevent memory issues on massive filings.
         """
         client = await self._ensure_client()
+        logger.debug("[EDGAR] Downloading filing: %s", url)
 
         async with _SEC_SEMAPHORE:
             try:

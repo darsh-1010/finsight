@@ -77,6 +77,12 @@ async def trigger_ingestion(request: IngestionRequest) -> IngestionResponse:
         logger.error("[EDGAR_API] Ingestion failed: %s", exc)
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
+    logger.info(
+        "[EDGAR_API] Ingestion complete | fetched=%d | ingested=%d | chunks=%d | errors=%d",
+        result["filings_fetched"], result["filings_ingested"],
+        result["chunks_stored"], result["errors"],
+    )
+
     return IngestionResponse(
         status="completed",
         filings_fetched=result["filings_fetched"],
@@ -99,9 +105,11 @@ async def list_filings(
             detail=f"Unsupported filing type: {filing_type}",
         )
 
+    logger.info("[EDGAR_API] Listing filings | ticker=%s | type=%s | limit=%d", ticker, filing_type, limit)
     source = EdgarSource()
     try:
         filings = await source.get_filings(ticker, filing_type=filing_type, limit=limit)
+        logger.info("[EDGAR_API] Found %d filings for %s", len(filings), ticker)
         return {"ticker": ticker.upper(), "filing_type": filing_type, "filings": filings}
     except (RuntimeError, OSError, ValueError) as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc

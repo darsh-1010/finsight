@@ -135,6 +135,11 @@ async def ingest_filings(
     edgar = EdgarSource()
     rag = RAGService()
 
+    logger.info(
+        "[EDGAR_INGEST] Starting | tickers=%s | types=%s | limit_per_type=%d",
+        tickers, types, limit_per_type,
+    )
+
     stats = {"filings_fetched": 0, "filings_ingested": 0, "chunks_stored": 0, "errors": 0}
 
     try:

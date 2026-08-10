@@ -119,6 +119,7 @@ class GraphClient:
                 await tx.run(cypher, parameters or {})
 
             await session.execute_write(_tx)
+            logger.debug("[GRAPH] Write executed: %.80s", cypher)
 
     async def close(self) -> None:
         """Close the driver and release all connections."""
@@ -130,6 +131,7 @@ class GraphClient:
     async def health_check(self) -> bool:
         """Return True if Neo4j is reachable."""
         if not _NEO4J_AVAILABLE:
+            logger.info("[GRAPH] neo4j driver not installed — graph features disabled")
             return False
         try:
             driver = await self._ensure_driver()
