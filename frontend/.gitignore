@@ -20,4 +20,4 @@ frontend/.env
 
 # Logs
 logs/
-*.log
+*.log*.tsbuildinfo
