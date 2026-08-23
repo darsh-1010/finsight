@@ -26,7 +26,7 @@ const TierTabs: React.FC<{
           className={cn(
             'flex h-9 shrink-0 items-center gap-2 rounded-full px-4 text-sm font-semibold transition-colors',
             isActive
-              ? 'bg-[#9C6F0E] text-white shadow-sm'
+              ? 'bg-[#9683C2] text-white shadow-sm'
               : 'bg-card border border-border text-muted-foreground hover:bg-secondary hover:text-foreground',
           )}
         >

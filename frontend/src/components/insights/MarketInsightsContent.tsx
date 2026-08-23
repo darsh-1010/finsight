@@ -301,13 +301,13 @@ const MarketInsightsContent = () => {
 
         <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto justify-start sm:justify-between lg:justify-end">
           {/* View Mode Toggle: Latest vs Archive */}
-          <div className="flex rounded-xl bg-slate-100 dark:bg-[#120F1D] p-1 border border-slate-200 dark:border-[#9C6F0E]/30 shadow-[0_0_15px_rgba(156, 111, 14,0.08)]">
+          <div className="flex rounded-xl bg-slate-100 dark:bg-[#120F1D] p-1 border border-slate-200 dark:border-[#9683C2]/30 shadow-[0_0_15px_rgba(150, 131, 194,0.08)]">
             <button
               onClick={() => setViewMode('latest')}
               className={cn(
                 'flex items-center justify-center gap-1.5 px-4 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition-all cursor-pointer',
                 viewMode === 'latest'
-                  ? 'bg-gradient-to-r from-[#D4A94F] to-[#9C6F0E] text-white shadow-[0_0_12px_rgba(212, 169, 79,0.35)] font-bold'
+                  ? 'bg-gradient-to-r from-[#B0A0D4] to-[#9683C2] text-white shadow-[0_0_12px_rgba(176, 160, 212,0.35)] font-bold'
                   : 'text-slate-500 dark:text-muted-foreground hover:text-slate-900 dark:hover:text-foreground hover:bg-slate-200/50 dark:hover:bg-[#1C1830]',
               )}
             >
@@ -319,7 +319,7 @@ const MarketInsightsContent = () => {
               className={cn(
                 'flex items-center justify-center gap-1.5 px-4 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition-all cursor-pointer',
                 viewMode === 'archive'
-                  ? 'bg-gradient-to-r from-[#D4A94F] to-[#9C6F0E] text-white shadow-[0_0_12px_rgba(212, 169, 79,0.35)] font-bold'
+                  ? 'bg-gradient-to-r from-[#B0A0D4] to-[#9683C2] text-white shadow-[0_0_12px_rgba(176, 160, 212,0.35)] font-bold'
                   : 'text-slate-500 dark:text-muted-foreground hover:text-slate-900 dark:hover:text-foreground hover:bg-slate-200/50 dark:hover:bg-[#1C1830]',
               )}
             >
@@ -417,7 +417,7 @@ const MarketInsightsContent = () => {
                     </span>
                     <div className="w-24 md:w-32 h-1 bg-secondary rounded-full overflow-hidden relative">
                       <div
-                        className="absolute top-0 left-0 h-full bg-[#9C6F0E] transition-all duration-300 ease-out rounded-full"
+                        className="absolute top-0 left-0 h-full bg-[#9683C2] transition-all duration-300 ease-out rounded-full"
                         style={{
                           width: `${100 / latestInsights.length}%`,
                           transform: `translateX(${carouselIndex * 100}%)`,

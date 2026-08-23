@@ -46,7 +46,7 @@ export const CarouselCard: React.FC<CarouselCardProps> = ({
           ? 'opacity-100 scale-100 translate-x-0 z-10 pointer-events-auto'
           : 'opacity-0 scale-95 pointer-events-none z-0',
         isHighlighted &&
-          'ring-2 ring-indigo-500 ring-offset-2 dark:ring-offset-[#120F1D] animate-pulse shadow-[0_0_25px_rgba(212, 169, 79,0.6)]',
+          'ring-2 ring-indigo-500 ring-offset-2 dark:ring-offset-[#120F1D] animate-pulse shadow-[0_0_25px_rgba(176, 160, 212,0.6)]',
       )}
     >
       {/* Sidebar Area: Trend & Ticker */}
@@ -64,7 +64,7 @@ export const CarouselCard: React.FC<CarouselCardProps> = ({
         {/* Ticker Emblem */}
         <div className="flex items-center gap-3 md:flex-col md:items-start md:gap-4 w-full md:h-full justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 md:h-12 md:w-12 text-sm shrink-0 items-center justify-center rounded-xl border border-border bg-background shadow-sm font-mono font-extrabold text-[#9C6F0E] tracking-wider">
+            <div className="flex h-10 w-10 md:h-12 md:w-12 text-sm shrink-0 items-center justify-center rounded-xl border border-border bg-background shadow-sm font-mono font-extrabold text-[#9683C2] tracking-wider">
               {insight.ticker || 'MKT'}
             </div>
             <div className="md:hidden flex flex-col">
@@ -122,7 +122,7 @@ export const CarouselCard: React.FC<CarouselCardProps> = ({
                 {formatPriceChange(insight.price_change_pct)}
               </span>
             )}
-            <span className="inline-flex items-center gap-1 rounded-full bg-[#9C6F0E]/10 text-[#9C6F0E] px-2.5 py-1 text-[10px] md:text-xs font-bold border border-[#9C6F0E]/20 shadow-[0_0_10px_rgba(156, 111, 14,0.1)]">
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#9683C2]/10 text-[#9683C2] px-2.5 py-1 text-[10px] md:text-xs font-bold border border-[#9683C2]/20 shadow-[0_0_10px_rgba(150, 131, 194,0.1)]">
               <Zap className="h-3 w-3 fill-current" /> Top Signal
             </span>
           </div>
@@ -241,7 +241,7 @@ export const CarouselCard: React.FC<CarouselCardProps> = ({
 
       {isLocked && (
         <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-background/60 backdrop-blur-md transition-all duration-300">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#9C6F0E]/10 text-[#9C6F0E] border border-[#9C6F0E]/20 shadow-[0_0_15px_rgba(156, 111, 14,0.2)] mb-2 animate-bounce">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#9683C2]/10 text-[#9683C2] border border-[#9683C2]/20 shadow-[0_0_15px_rgba(150, 131, 194,0.2)] mb-2 animate-bounce">
             <Lock className="h-5 w-5" />
           </div>
           <h3 className="mb-3 text-base font-extrabold text-foreground tracking-tight">
@@ -249,7 +249,7 @@ export const CarouselCard: React.FC<CarouselCardProps> = ({
           </h3>
           <Link
             href="/pricing"
-            className="rounded-full bg-gradient-to-r from-[#D4A94F] to-[#9C6F0E] px-5 py-1.5 text-xs font-bold text-white shadow-md hover:shadow-[0_0_15px_rgba(212, 169, 79,0.4)] transition-all duration-200 hover:scale-105"
+            className="rounded-full bg-gradient-to-r from-[#B0A0D4] to-[#9683C2] px-5 py-1.5 text-xs font-bold text-white shadow-md hover:shadow-[0_0_15px_rgba(176, 160, 212,0.4)] transition-all duration-200 hover:scale-105"
           >
             Upgrade to Unlock
           </Link>

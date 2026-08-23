@@ -128,7 +128,7 @@ const InteractiveThreeBackground: React.FC = () => {
     pointsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
     const pointsMaterial = new THREE.PointsMaterial({
-      color: 0xB49C6E,
+      color: 0x9683C2,
       size: 4,
       transparent: true,
       opacity: 0.8,
@@ -216,8 +216,8 @@ const InteractiveThreeBackground: React.FC = () => {
 
             const alpha = 1.0 - (dist / maxDistance);
 
-            lineColors.push(0.706 * alpha, 0.612 * alpha, 0.431 * alpha);
-            lineColors.push(0.706 * alpha, 0.612 * alpha, 0.431 * alpha);
+            lineColors.push(0.588 * alpha, 0.514 * alpha, 0.761 * alpha);
+            lineColors.push(0.588 * alpha, 0.514 * alpha, 0.761 * alpha);
           }
         }
       }
@@ -271,7 +271,7 @@ const HeroSection = () => (
 
     <div className="w-full max-w-5xl flex flex-col items-center justify-center z-10 relative">
       <h1 className="hero-title text-5xl sm:text-7xl md:text-[6rem] font-extrabold tracking-tighter max-w-5xl leading-[1.05] text-foreground drop-shadow-2xl">
-          Redefining <span className="text-transparent bg-clip-text bg-gradient-to-br from-primary via-amber-500 to-accent drop-shadow-sm">Intelligence</span> for the Modern Investor
+          Redefining <span className="text-transparent bg-clip-text bg-gradient-to-br from-primary via-violet-400 to-accent drop-shadow-sm">Intelligence</span> for the Modern Investor
       </h1>
 
       <p className="hero-subtitle mt-8 text-lg md:text-2xl text-muted-foreground max-w-3xl leading-relaxed font-medium">
@@ -406,7 +406,7 @@ const WhoItsForSection = () => (
         viewport={{ once: true, amount: 0.1 }}
         transition={{ duration: 1, ease: 'easeOut' }}
       >
-        <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-sm font-bold uppercase tracking-widest text-primary mb-6 shadow-[0_0_15px_rgba(212,169,79,0.2)]">
+        <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-sm font-bold uppercase tracking-widest text-primary mb-6 shadow-[0_0_15px_rgba(150,131,194,0.2)]">
             Ecosystem
         </span>
         <h2 className="text-4xl md:text-6xl font-black tracking-tight text-foreground mb-6 drop-shadow-md">
@@ -435,7 +435,7 @@ const WhoItsForSection = () => (
                 className="glass-panel p-10 rounded-3xl flex flex-col items-start group will-change-transform cursor-pointer border-t border-l border-white/10 shadow-2xl transition-all duration-200 h-full bg-gradient-to-br from-background/80 to-background/40"
               >
                 <div className="flex items-center justify-between w-full mb-8">
-                  <div className="p-5 bg-gradient-to-br from-primary to-amber-600 rounded-2xl text-white shadow-xl shadow-primary/30 group-hover:scale-110 transition-transform duration-300">
+                  <div className="p-5 bg-gradient-to-br from-primary to-violet-600 rounded-2xl text-white shadow-xl shadow-primary/30 group-hover:scale-110 transition-transform duration-300">
                     {card.icon}
                   </div>
                   <span className="text-xs font-black uppercase tracking-wider text-muted-foreground bg-secondary/80 px-4 py-2 rounded-full border border-border/50 shadow-inner">
@@ -467,14 +467,14 @@ const CTASection = () => (
       viewport={{ once: true, amount: 0.1 }}
       transition={{ duration: 1.2, ease: 'easeOut' }}
     >
-      <div className="relative overflow-hidden rounded-[3rem] border border-primary/30 bg-gradient-to-br from-primary/10 via-background to-amber-900/10 p-16 md:p-24 text-center shadow-[0_0_50px_rgba(212,169,79,0.15)] backdrop-blur-2xl">
+      <div className="relative overflow-hidden rounded-[3rem] border border-primary/30 bg-gradient-to-br from-primary/10 via-background to-violet-900/10 p-16 md:p-24 text-center shadow-[0_0_50px_rgba(150,131,194,0.15)] backdrop-blur-2xl">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 blur-[100px] rounded-full" />
         </div>
 
         <div className="relative z-10">
           <h2 className="text-4xl md:text-6xl font-black text-foreground mb-8 leading-tight drop-shadow-lg">
-              Elevate Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-amber-500">Portfolio</span> Today
+              Elevate Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-violet-400">Portfolio</span> Today
           </h2>
           <p className="text-muted-foreground text-lg md:text-2xl font-medium max-w-2xl mx-auto mb-12">
               Join professionals who understand markets before they make decisions. Start with FinSight today.

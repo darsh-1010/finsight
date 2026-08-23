@@ -44,14 +44,14 @@ export const StatsGrid: React.FC<StatsGridProps> = ({
     </div>
 
     <div className="flex flex-col sm:flex-row items-center justify-center gap-2 p-3 text-center sm:text-left hover:bg-secondary/10 transition-colors">
-      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#9C6F0E]/10 text-[#9C6F0E]">
+      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#9683C2]/10 text-[#9683C2]">
         <Layers className="h-4 w-4" />
       </div>
       <div>
         <p className="text-[10px] md:text-xs font-semibold text-muted-foreground uppercase tracking-wider truncate max-w-[80px] sm:max-w-none">
           {activeTab === 'daily' ? 'Today' : 'This Week'}
         </p>
-        <p className="text-sm md:text-base font-extrabold text-[#9C6F0E] leading-none mt-0.5">
+        <p className="text-sm md:text-base font-extrabold text-[#9683C2] leading-none mt-0.5">
           {totalCount}
         </p>
       </div>

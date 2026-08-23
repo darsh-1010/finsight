@@ -69,7 +69,7 @@ export const ArchiveView: React.FC<ArchiveViewProps> = ({
           placeholder="Search ticker, headline..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full rounded-xl border border-border bg-card py-2 pl-9 pr-4 text-xs md:text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-[#9C6F0E] focus:border-[#9C6F0E] shadow-sm"
+          className="w-full rounded-xl border border-border bg-card py-2 pl-9 pr-4 text-xs md:text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-[#9683C2] focus:border-[#9683C2] shadow-sm"
         />
       </div>
       <div className="relative shrink-0">
@@ -77,7 +77,7 @@ export const ArchiveView: React.FC<ArchiveViewProps> = ({
           onClick={() => setShowFilterPanel(!showFilterPanel)}
           className={cn(
             'w-full flex items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-2 text-xs md:text-sm font-semibold text-foreground hover:bg-secondary/40 transition-all cursor-pointer shadow-sm',
-            trendFilter !== 'all' ? 'border-[#9C6F0E] text-[#9C6F0E] bg-[#9C6F0E]/5' : '',
+            trendFilter !== 'all' ? 'border-[#9683C2] text-[#9683C2] bg-[#9683C2]/5' : '',
           )}
         >
           <Filter className="h-4 w-4" />
@@ -99,7 +99,7 @@ export const ArchiveView: React.FC<ArchiveViewProps> = ({
                 className={cn(
                   'w-full text-left rounded-lg px-3 py-2 text-xs font-semibold capitalize hover:bg-secondary/40 transition-all cursor-pointer',
                   trendFilter === opt
-                    ? 'text-[#9C6F0E] bg-[#9C6F0E]/10 font-bold'
+                    ? 'text-[#9683C2] bg-[#9683C2]/10 font-bold'
                     : 'text-muted-foreground hover:text-foreground',
                 )}
               >
@@ -177,7 +177,7 @@ export const ArchiveView: React.FC<ArchiveViewProps> = ({
                         className={cn(
                           'p-4 sm:p-5 hover:bg-secondary/20 transition-all cursor-pointer text-left border-l-4 flex flex-col justify-center',
                           isExpanded && 'bg-secondary/10 border-l-[6px] shadow-md',
-                          isHighlighted && 'ring-2 ring-indigo-500 ring-offset-2 dark:ring-offset-[#120F1D] animate-pulse shadow-[0_0_25px_rgba(212, 169, 79,0.6)]'
+                          isHighlighted && 'ring-2 ring-indigo-500 ring-offset-2 dark:ring-offset-[#120F1D] animate-pulse shadow-[0_0_25px_rgba(176, 160, 212,0.6)]'
                         )}
                         onClick={() => setExpandedArchiveSignalId(
                           isExpanded ? null : insight.id,
