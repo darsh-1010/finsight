@@ -31,8 +31,7 @@ htmlcov/
 
 # ── ML scraper storage (large, generated at runtime) ─────────────────────────
 ml/storage_*/
-ml/graphify-out/
-graphify-out/cache/
+graphify-out/
 ml/logs/
 ml/outputs/
 ml/financial-perf-audit/
