@@ -14,7 +14,7 @@ name: "CodeQL Security Analysis"
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, dev]
     paths:
       - "backend/**"
       - "ml/**"

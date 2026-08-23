@@ -21,9 +21,9 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, dev]
   pull_request:
-    branches: [main, develop]
+    branches: [main, dev]
 
 # Cancel a queued run for the same branch to avoid wasted minutes
 concurrency:
