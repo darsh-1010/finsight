@@ -128,7 +128,7 @@ const InteractiveThreeBackground: React.FC = () => {
     pointsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
     const pointsMaterial = new THREE.PointsMaterial({
-      color: 0xD4A94F,
+      color: 0xB49C6E,
       size: 4,
       transparent: true,
       opacity: 0.8,
@@ -216,8 +216,8 @@ const InteractiveThreeBackground: React.FC = () => {
 
             const alpha = 1.0 - (dist / maxDistance);
 
-            lineColors.push(0.831 * alpha, 0.663 * alpha, 0.31 * alpha);
-            lineColors.push(0.831 * alpha, 0.663 * alpha, 0.31 * alpha);
+            lineColors.push(0.706 * alpha, 0.612 * alpha, 0.431 * alpha);
+            lineColors.push(0.706 * alpha, 0.612 * alpha, 0.431 * alpha);
           }
         }
       }
