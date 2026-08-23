@@ -36,10 +36,5 @@ jobs:
         with:
           # Block PRs that introduce packages with HIGH or CRITICAL advisories
           fail-on-severity: high
-          # Allow advisories that have no known fix yet
-          allow-ghsas: []
           # Post a summary comment on the PR with the full dependency diff
           comment-summary-in-pr: always
-          # Don't fail if the base commit has no dependency snapshot
-          # (useful on first setup)
-          deny-licenses: []
