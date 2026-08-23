@@ -1,27 +1,10 @@
 import { Loader2, ArrowRight, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { createCheckoutSession, type PreviewSubscriptionResponse } from '@/api/payments';
 import PricingCards from '@/components/pricing/PricingCards';
 import PricingSwitch from '@/components/pricing/PricingSwitch';
-
-import { useAuth } from '@/context/AuthContext';
-import type { PricingTier } from '@/lib/interfaces/Pricing';
-import { useAppSelector, useAppDispatch } from '@/store/hooks';
-import {
-  fetchTiers,
-  selectTiers,
-  selectTiersLoading,
-  selectIsFallback,
-} from '@/store/slices/tierSlice';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,6 +16,22 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { useAuth } from '@/context/AuthContext';
+import type { PricingTier } from '@/lib/interfaces/Pricing';
+import { useAppSelector, useAppDispatch } from '@/store/hooks';
+import {
+  fetchTiers,
+  selectTiers,
+  selectTiersLoading,
+  selectIsFallback,
+} from '@/store/slices/tierSlice';
 
 const getPriceId = (
   tier: PricingTier,
@@ -55,11 +54,12 @@ const startCheckout = async (priceId: string) => {
 };
 
 const handleUnauthenticatedRedirect = (
-  navigate: ReturnType<typeof useNavigate>,
+  navigate: (path: string) => void,
   billingPeriod: 'monthly' | 'yearly',
   tierLevel: number,
 ) => {
   const planParam = billingPeriod === 'yearly' ? '&plan=yearly' : '';
+
   navigate(`/signup?tier=${tierLevel}${planParam}`);
 };
 
@@ -75,7 +75,7 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({
   scheduledTierLevel = null
 }) => {
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const navigate = useRouter().push;
   const dispatch = useAppDispatch();
 
   const [open, setOpen] = useState(false);
@@ -117,12 +117,15 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({
   const handleSubscribe = async (tierLevel: number, tierIndex: number) => {
     if (!user) {
       handleUnauthenticatedRedirect(navigate, billingPeriod, tierLevel);
+
       return;
     }
     const tier = tiers.find((t) => t.level === tierLevel);
+
     if (!tier) return;
 
     let actionType: 'upgrade' | 'downgrade' | 'resume' | 'subscribe' = 'upgrade';
+
     if (tierLevel === user.tier_level) {
       actionType = 'resume';
     } else if (user.tier_level === 1) {
@@ -146,15 +149,19 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({
 
     try {
       const tier = tiers.find((t) => t.level === tierLevel);
+
       if (!tier) {
         setSubmittingTier(null);
+
         return;
       }
 
       const priceId = getPriceId(tier, billingPeriod);
+
       if (!priceId) {
         setErrorState('This plan is not yet available for yearly billing.');
         setSubmittingTier(null);
+
         return;
       }
 
@@ -162,7 +169,8 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({
 
     } catch (e: any) {
       console.error('Subscription error:', e);
-      let msg = e.response?.data?.detail || 'Failed to process subscription. Please try again.';
+      const msg = e.response?.data?.detail || 'Failed to process subscription. Please try again.';
+
       setErrorState(msg);
     }
 

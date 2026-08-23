@@ -1,8 +1,9 @@
 'use client';
 
 import { Suspense } from 'react';
-import VerifyEmailPage from '@/views/VerifyEmailPage';
+
 import Loader from '@/components/common/Loader';
+import VerifyEmailPage from '@/views/VerifyEmailPage';
 
 export default function Page() {
   return (

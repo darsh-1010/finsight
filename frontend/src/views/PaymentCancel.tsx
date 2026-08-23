@@ -1,11 +1,11 @@
+import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 import { PiXCircleDuotone } from 'react-icons/pi';
-import { useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
 
 const PaymentCancel: React.FC = () => {
-  const navigate = useNavigate();
+  const navigate = useRouter().push;
 
   useEffect(() => {
     sessionStorage.removeItem('payment_redirect_pending');

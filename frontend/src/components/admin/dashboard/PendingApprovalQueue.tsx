@@ -1,7 +1,7 @@
 /* eslint-disable max-lines-per-function */
 import { Sparkles, CheckCircle2, ChevronRight } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -36,7 +36,7 @@ const PendingApprovalQueue: React.FC<PendingApprovalQueueProps> = ({
   isUpdating,
   onQuickApproval,
 }) => {
-  const navigate = useNavigate();
+  const navigate = useRouter().push;
 
   return (
     <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-xs">

@@ -1,8 +1,9 @@
 'use client';
 
 import { Suspense } from 'react';
-import LoginPage from '@/views/LoginPage';
+
 import Loader from '@/components/common/Loader';
+import LoginPage from '@/views/LoginPage';
 
 export default function Page() {
   return (

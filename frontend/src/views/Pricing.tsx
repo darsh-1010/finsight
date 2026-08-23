@@ -1,5 +1,5 @@
+import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import type { User } from '@/api/auth';
 import { createCheckoutSession } from '@/api/payments';
@@ -9,8 +9,8 @@ import PricingCompare from '@/components/pricing/PricingCompare';
 import PricingError from '@/components/pricing/PricingError';
 import PricingHeader from '@/components/pricing/PricingHeader';
 import PricingSwitch from '@/components/pricing/PricingSwitch';
-import { useAuth } from '@/context/AuthContext';
 import { useAlert } from '@/context/AlertContext';
+import { useAuth } from '@/context/AuthContext';
 import type { PricingTier } from '@/lib/interfaces/Pricing';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import {
@@ -42,7 +42,7 @@ const startCheckout = async (priceId: string) => {
 };
 
 const handleUnauthenticatedRedirect = (
-  navigate: ReturnType<typeof useNavigate>,
+  navigate: (path: string) => void,
   billingPeriod: 'monthly' | 'yearly',
   tierLevel: number,
 ) => {
@@ -66,7 +66,7 @@ const handleSubscribeHelper = async ({
   tierIndex: number;
   tiers: PricingTier[];
   billingPeriod: 'monthly' | 'yearly';
-  navigate: ReturnType<typeof useNavigate>;
+  navigate: (path: string) => void;
   setSubmittingTier: (val: number | null) => void;
   showAlert: (title: string, desc: string) => void;
 }) => {
@@ -92,7 +92,7 @@ const handleSubscribeHelper = async ({
 const usePricing = () => {
   const { user } = useAuth();
   const { showAlert } = useAlert();
-  const navigate = useNavigate();
+  const navigate = useRouter().push;
   const dispatch = useAppDispatch();
 
   const [submittingTier, setSubmittingTier] = useState<number | null>(null);

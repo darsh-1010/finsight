@@ -1,6 +1,8 @@
-import React from "react";
-import { Bell, Check, Inbox, Loader2 } from "lucide-react";
-import type { IconType } from "react-icons";
+import { Bell, Check, Inbox, Loader2 } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
+import React from 'react';
+import type { IconType } from 'react-icons';
 import {
   PiListBold,
   PiUserCircleDuotone,
@@ -8,27 +10,12 @@ import {
   PiSunDim,
   PiMoon,
   PiCoinsDuotone,
-} from "react-icons/pi";
-import { PiStar, PiCrown, PiRocket } from "react-icons/pi"; // example
-import {
-  useNavigate,
-  useLocation,
-  Link,
-  type NavigateFunction,
-} from "react-router-dom";
+} from 'react-icons/pi';
+import { PiStar, PiCrown, PiRocket } from 'react-icons/pi'; // example
 
-import Sidebar from "./Sidebar";
+import Sidebar from './Sidebar';
 
-import ChatHistorySidebar from "@/components/chatbot/ChatHistorySidebar";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import ChatHistorySidebar from '@/components/chatbot/ChatHistorySidebar';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,23 +25,32 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useAuth } from "@/context/AuthContext";
-import { useTheme } from "@/context/ThemeContext";
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { useAuth } from '@/context/AuthContext';
+import { useTheme } from '@/context/ThemeContext';
 import {
   profilePath,
   PROFILE_SUBSCRIPTION_PATH,
   PROFILE_TOKENS_PATH,
-} from "@/lib/profileRoutes";
-import { cn } from "@/lib/utils";
-import { useAppDispatch } from "@/store/hooks";
+} from '@/lib/profileRoutes';
+import { cn } from '@/lib/utils';
 import {
   useGetNotificationsQuery,
   useGetTokenUsageQuery,
   useMarkNotificationReadMutation,
   type NotificationResponse,
-} from "@/store/apiSlice";
+} from '@/store/apiSlice';
+import { useAppDispatch } from '@/store/hooks';
 
 const TIER_ICON_MAP: Record<number, IconType> = {
   0: PiStar,
@@ -65,13 +61,15 @@ const TIER_ICON_MAP: Record<number, IconType> = {
 
 /* -------------------- Types -------------------- */
 
+type NavigateFunction = (path: string) => void;
+
 interface User {
   email?: string;
   tier_level: number;
   tier_name: string;
 }
 
-type Theme = "light" | "dark";
+type Theme = 'light' | 'dark';
 
 interface MobileDrawerContentProps {
   isAskFinSight: boolean;
@@ -146,7 +144,7 @@ const MobileDrawerContent: React.FC<MobileDrawerContentProps> = ({
 
 const MobileLogo: React.FC = () => (
   <Link
-    to="/"
+    href="/"
     className="md:hidden flex items-center gap-2 hover:opacity-80 transition-opacity"
   >
     <span className="font-extrabold text-xl tracking-tight font-logo bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">FinSight</span>
@@ -192,7 +190,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
 
 const ThemeToggle: React.FC<ThemeToggleProps> = ({ theme, toggleTheme }) => (
   <Button variant="ghost" size="icon" onClick={toggleTheme} className="border">
-    {theme === "dark" ? <PiSunDim size={25} /> : <PiMoon size={25} />}
+    {theme === 'dark' ? <PiSunDim size={25} /> : <PiMoon size={25} />}
   </Button>
 );
 
@@ -208,7 +206,7 @@ const TierBadge: React.FC<TierBadgeProps> = ({ user, navigate }) => {
     >
       <Icon size={20} />
       <span>
-        {user ? user.tier_name : "Foundation"}
+        {user ? user.tier_name : 'Foundation'}
       </span>
     </Button>
   );
@@ -224,26 +222,26 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
   return (
     <>
       <DropdownMenu>
-       <DropdownMenuTrigger asChild>
-  <Button
-    variant="ghost"
-    size="icon"
-    className="relative border md:w-auto md:px-3"
-  >
-    <PiUserCircleDuotone className="h-5 w-5" />
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="relative border md:w-auto md:px-3"
+          >
+            <PiUserCircleDuotone className="h-5 w-5" />
 
-    <span className="hidden md:block ml-2 max-w-28 truncate">
-      {user?.email?.split("@")[0]}
-    </span>
-  </Button>
-</DropdownMenuTrigger>
+            <span className="hidden md:block ml-2 max-w-28 truncate">
+              {user?.email?.split('@')[0]}
+            </span>
+          </Button>
+        </DropdownMenuTrigger>
 
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
 
           <DropdownMenuItem
-            onClick={() => navigate(profilePath("personal"))}
+            onClick={() => navigate(profilePath('personal'))}
             className="cursor-pointer"
           >
             Profile Settings
@@ -308,18 +306,19 @@ const DailyUsageBadge: React.FC<{ navigate: NavigateFunction }> = ({
     usage.daily_token_limit <= 0
       ? 0
       : Math.min(
-          100,
-          Math.round((displayDailyUsed / usage.daily_token_limit) * 100),
-        );
+        100,
+        Math.round((displayDailyUsed / usage.daily_token_limit) * 100),
+      );
 
   let badgeColorClass =
-    "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20 hover:bg-green-500/20";
+    'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20 hover:bg-green-500/20';
+
   if (dailyPercent >= 85) {
     badgeColorClass =
-      "bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20 hover:bg-red-500/20 animate-pulse";
+      'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20 hover:bg-red-500/20 animate-pulse';
   } else if (dailyPercent >= 50) {
     badgeColorClass =
-      "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20 hover:bg-indigo-500/20";
+      'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20 hover:bg-amber-500/20';
   }
 
   return (
@@ -338,26 +337,25 @@ const DailyUsageBadge: React.FC<{ navigate: NavigateFunction }> = ({
 };
 
 const getNotificationCardStyle = (
-  priority: NotificationResponse["priority"],
+  priority: NotificationResponse['priority'],
 ) => {
-  if (priority === "high") {
-    return "bg-red-500/10 focus:bg-red-500/20 dark:bg-red-500/10 dark:focus:bg-red-500/20";
+  if (priority === 'high') {
+    return 'bg-red-500/10 focus:bg-red-500/20 dark:bg-red-500/10 dark:focus:bg-red-500/20';
   }
 
-  if (priority === "low") {
-    return "bg-slate-500/10 focus:bg-slate-500/20 dark:bg-slate-500/10 dark:focus:bg-slate-500/20";
+  if (priority === 'low') {
+    return 'bg-slate-500/10 focus:bg-slate-500/20 dark:bg-slate-500/10 dark:focus:bg-slate-500/20';
   }
 
-  return "bg-indigo-500/10 focus:bg-indigo-500/20 dark:bg-indigo-500/10 dark:focus:bg-indigo-500/20";
+  return 'bg-amber-500/10 focus:bg-amber-500/20 dark:bg-amber-500/10 dark:focus:bg-amber-500/20';
 };
 
-const formatNotificationTime = (value: string) =>
-  new Intl.DateTimeFormat(undefined, {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(new Date(value));
+const formatNotificationTime = (value: string) => new Intl.DateTimeFormat(undefined, {
+  month: 'short',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: '2-digit',
+}).format(new Date(value));
 
 const NotificationItem: React.FC<{
   notification: NotificationResponse;
@@ -371,9 +369,11 @@ const NotificationItem: React.FC<{
 
     if (notification.action_url) {
       let targetUrl = notification.action_url;
-      if (notification.entity_type === "insight" && notification.entity_id) {
-        if (!targetUrl.includes("insightId=")) {
-          const separator = targetUrl.includes("?") ? "&" : "?";
+
+      if (notification.entity_type === 'insight' && notification.entity_id) {
+        if (!targetUrl.includes('insightId=')) {
+          const separator = targetUrl.includes('?') ? '&' : '?';
+
           targetUrl = `${targetUrl}${separator}insightId=${notification.entity_id}`;
         }
       }
@@ -385,14 +385,14 @@ const NotificationItem: React.FC<{
     <DropdownMenuItem
       onClick={openNotification}
       className={cn(
-        "items-start gap-3 p-3 cursor-pointer mb-1",
+        'items-start gap-3 p-3 cursor-pointer mb-1',
         getNotificationCardStyle(notification.priority),
       )}
     >
       <span
         className={cn(
-          "mt-1 h-2 w-2 rounded-full shrink-0",
-          notification.is_read ? "bg-muted" : "bg-primary",
+          'mt-1 h-2 w-2 rounded-full shrink-0',
+          notification.is_read ? 'bg-muted' : 'bg-primary',
         )}
       />
       <div className="min-w-0 flex-1">
@@ -449,7 +449,7 @@ const NotificationsMenu: React.FC<{ navigate: NavigateFunction }> = ({
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
             <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
-              {unreadCount > 9 ? "9+" : unreadCount}
+              {unreadCount > 9 ? '9+' : unreadCount}
             </span>
           )}
         </Button>
@@ -528,23 +528,22 @@ const UserActions: React.FC<UserActionsProps> = ({
 
 /* -------------------- Header Content -------------------- */
 
-const HeaderContent: React.FC<HeaderContentProps> = ({ isAskFinSight, title }) =>
-  isAskFinSight ? (
-    <h4 className="font-bold text-lg">Ask FinSight</h4>
-  ) : (
-    <h4 className="font-bold text-lg">{title}</h4>
-  );
+const HeaderContent: React.FC<HeaderContentProps> = ({ isAskFinSight, title }) => isAskFinSight ? (
+  <h4 className="font-bold text-lg">Ask FinSight</h4>
+) : (
+  <h4 className="font-bold text-lg">{title}</h4>
+);
 
 /* -------------------- Main Component -------------------- */
 
 const useHeaderState = () => {
-  const location = useLocation();
+  const pathname = usePathname();
 
   const isAskFinSight =
-    location.pathname === "/ask_finsight" ||
-    location.pathname.startsWith("/ask_finsight/c/");
+    pathname === '/ask_finsight' ||
+    pathname.startsWith('/ask_finsight/c/');
 
-  const isAdminPath = location.pathname.startsWith("/admin");
+  const isAdminPath = pathname.startsWith('/admin');
 
   return { isAskFinSight, isAdminPath };
 };
@@ -610,22 +609,22 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   const { user, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const { theme, toggleTheme } = useTheme();
-  const navigate = useNavigate();
+  const navigate = useRouter().push;
   const dispatch = useAppDispatch();
-  const location = useLocation();
+  const pathname = usePathname();
 
   const { isAskFinSight, isAdminPath } = useHeaderState();
 
   React.useEffect(() => {
     setMobileOpen(false);
-  }, [location.pathname]);
+  }, [pathname]);
 
   return (
     <header
       className={cn(
-        "h-16 fixed top-0 right-0 backdrop-blur-md border-b z-40",
-        collapsed ? "md:left-20" : "md:left-64",
-        "left-0",
+        'h-16 fixed top-0 right-0 backdrop-blur-md border-b z-40',
+        collapsed ? 'md:left-20' : 'md:left-64',
+        'left-0',
       )}
     >
       <HeaderLayout

@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
-import { useAuth } from '../context/AuthContext';
 import { getStoredVisitingUser } from '../api/auth';
+import { useAuth } from '../context/AuthContext';
 
 
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
@@ -63,7 +64,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ formData, handleChange, handleS
       />
       <div className="relative">
         <input
-          type={showPassword ? "text" : "password"}
+          type={showPassword ? 'text' : 'password'}
           name="password"
           placeholder="Password"
           value={formData.password}
@@ -81,7 +82,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ formData, handleChange, handleS
       </div>
       <div className="relative">
         <input
-          type={showConfirmPassword ? "text" : "password"}
+          type={showConfirmPassword ? 'text' : 'password'}
           name="confirmPassword"
           placeholder="Confirm Password"
           value={formData.confirmPassword}
@@ -147,11 +148,13 @@ const performSignup = (
     const e = err as { response?: { data?: { detail?: string | { msg: string }[] } } };
 
     let errorMsg = 'Failed to sign up. Please verify your details and try again.';
+
     if (e.response?.data?.detail) {
       if (typeof e.response.data.detail === 'string') {
         errorMsg = e.response.data.detail;
       } else if (Array.isArray(e.response.data.detail) && e.response.data.detail.length > 0) {
         const detailObj = e.response.data.detail[0];
+
         errorMsg = detailObj?.msg || errorMsg;
       }
     }
@@ -182,7 +185,7 @@ const useSignupForm = (initialSelection: { tier: number; period: 'monthly' | 'ye
 
 const useSignupActions = () => {
   const { signup } = useAuth();
-  const navigate = useNavigate();
+  const navigate = useRouter().push;
 
   return { signup, navigate };
 };
@@ -195,7 +198,7 @@ const useSignupStatus = () => {
 };
 
 const useSignupLogic = () => {
-  const [searchParams] = useSearchParams();
+  const searchParams = useSearchParams();
   const { signup, navigate } = useSignupActions();
   const initialSelection = useTierSelection(searchParams);
   const { formData, handleChange } = useSignupForm(initialSelection);
@@ -266,10 +269,6 @@ const SignupPage: React.FC = () => {
         <div className="bg-card/30 backdrop-blur-xl border border-border/50 rounded-3xl p-8 sm:p-10 shadow-2xl shadow-black/10 dark:shadow-black/40">
           {/* Header */}
           <div className="text-center mb-8">
-            <Link to="/" className="inline-flex items-center gap-2 mb-6 hover:opacity-80 transition-opacity">
-              <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold text-lg">F</span>
-              <span className="text-xl font-bold tracking-wide bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">FinSight</span>
-            </Link>
             <h2 className="text-2xl font-bold text-foreground">Create your account</h2>
             <p className="text-muted-foreground text-sm mt-1.5">Join 200+ investors making smarter decisions</p>
           </div>
@@ -296,7 +295,7 @@ const SignupPage: React.FC = () => {
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
             Already have an account?{' '}
-            <Link to="/login" className="text-primary font-semibold hover:underline cursor-pointer">Sign in</Link>
+            <Link href="/login" className="text-primary font-semibold hover:underline cursor-pointer">Sign in</Link>
           </p>
         </div>
       </div>

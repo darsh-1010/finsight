@@ -1,7 +1,7 @@
 /* eslint-disable max-lines-per-function */
 import { Clock } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import type { ScrapingJobHistory } from '@/store/apiSlice';
@@ -47,7 +47,7 @@ const ScraperRunLogs: React.FC<ScraperRunLogsProps> = ({
   scrapingHistory,
   isScrapingHistoryLoading,
 }) => {
-  const navigate = useNavigate();
+  const navigate = useRouter().push;
 
   return (
     <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-xs">

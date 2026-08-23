@@ -1,7 +1,7 @@
-import { useNavigate } from "react-router-dom";
+import { useRouter } from 'next/navigation';
+import {  PiX, PiLockFill, PiSparkleFill } from 'react-icons/pi';
 
-import { PROFILE_SUBSCRIPTION_PATH } from "@/lib/profileRoutes";
-import {  PiX, PiLockFill, PiSparkleFill } from "react-icons/pi";
+import { PROFILE_SUBSCRIPTION_PATH } from '@/lib/profileRoutes';
 
 interface UpgradePlanModalProps {
   onClose: () => void;
@@ -13,17 +13,17 @@ interface UpgradePlanModalProps {
 
 const UpgradePlanModal = ({ 
   onClose, 
-  title = "File Attachments Locked", 
+  title = 'File Attachments Locked', 
   description,
   showTierRequirement = true,
   isTrial = false
 }: UpgradePlanModalProps) => {
-  const navigate = useNavigate();
+  const navigate = useRouter().push;
 
   const handleAction = () => {
     onClose();
     if (isTrial) {
-      navigate("/signup");
+      navigate('/signup');
     } else {
       navigate(PROFILE_SUBSCRIPTION_PATH);
     }
@@ -61,7 +61,7 @@ const UpgradePlanModal = ({
           <div className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
             {description || (
               <p>
-                Uploading files and images is available on the{" "}
+                Uploading files and images is available on the{' '}
                 <span className="font-medium text-primary">Premium plan</span>. Upgrade
                 your account to unlock this feature.
               </p>
@@ -81,7 +81,7 @@ const UpgradePlanModal = ({
             className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20"
           >
             <PiSparkleFill size={16} />
-            {isTrial ? "Get Started" : "Upgrade Plan"}
+            {isTrial ? 'Get Started' : 'Upgrade Plan'}
           </button>
           <button
             onClick={onClose}

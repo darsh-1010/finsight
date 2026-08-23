@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+
 import { authApi } from '../api/auth';
 
 const ResetPasswordPage: React.FC = () => {
-  const [searchParams] = useSearchParams();
+  const searchParams = useSearchParams();
   const token = searchParams.get('token');
-  const navigate = useNavigate();
+  const navigate = useRouter().push;
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -28,11 +30,13 @@ const ResetPasswordPage: React.FC = () => {
 
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
+
       return;
     }
 
     if (!token) {
       setError('Invalid token.');
+
       return;
     }
 
@@ -62,10 +66,6 @@ const ResetPasswordPage: React.FC = () => {
         <div className="bg-card border border-border/60 rounded-3xl p-8 sm:p-10 shadow-xl shadow-black/5 dark:shadow-black/30">
           {/* Header */}
           <div className="text-center mb-8">
-            <Link to="/" className="inline-flex items-center gap-2 mb-6 hover:opacity-80 transition-opacity">
-              <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold text-lg">F</span>
-              <span className="text-xl font-bold tracking-wide bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">FinSight</span>
-            </Link>
             <h2 className="text-2xl font-bold text-foreground">Reset Password</h2>
             <p className="text-muted-foreground text-sm mt-1.5">Enter your new password below</p>
           </div>
@@ -77,7 +77,7 @@ const ResetPasswordPage: React.FC = () => {
                 <p className="text-muted-foreground text-xs">Redirecting to login...</p>
               </div>
               <Link
-                to="/login"
+                href="/login"
                 className="w-full inline-block py-3.5 bg-primary text-primary-foreground rounded-xl font-bold hover:opacity-95 transition-all shadow-lg shadow-primary/20 text-center"
               >
                 Go to Login

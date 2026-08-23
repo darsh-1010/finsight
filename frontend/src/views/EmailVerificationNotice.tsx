@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from 'react';
 import { Loader2, Mail, CheckCircle2, ExternalLink } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+
+import { authApi } from '../api/auth';
+import { Button } from '../components/ui/button';
 import { useAuth } from '../context/AuthContext';
 import { useAppSelector } from '../store/hooks';
 import { selectTiers } from '../store/slices/tierSlice';
-import { authApi } from '../api/auth';
-import { Button } from '../components/ui/button';
-import { useNavigate } from 'react-router-dom';
+
 
 const EmailVerificationNotice: React.FC = () => {
   const { user, updateUser, logout } = useAuth();
   const tiers = useAppSelector(selectTiers);
-  const navigate = useNavigate();
+  const navigate = useRouter().push;
   
   const [resending, setResending] = useState(false);
   const [resendStatus, setResendStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -18,6 +20,7 @@ const EmailVerificationNotice: React.FC = () => {
 
   const [isPaymentRedirectPending, setIsPaymentRedirectPending] = useState(() => {
     if (typeof window === 'undefined') return false;
+
     return sessionStorage.getItem('payment_redirect_pending') === 'true';
   });
 
@@ -28,6 +31,7 @@ const EmailVerificationNotice: React.FC = () => {
         sessionStorage.removeItem('payment_redirect_pending');
         setIsPaymentRedirectPending(false);
       }, 8000);
+
       return () => clearTimeout(timer);
     }
   }, [isPaymentRedirectPending]);
@@ -72,9 +76,11 @@ const EmailVerificationNotice: React.FC = () => {
   const getEmailProviderLink = (email: string) => {
     if (!email) return null;
     const domain = email.split('@')[1]?.toLowerCase();
+
     if (domain === 'gmail.com') return { name: 'Gmail', url: 'https://mail.google.com/' };
     if (domain === 'yahoo.com' || domain === 'ymail.com') return { name: 'Yahoo Mail', url: 'https://mail.yahoo.com/' };
     if (domain === 'outlook.com' || domain === 'hotmail.com') return { name: 'Outlook', url: 'https://outlook.live.com/' };
+
     return { name: 'Gmail', url: 'https://mail.google.com/' };
   };
 
@@ -115,12 +121,12 @@ const EmailVerificationNotice: React.FC = () => {
         )}
 
         <Button 
-          variant={emailProvider ? "outline" : "default"}
+          variant={emailProvider ? 'outline' : 'default'}
           onClick={handleCheckVerified} 
           disabled={checking}
           className={`w-full py-6 text-lg font-semibold rounded-xl transition-transform ${emailProvider ? 'border-white/10 bg-background/50 backdrop-blur-md hover:bg-background/80' : 'shadow-lg shadow-primary/20 hover:scale-105'}`}
         >
-          {checking ? <Loader2 className="w-5 h-5 animate-spin" /> : "I have verified my email"}
+          {checking ? <Loader2 className="w-5 h-5 animate-spin" /> : 'I have verified my email'}
         </Button>
 
         <div className="pt-4">

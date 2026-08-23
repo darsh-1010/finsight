@@ -1,4 +1,6 @@
-﻿import React, { useEffect, useRef } from 'react';
+﻿import { gsap } from 'gsap';
+import Link from 'next/link';
+import React, { useEffect, useRef } from 'react';
 import {
   PiUsersThreeLight,
   PiMagnifyingGlassLight,
@@ -18,9 +20,7 @@ import {
   PiLightningLight,
   PiArrowUpRightBold,
 } from 'react-icons/pi';
-import { Link } from 'react-router-dom';
 import * as THREE from 'three';
-import { gsap } from 'gsap';
 
 /* â”€â”€â”€ Three.js Rotating Geometric Background â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const ThreeBackground: React.FC = () => {
@@ -28,6 +28,7 @@ const ThreeBackground: React.FC = () => {
 
   useEffect(() => {
     const container = containerRef.current;
+
     if (!container) return;
 
     const width = container.clientWidth || window.innerWidth;
@@ -35,9 +36,11 @@ const ThreeBackground: React.FC = () => {
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(60, width / height, 1, 2000);
+
     camera.position.z = 500;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     container.appendChild(renderer.domElement);
@@ -51,6 +54,7 @@ const ThreeBackground: React.FC = () => {
       opacity: 0.12,
     });
     const icosahedron = new THREE.Mesh(icoGeo, icoMat);
+
     icosahedron.position.set(220, -60, 0);
     scene.add(icosahedron);
 
@@ -63,18 +67,21 @@ const ThreeBackground: React.FC = () => {
       opacity: 0.10,
     });
     const sphere = new THREE.Mesh(sphereGeo, sphereMat);
+
     sphere.position.set(-200, 80, -100);
     scene.add(sphere);
 
     // Floating particles
     const particleCount = 60;
     const positions = new Float32Array(particleCount * 3);
+
     for (let i = 0; i < particleCount; i++) {
       positions[i * 3] = (Math.random() - 0.5) * width;
       positions[i * 3 + 1] = (Math.random() - 0.5) * height;
       positions[i * 3 + 2] = (Math.random() - 0.5) * 300;
     }
     const pGeo = new THREE.BufferGeometry();
+
     pGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     const pMat = new THREE.PointsMaterial({
       color: 0x7b61ff,
@@ -84,6 +91,7 @@ const ThreeBackground: React.FC = () => {
       blending: THREE.AdditiveBlending,
     });
     const particles = new THREE.Points(pGeo, pMat);
+
     scene.add(particles);
 
     let mouseX = 0;
@@ -92,6 +100,7 @@ const ThreeBackground: React.FC = () => {
       mouseX = (e.clientX / window.innerWidth - 0.5) * 0.4;
       mouseY = (e.clientY / window.innerHeight - 0.5) * 0.4;
     };
+
     window.addEventListener('mousemove', handleMouseMove);
 
     let animId: number;
@@ -107,16 +116,19 @@ const ThreeBackground: React.FC = () => {
       camera.lookAt(scene.position);
       renderer.render(scene, camera);
     };
+
     animate();
 
     const handleResize = () => {
       if (!container) return;
       const w = container.clientWidth;
       const h = container.clientHeight;
+
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
     };
+
     window.addEventListener('resize', handleResize);
 
     return () => {
@@ -145,12 +157,14 @@ const useScrollReveal = () => {
         ([entry]) => {
           if (entry.isIntersecting) {
             const delay = parseFloat(el.dataset.delay ?? '0');
+
             gsap.to(el, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', delay });
             observer.unobserve(el);
           }
         },
         { threshold: 0.1 },
       );
+
       observer.observe(el);
       observers.push(observer);
     });
@@ -355,7 +369,7 @@ const AboutCTA = () => (
           Join investors who understand markets deeply before making decisions. Start your intelligence journey today.
         </p>
         <Link
-          to="/try-finsight"
+          href="/try-finsight"
           className="inline-flex items-center gap-2 px-8 py-3.5 bg-primary text-primary-foreground rounded-full font-semibold hover:opacity-95 shadow-lg shadow-primary/20 hover:-translate-y-0.5 transform duration-200 transition-all"
         >
           Try FinSight Free <PiArrowUpRightBold size={16} />

@@ -1,10 +1,11 @@
 import { Lock } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+
+import { Button } from '../ui/button';
 
 import { PROFILE_SUBSCRIPTION_PATH } from '@/lib/profileRoutes';
 
-import { Button } from '../ui/button';
 
 
 interface LockedFeatureProps {
@@ -18,7 +19,7 @@ const LockedFeature: React.FC<LockedFeatureProps> = ({
   description,
   requiredTier,
 }) => {
-  const navigate = useNavigate();
+  const navigate = useRouter().push;
 
   return (
     <div className="border border-dashed border-gray-300 dark:border-gray-700 rounded-2xl p-6 text-center bg-gray-50 dark:bg-[#0B0A10]">

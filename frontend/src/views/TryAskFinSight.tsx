@@ -1,41 +1,41 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import React, { useState, useEffect, useRef } from 'react';
 
 
-import ChatBody from "@/components/chatbot/ChatBody";
-import ChatInput from "@/components/chatbot/ChatInput";
-import { chatApi } from "@/api/chat";
-import TrialLimitModal from "@/components/chatbot/TrialLimitModal";
-import WelcomeScreen from "@/components/chatbot/WelcomeScreen";
-import TrialJoinModal from "@/components/chatbot/TrialJoinModal";
-import EmailGateModal from "@/components/chatbot/EmailGateModal";
-import { useAuth } from "@/context/AuthContext";
 import {
   visitingUsersApi,
   storeVisitingUser,
   getStoredVisitingUser,
   clearVisitingUser,
   type VisitingUser,
-} from "@/api/auth";
-import type { Message } from "@/store/slices/chatSlice";
+} from '@/api/auth';
+import { chatApi } from '@/api/chat';
+import ChatBody from '@/components/chatbot/ChatBody';
+import ChatInput from '@/components/chatbot/ChatInput';
+import EmailGateModal from '@/components/chatbot/EmailGateModal';
+import TrialJoinModal from '@/components/chatbot/TrialJoinModal';
+import TrialLimitModal from '@/components/chatbot/TrialLimitModal';
+import WelcomeScreen from '@/components/chatbot/WelcomeScreen';
+import { useAuth } from '@/context/AuthContext';
+import type { Message } from '@/store/slices/chatSlice';
 
 const TRIAL_LIMIT = 5;
 
 const TryAskFinSight: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { isLoggedIn, isLoading: isAuthLoading } = useAuth();
 
   // ── Redirect logged-in users ────────────────────────────────────────────
   useEffect(() => {
     if (!isAuthLoading && isLoggedIn) {
       clearVisitingUser();
-      navigate("/dashboard", { replace: true });
+      router.replace('/dashboard');
     }
-  }, [isLoggedIn, isAuthLoading, navigate]);
+  }, [isLoggedIn, isAuthLoading, router]);
 
   // ── Visiting user state (gate) ──────────────────────────────────────────
-  const [visitingUser, setVisitingUser] = useState<VisitingUser | null>(() =>
-    getStoredVisitingUser(),
+  const [visitingUser, setVisitingUser] = useState<VisitingUser | null>(() => getStoredVisitingUser(),
   );
 
   // ── Chat state ──────────────────────────────────────────────────────────
@@ -66,6 +66,7 @@ const TryAskFinSight: React.FC = () => {
   useEffect(() => {
     if (chatCount >= TRIAL_LIMIT && !isBotTyping && messages.length > 0) {
       const timer = setTimeout(() => setShowLimitModal(true), 800);
+
       return () => clearTimeout(timer);
     }
   }, [chatCount, isBotTyping, messages.length]);
@@ -78,6 +79,7 @@ const TryAskFinSight: React.FC = () => {
           setShowJoinModal(true);
           setHasShownJoinAlert3(true);
         }, 1000);
+
         return () => clearTimeout(timer);
       }
     }
@@ -104,16 +106,17 @@ const TryAskFinSight: React.FC = () => {
 
     if (chatCount >= TRIAL_LIMIT) {
       setShowLimitModal(true);
+
       return false;
     }
 
     const userMessage: Message = {
       id: Date.now().toString(),
-      role: "user",
+      role: 'user',
       content,
       timestamp: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
+        hour: '2-digit',
+        minute: '2-digit',
       }),
     };
 
@@ -121,19 +124,19 @@ const TryAskFinSight: React.FC = () => {
     setIsBotTyping(true);
     setError(null);
 
-    const botMessageId = "bot-" + Date.now().toString();
-    let fullBotContent = "";
+    const botMessageId = 'bot-' + Date.now().toString();
+    let fullBotContent = '';
 
     // Add empty bot bubble immediately
     setMessages((prev) => [
       ...prev,
       {
         id: botMessageId,
-        role: "bot",
-        content: "",
+        role: 'bot',
+        content: '',
         timestamp: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
+          hour: '2-digit',
+          minute: '2-digit',
         }),
       },
     ]);
@@ -141,62 +144,59 @@ const TryAskFinSight: React.FC = () => {
     try {
       await chatApi
         .sendTrialMessageStream(content, (chunk) => {
-          const lines = chunk.split("\n");
+          const lines = chunk.split('\n');
+
           for (const line of lines) {
             const trimmed = line.trim();
-            if (!trimmed || trimmed === "data: [DONE]") continue;
-            if (trimmed.startsWith("data: ")) {
+
+            if (!trimmed || trimmed === 'data: [DONE]') continue;
+            if (trimmed.startsWith('data: ')) {
               try {
                 const parsed = JSON.parse(trimmed.substring(6));
+
                 if (
-                  parsed.type === "content" ||
-                  parsed.type === "content_block_delta"
+                  parsed.type === 'content' ||
+                  parsed.type === 'content_block_delta'
                 ) {
                   fullBotContent += parsed.data;
-                  setMessages((prev) =>
-                    prev.map((m) =>
-                      m.id === botMessageId
-                        ? { ...m, content: fullBotContent }
-                        : m,
-                    ),
+                  setMessages((prev) => prev.map((m) => m.id === botMessageId
+                    ? { ...m, content: fullBotContent }
+                    : m,
+                  ),
                   );
-                } else if (parsed.type === "sources" && Array.isArray(parsed.data)) {
-                  setMessages((prev) =>
-                    prev.map((m) =>
-                      m.id === botMessageId
-                        ? { ...m, sources: parsed.data }
-                        : m,
-                    ),
+                } else if (parsed.type === 'sources' && Array.isArray(parsed.data)) {
+                  setMessages((prev) => prev.map((m) => m.id === botMessageId
+                    ? { ...m, sources: parsed.data }
+                    : m,
+                  ),
                   );
                 } else if (
-                  parsed.type === "metadata" &&
-                  typeof parsed.data === "object" &&
+                  parsed.type === 'metadata' &&
+                  typeof parsed.data === 'object' &&
                   parsed.data !== null
                 ) {
-                  setMessages((prev) =>
-                    prev.map((m) =>
-                      m.id === botMessageId
-                        ? {
-                            ...m,
-                            suggestedFollowUps:
+                  setMessages((prev) => prev.map((m) => m.id === botMessageId
+                    ? {
+                      ...m,
+                      suggestedFollowUps:
                               parsed.data.suggested_follow_ups ||
                               m.suggestedFollowUps,
-                            sources: parsed.data.sources || m.sources,
-                          }
-                        : m,
-                    ),
+                      sources: parsed.data.sources || m.sources,
+                    }
+                    : m,
+                  ),
                   );
-                } else if (parsed.type === "error") {
+                } else if (parsed.type === 'error') {
                   setError(parsed.data);
                 }
               } catch (e) {
-                console.error("Error parsing stream chunk", e);
+                console.error('Error parsing stream chunk', e);
               }
             }
           }
         })
         .catch((err: any) => {
-          setError(err.message || "Failed to send message");
+          setError(err.message || 'Failed to send message');
           setMessages((prev) => prev.filter((m) => m.id !== botMessageId));
         })
         .finally(() => {
@@ -205,6 +205,7 @@ const TryAskFinSight: React.FC = () => {
 
       // ── Update chat count via API after successful bot response ──────────
       const newCount = chatCount + 1;
+
       setChatCount(newCount);
 
       if (visitingUser) {
@@ -218,6 +219,7 @@ const TryAskFinSight: React.FC = () => {
             ...visitingUser,
             chat_count: updated.chat_count,
           };
+
           setVisitingUser(synced);
           storeVisitingUser(synced);
           setChatCount(updated.chat_count);
@@ -227,16 +229,19 @@ const TryAskFinSight: React.FC = () => {
             ...visitingUser,
             chat_count: newCount,
           };
+
           storeVisitingUser(synced);
           setVisitingUser(synced);
         }
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Failed to send message";
+      const msg = err instanceof Error ? err.message : 'Failed to send message';
+
       setError(msg);
       setMessages((prev) => prev.filter((m) => m.id !== botMessageId));
     } finally {
       setIsBotTyping(false);
+
       return false;
     }
   };
@@ -261,7 +266,7 @@ const TryAskFinSight: React.FC = () => {
           >
             <PiCaretLeftBold size={20} />
           </button> */}
-          <Link to="/" className="hover:opacity-80 transition-opacity flex items-center">
+          <Link href="/" className="hover:opacity-80 transition-opacity flex items-center">
             <h3 className="text-2xl md:text-3xl font-logo tracking-tight">FinSight</h3>
           </Link>
           <span className="hidden sm:inline-flex bg-primary/10 text-primary text-xs font-medium px-2 py-0.5 rounded ml-2">
@@ -282,12 +287,12 @@ const TryAskFinSight: React.FC = () => {
           <div
             className={`px-3 py-1.5 rounded-full text-xs font-medium border flex items-center gap-2 ${
               remaining <= 2
-                ? "border-indigo-200 bg-indigo-50 text-indigo-700 dark:border-indigo-900/50 dark:bg-indigo-900/20 dark:text-indigo-400"
-                : "border-gray-200 bg-gray-50 text-muted-foreground dark:border-gray-800 dark:bg-gray-900"
+                ? 'border-indigo-200 bg-indigo-50 text-indigo-700 dark:border-indigo-900/50 dark:bg-indigo-900/20 dark:text-indigo-400'
+                : 'border-gray-200 bg-gray-50 text-muted-foreground dark:border-gray-800 dark:bg-gray-900'
             }`}
           >
             <div
-              className={`w-1.5 h-1.5 rounded-full ${remaining <= 2 ? "bg-indigo-500" : "bg-primary"}`}
+              className={`w-1.5 h-1.5 rounded-full ${remaining <= 2 ? 'bg-indigo-500' : 'bg-primary'}`}
             />
             <span>
               {remaining} of {TRIAL_LIMIT} left

@@ -50,71 +50,71 @@
 
 :root {
   --radius: 1rem;
-  --background: #F9F9FC;
-  --foreground: #1A1926;
+  --background: #FBFAF6;
+  --foreground: #1B1B18;
   --card: #FFFFFF;
-  --card-foreground: #1A1926;
+  --card-foreground: #1B1B18;
   --popover: #FFFFFF;
-  --popover-foreground: #1A1926;
-  --primary: #7B61FF; /* Indigo/Violet Purple */
+  --popover-foreground: #1B1B18;
+  --primary: #9C6F0E; /* Ink & Gold — antique gold, darkened for AA contrast on white */
   --primary-foreground: #FFFFFF;
-  --secondary: #F0EEFC;
-  --secondary-foreground: #5C4EBA;
-  --muted: #F0EEFC;
-  --muted-foreground: #8B88A0;
-  --accent: #9A8BFF;
+  --secondary: #F3EEE0;
+  --secondary-foreground: #6B5210;
+  --muted: #F3EEE0;
+  --muted-foreground: #736D5E;
+  --accent: #B8860B;
   --accent-foreground: #FFFFFF;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: #E8E6F5;
-  --input: #E8E6F5;
-  --ring: #7B61FF;
-  --chart-1: #7B61FF;
-  --chart-2: #9A8BFF;
-  --chart-3: #C3B4FC;
+  --border: #E7E1D0;
+  --input: #E7E1D0;
+  --ring: #9C6F0E;
+  --chart-1: #9C6F0E;
+  --chart-2: #B8860B;
+  --chart-3: #D9B65C;
   --chart-4: #F59E0B;
   --chart-5: #10B981;
-  --sidebar: #F4F3FB;
-  --sidebar-foreground: #1A1926;
-  --sidebar-primary: #7B61FF;
+  --sidebar: #F6F2E7;
+  --sidebar-foreground: #1B1B18;
+  --sidebar-primary: #9C6F0E;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #EAE8F7;
-  --sidebar-accent-foreground: #7B61FF;
-  --sidebar-border: #E8E6F5;
-  --sidebar-ring: #7B61FF;
+  --sidebar-accent: #EFE6CD;
+  --sidebar-accent-foreground: #8B6708;
+  --sidebar-border: #E7E1D0;
+  --sidebar-ring: #9C6F0E;
 }
 
 .dark {
-  --background: #09090D;
-  --foreground: #F2F1F7;
-  --card: #121118;
-  --card-foreground: #F2F1F7;
-  --popover: #121118;
-  --popover-foreground: #F2F1F7;
-  --primary: #7B61FF;
-  --primary-foreground: #FFFFFF;
-  --secondary: #1C1A27;
-  --secondary-foreground: #A799FF;
-  --muted: #1C1A27;
-  --muted-foreground: #8E8A9F;
-  --accent: #9A8BFF;
-  --accent-foreground: #FFFFFF;
+  --background: #0A0E15;
+  --foreground: #F2F0E7;
+  --card: #12161F;
+  --card-foreground: #F2F0E7;
+  --popover: #12161F;
+  --popover-foreground: #F2F0E7;
+  --primary: #D4A94F; /* Ink & Gold — warm gold, differentiates from the generic AI-purple gradient */
+  --primary-foreground: #14171F;
+  --secondary: #1B212C;
+  --secondary-foreground: #E0C787;
+  --muted: #1B212C;
+  --muted-foreground: #9CA3B3;
+  --accent: #E8C468;
+  --accent-foreground: #14171F;
   --destructive: oklch(0.704 0.191 22.216);
-  --border: #222030;
-  --input: #222030;
-  --ring: #7B61FF;
-  --chart-1: #7B61FF;
-  --chart-2: #9A8BFF;
-  --chart-3: #C3B4FC;
+  --border: #242C39;
+  --input: #242C39;
+  --ring: #D4A94F;
+  --chart-1: #D4A94F;
+  --chart-2: #B8935F;
+  --chart-3: #E8D5A8;
   --chart-4: #F59E0B;
   --chart-5: #10B981;
-  --sidebar: #121118;
-  --sidebar-foreground: #F2F1F7;
-  --sidebar-primary: #7B61FF;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #1C1A27;
-  --sidebar-accent-foreground: #A799FF;
-  --sidebar-border: #222030;
-  --sidebar-ring: #7B61FF;
+  --sidebar: #12161F;
+  --sidebar-foreground: #F2F0E7;
+  --sidebar-primary: #D4A94F;
+  --sidebar-primary-foreground: #14171F;
+  --sidebar-accent: #1B212C;
+  --sidebar-accent-foreground: #E8C468;
+  --sidebar-border: #242C39;
+  --sidebar-ring: #D4A94F;
 }
 
 @layer base {
@@ -156,11 +156,11 @@
 }
 
 .neon-button {
-  box-shadow: 0 0 10px rgba(123, 97, 255, 0.4), 0 0 20px rgba(154, 139, 255, 0.2);
+  box-shadow: 0 0 10px rgba(156, 111, 14, 0.4), 0 0 20px rgba(184, 134, 11, 0.2);
 }
 
 .dark .neon-button {
-  box-shadow: 0 0 10px rgba(123, 97, 255, 0.4), 0 0 20px rgba(154, 139, 255, 0.2);
+  box-shadow: 0 0 10px rgba(212, 169, 79, 0.4), 0 0 20px rgba(232, 196, 104, 0.2);
 }
 
 .neon-card {
@@ -168,13 +168,13 @@
 }
 
 .neon-card:hover {
-  box-shadow: 0 12px 30px -10px rgba(123, 97, 255, 0.15);
+  box-shadow: 0 12px 30px -10px rgba(156, 111, 14, 0.15);
   border-color: var(--color-primary);
   transform: translateY(-4px);
 }
 
 .dark .neon-card:hover {
-  box-shadow: 0 12px 35px -10px rgba(123, 97, 255, 0.2);
+  box-shadow: 0 12px 35px -10px rgba(212, 169, 79, 0.2);
   border-color: var(--color-primary);
   transform: translateY(-4px);
 }
@@ -184,8 +184,8 @@
 }
 
 .dark .bg-secondary-theme {
-  background-color: rgba(123, 97, 255, 0.1);
-  color: #A799FF;
+  background-color: rgba(212, 169, 79, 0.1);
+  color: #E0C787;
 }
 
 @keyframes loading {
@@ -299,11 +299,12 @@
 }
 .bento-hover:hover {
   box-shadow: 0 4px 24px rgba(0,0,0,0.06);
-  border-color: rgba(123, 97, 255, 0.4); /* Purple border on hover */
+  border-color: rgba(156, 111, 14, 0.4); /* Gold border on hover */
   transform: translateY(-2px);
 }
 .dark .bento-hover:hover {
   box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  border-color: rgba(212, 169, 79, 0.4);
 }
 
 /* â”€â”€â”€ Stagger fade-in children â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */

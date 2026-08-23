@@ -1,5 +1,6 @@
+import Link from 'next/link';
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+
 import { authApi } from '../api/auth';
 
 const ForgotPasswordPage: React.FC = () => {
@@ -35,10 +36,6 @@ const ForgotPasswordPage: React.FC = () => {
         <div className="bg-card border border-border/60 rounded-3xl p-8 sm:p-10 shadow-xl shadow-black/5 dark:shadow-black/30">
           {/* Header */}
           <div className="text-center mb-8">
-            <Link to="/" className="inline-flex items-center gap-2 mb-6 hover:opacity-80 transition-opacity">
-              <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold text-lg">F</span>
-              <span className="text-xl font-bold tracking-wide bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">FinSight</span>
-            </Link>
             <h2 className="text-2xl font-bold text-foreground">Forgot Password</h2>
             <p className="text-muted-foreground text-sm mt-1.5">We'll send a reset link to your email</p>
           </div>
@@ -51,7 +48,7 @@ const ForgotPasswordPage: React.FC = () => {
                 </p>
               </div>
               <Link
-                to="/login"
+                href="/login"
                 className="w-full inline-block py-3.5 bg-primary text-primary-foreground rounded-xl font-bold hover:opacity-95 transition-all shadow-lg shadow-primary/20 text-center"
               >
                 Return to Login
@@ -88,7 +85,7 @@ const ForgotPasswordPage: React.FC = () => {
               
               <p className="mt-6 text-center text-sm text-muted-foreground">
                 Remember your password?{' '}
-                <Link to="/login" className="text-primary font-semibold hover:underline cursor-pointer">
+                <Link href="/login" className="text-primary font-semibold hover:underline cursor-pointer">
                   Sign In
                 </Link>
               </p>
