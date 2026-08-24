@@ -30,7 +30,7 @@ finsight/
 │   ├── requirements.txt
 │   └── ...
 │
-└── frontend/               ← Next.js + React + Tailwind + TypeScript frontend (Violet/Lavender theme)
+└── frontend/               ← Next.js + React + Tailwind + TypeScript frontend (Purple/Black theme)
     ├── src/
     ├── package.json
     └── ...
