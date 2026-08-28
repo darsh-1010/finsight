@@ -25,6 +25,7 @@ export function middleware(request: NextRequest) {
     pathname.startsWith('/ask_finsight') ||
     pathname.startsWith('/user_profile') ||
     pathname.startsWith('/sandbox') ||
+    pathname.startsWith('/research') ||
     pathname.startsWith('/admin');
 
   // Only redirect if definitely unauthenticated (no cookies at all)
@@ -43,6 +44,7 @@ export const config = {
     '/ask_finsight/:path*',
     '/user_profile/:path*',
     '/sandbox/:path*',
+    '/research/:path*',
     '/admin/:path*',
   ],
 };

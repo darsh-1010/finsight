@@ -4,6 +4,7 @@ import {
   ChevronDown,
   ChevronRight,
   Briefcase,
+  FileSearch,
   Newspaper,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -63,6 +64,11 @@ const navItems = [
     label: 'Portfolio Sandbox',
     icon: <Briefcase size={22} />,
     path: '/sandbox',
+  },
+  {
+    label: 'Research',
+    icon: <FileSearch size={22} />,
+    path: '/research',
   },
 ];
 
