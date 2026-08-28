@@ -117,6 +117,26 @@ class TestCreateAccessToken:
         with pytest.raises(JWTError):
             jwt.decode(token, "wrong-secret", algorithms=[settings.ALGORITHM])
 
+    def test_tokens_for_same_claims_are_unique(self):
+        """Two tokens issued for identical claims must not collide.
+
+        exp only has second resolution, so without a unique jti claim, two
+        tokens issued for the same user within the same second would be
+        byte-identical - this broke the unique constraint on
+        user_sessions.token_hash for real signup-then-login flows.
+        """
+        claims = {"sub": "1", "role": "user"}
+        token_a = create_access_token(claims)
+        token_b = create_access_token(claims)
+        assert token_a != token_b
+
+    def test_token_has_jti_claim(self):
+        """Access token must include a unique 'jti' claim."""
+        token = create_access_token({"sub": "1"})
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        assert "jti" in payload
+        assert len(payload["jti"]) > 0
+
 
 # ── Refresh Token ─────────────────────────────────────────────────────────────
 
@@ -155,3 +175,15 @@ class TestCreateRefreshToken:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         expected_exp = time.time() + settings.REFRESH_TOKEN_EXPIRE_DAYS * 86400
         assert abs(payload["exp"] - expected_exp) < 120
+
+    def test_tokens_for_same_claims_are_unique(self):
+        """Two refresh tokens for the same user must not collide.
+
+        UserSession.token_hash has a unique constraint on this exact value -
+        a signup immediately followed by a login for the same user, within
+        the same second, previously produced byte-identical refresh tokens
+        and crashed with an IntegrityError.
+        """
+        token_a = create_refresh_token({"sub": "1"})
+        token_b = create_refresh_token({"sub": "1"})
+        assert token_a != token_b

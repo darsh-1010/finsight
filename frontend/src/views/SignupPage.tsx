@@ -38,9 +38,7 @@ interface SignupFormProps {
     email: string;
     password: string;
     confirmPassword: string;
-    role_id: number;
     tier_level: number;
-    billing_period: 'monthly' | 'yearly';
   };
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSignup: (e: React.FormEvent) => Promise<void>;
@@ -111,24 +109,19 @@ const SignupForm: React.FC<SignupFormProps> = ({ formData, handleChange, handleS
 
 const useTierSelection = (searchParams: URLSearchParams) => {
   const tierParam = searchParams.get('tier');
-  const planParam = searchParams.get('plan');
-
   const tier = tierParam ? parseInt(tierParam) : 1;
-  const period = planParam === 'yearly' ? 'yearly' as const : 'monthly' as const;
 
-  return { tier: tier >= 1 && tier <= 5 ? tier : 1, period };
+  return { tier: tier >= 1 && tier <= 5 ? tier : 1 };
 };
 
 interface Tier {
   level: number;
   name: string;
-  price_amount: string | number;
-  price_amount_yearly?: string | number | null;
 }
 
 const performSignup = (
-  formData: { email: string; password: string; role_id: number; tier_level: number; billing_period: string },
-  signup: (data: { email: string; password: string; role_id: number; tier_level: number }) => Promise<void>,
+  formData: { email: string; password: string; tier_level: number },
+  signup: (data: { email: string; password: string; tier_level: number }) => Promise<void>,
   navigate: (path: string) => void,
   setError: (msg: string) => void,
   setIsSubmitting: (loading: boolean) => void
@@ -139,7 +132,6 @@ const performSignup = (
   signup({
     email: formData.email,
     password: formData.password,
-    role_id: Number(formData.role_id),
     tier_level: Number(formData.tier_level),
   }).then(() => {
     localStorage.setItem('has_shown_welcome_modal', 'true');
@@ -165,15 +157,12 @@ const performSignup = (
   });
 };
 
-const useSignupForm = (initialSelection: { tier: number; period: 'monthly' | 'yearly' }) => {
+const useSignupForm = (initialSelection: { tier: number }) => {
   const [formData, setFormData] = useState({
     email: getStoredVisitingUser()?.email || '',
     password: '',
     confirmPassword: '',
-    role_id: 2,
-    ...initialSelection,
     tier_level: initialSelection.tier,
-    billing_period: initialSelection.period,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -213,26 +202,16 @@ const useSignupLogic = () => {
       return;
     }
 
-    if (formData.tier_level !== 1) {
-      sessionStorage.setItem('payment_redirect_pending', 'true');
-    }
-
     performSignup(formData, signup, navigate, setError, setIsSubmitting);
   };
 
   return { formData, error, isSubmitting, handleChange, handleSignupSubmit };
 };
 
-const getSelectedTierDetails = (tiers: Tier[], tierLevel: number, period: string) => {
+const getSelectedTierDetails = (tiers: Tier[], tierLevel: number) => {
   const selectedTier = tiers.find((t) => t.level === tierLevel);
 
-  if (!selectedTier) return 'Foundation (Free)';
-
-  const price = period === 'yearly'
-    ? (Number(selectedTier.price_amount_yearly) || (Number(selectedTier.price_amount) * 12 * 0.9)) / 100
-    : Number(selectedTier.price_amount) / 100;
-
-  return `${selectedTier.name} ($${Math.round(price)}/${period === 'yearly' ? 'yr' : 'mo'})`;
+  return selectedTier ? selectedTier.name : 'Foundation';
 };
 
 const useTiers = () => {
@@ -251,7 +230,7 @@ const useTiers = () => {
 const SignupPage: React.FC = () => {
   const { tiers, isLoading, tierError } = useTiers();
   const { formData, error, isSubmitting, handleChange, handleSignupSubmit } = useSignupLogic();
-  const tierName = getSelectedTierDetails(tiers, formData.tier_level, formData.billing_period);
+  const tierName = getSelectedTierDetails(tiers, formData.tier_level);
 
   useEffect(() => {
     window.scrollTo(0, 0);

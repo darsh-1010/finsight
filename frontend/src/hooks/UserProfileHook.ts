@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { authApi } from '@/api/auth';
-import { createPortalSession } from '@/api/payments';
 import { useAuth } from '@/context/AuthContext';
 
 /* -------------------- Types -------------------- */
@@ -20,25 +19,6 @@ const extractErrorMessage = (err: unknown): string => {
 };
 
 /* -------------------- Small Hooks -------------------- */
-
-const useAutoClearError = (
-  error: string | null,
-  setError: (v: string | null) => void,
-) => {
-  useEffect(() => {
-    if (!error) return;
-
-    const timer = setTimeout(() => setError(null), 3000);
-
-    return () => clearTimeout(timer);
-  }, [error, setError]);
-};
-
-const useSubscriptionState = () => {
-  const [isLoading, setIsLoading] = useState(false);
-
-  return { isLoading, setIsLoading };
-};
 
 const usePasswordForm = () => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -98,29 +78,6 @@ const resetPasswordForm = (
 };
 
 /* -------------------- Feature Hooks -------------------- */
-
-const useSubscription = (setError: (v: string | null) => void) => {
-  const { isLoading, setIsLoading } = useSubscriptionState();
-
-  const handleManageSubscription = async () => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const returnUrl = window.location.href;
-      const { portal_url } = await createPortalSession(returnUrl);
-
-      window.location.href = portal_url;
-    } catch (err) {
-      console.error(err);
-      setError('Failed to open billing portal. Please try again later.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return { isLoading, handleManageSubscription };
-};
 
 const usePasswordChange = () => {
   const form = usePasswordForm();
@@ -182,18 +139,10 @@ const usePasswordChange = () => {
 
 export const useUserProfile = () => {
   const { user } = useAuth();
-  const [error, setError] = useState<string | null>(null);
-
-  useAutoClearError(error, setError);
-
-  const subscription = useSubscription(setError);
   const password = usePasswordChange();
 
   return {
     user,
-    error,
-    setError,
-    ...subscription,
     ...password,
   };
 };

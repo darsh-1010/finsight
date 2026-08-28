@@ -8,7 +8,7 @@ This document details the system architecture of the Finsight application, detai
 
 Finsight consists of three primary modules:
 1. **Frontend UI**: Application built using Next.js (App Router) and React, styled with Tailwind CSS v4.
-2. **Core Backend (FastAPI)**: Manages database persistence, authentication, billing (via Stripe integration), onboarding answers, and subscription tiers.
+2. **Core Backend (FastAPI)**: Manages database persistence, authentication, onboarding answers, and subscription tiers (all tiers are free).
 3. **ML Service**: Performs real-time sentiment analysis, RAG (Retrieval-Augmented Generation) document search, and structured insights classifications.
 
 ```mermaid

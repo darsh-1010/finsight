@@ -110,20 +110,20 @@ async def test_edge_case_vector_db_timeout_or_dns_failure(mock_weaviate_service_
 
 
 @pytest.mark.anyio
-@patch("src.services.market_insights.llm_engine.FallbackAsyncOpenAI")
-async def test_edge_case_openai_connection_and_ratelimit_errors(mock_openai_class: MagicMock) -> None:
+@patch("src.services.market_insights.llm_engine.get_structured_llm_client")
+async def test_edge_case_openai_connection_and_ratelimit_errors(mock_get_client: MagicMock) -> None:
     """Edge Case: OpenAI API returns direct rate limit or connection drops.
 
     Verifies that our enhanced catch-all handler cleanly maps unhandled generic exceptions
     to an LLMError (which is a subclass of AppError).
     """
-    mock_openai_instance = mock_openai_class.return_value
+    mock_client = mock_get_client.return_value
     # Simulate a network/API rate limit error not covered by (ValueError, AttributeError, RuntimeError)
-    mock_openai_instance.beta.chat.completions.parse = AsyncMock(
+    mock_client.beta.chat.completions.parse = AsyncMock(
         side_effect=Exception("HTTP 429 Too Many Requests: Rate Limit Exceeded")
     )
 
-    engine = LLMEngine(openai_api_key="fake-api-key")
+    engine = LLMEngine()
     event = MarketEvent(
         ticker="AAPL",
         event_type=EventType.STANDARD_UPDATE,

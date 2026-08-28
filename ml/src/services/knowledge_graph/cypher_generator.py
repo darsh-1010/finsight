@@ -13,11 +13,12 @@ import logging
 import re
 from typing import Any
 
+from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field
 
 from config.settings import settings
+from src.llm.litellm_router import get_chat_model
 from src.utils.perf_utils import timed
 
 logger = logging.getLogger(__name__)
@@ -120,11 +121,8 @@ class CypherGenerator:
             records = await graph_client.execute(result.cypher)
     """
 
-    def __init__(self, llm: ChatOpenAI | None = None) -> None:
-        self._llm = llm or ChatOpenAI(
-            model=settings.gpt_4o_mini,
-            temperature=0.0,
-        )
+    def __init__(self, llm: BaseChatModel | None = None) -> None:
+        self._llm = llm or get_chat_model(settings.gpt_4o_mini, temperature=0.0)
         self._generator = self._llm.with_structured_output(CypherQuery)
 
     @timed("cypher_generator.generate", warn_threshold_s=3.0)

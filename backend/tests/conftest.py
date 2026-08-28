@@ -2,14 +2,13 @@
 Shared pytest configuration and fixtures for the backend test suite.
 
 Uses in-memory SQLite (StaticPool) to avoid any PostgreSQL dependency.
-External services (SES, Stripe, boto3, cron) are globally mocked so
+External services (SES, boto3, cron) are globally mocked so
 tests never make real network calls.
 """
 
 # ── stdlib / third-party first to avoid import-order issues ──────────────────
 import os
-import sys
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 # Force SQLite DATABASE_URL before any app code is imported.
 os.environ.setdefault("DATABASE_URL", "sqlite://")
@@ -21,7 +20,6 @@ os.environ.setdefault("POSTGRES_SERVER", "localhost")
 os.environ.setdefault("POSTGRES_USER", "test")
 os.environ.setdefault("POSTGRES_PASSWORD", "test")
 os.environ.setdefault("POSTGRES_DB", "test")
-os.environ.setdefault("STRIPE_SECRET_KEY", "sk_test_placeholder")
 # Pydantic's assemble_cors_origins validator accepts JSON array format
 os.environ.setdefault("BACKEND_CORS_ORIGINS", '["http://localhost:3000"]')
 os.environ.setdefault("COOKIE_SECURE", "false")
@@ -202,15 +200,6 @@ def _mock_ses_service():
     """Prevent any real SES / email calls during tests."""
     with patch("app.services.ses_service.ses_service.send_verification_email", return_value=None), \
          patch("app.services.ses_service.ses_service.send_password_reset_email", return_value=None):
-        yield
-
-
-@pytest.fixture(autouse=True)
-def _mock_stripe():
-    """Prevent real Stripe API calls during tests."""
-    mock_customer = MagicMock()
-    mock_customer.id = "cus_test_placeholder"
-    with patch("app.services.stripe_service.StripeService.get_or_create_customer", return_value=mock_customer):
         yield
 
 

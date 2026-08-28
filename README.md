@@ -18,7 +18,7 @@ finsight/
 ├── Dockerfile.frontend     ← FE image (Next.js standalone production build)
 ├── nginx.conf              ← Nginx config for the web proxy
 │
-├── backend/                ← FastAPI Backend (auth, DB, Stripe, chat proxy)
+├── backend/                ← FastAPI Backend (auth, DB, chat proxy)
 │   ├── app/
 │   ├── alembic/
 │   ├── requirements.txt

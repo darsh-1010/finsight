@@ -10,7 +10,6 @@ import { getTierIcon } from '@/lib/utils';
 interface PricingCardsProps {
   isLoading: boolean;
   tiers: PricingTier[];
-  billingPeriod: 'monthly' | 'yearly';
   isFallback: boolean;
   handleSubscribe: (tierLevel: number, tierIndex: number) => Promise<void>;
   submittingTier: number | null;
@@ -25,17 +24,6 @@ const ICON_MAP: Record<number, TierIconType> = {
   3: getTierIcon(3),
   4: getTierIcon(4),
   5: getTierIcon(5),
-};
-
-const getPrice = (elm: PricingTier, billingPeriod: 'monthly' | 'yearly') => {
-  if (billingPeriod === 'monthly') {
-    return Number(elm.price_amount) / 100;
-  }
-
-  return (
-    Math.round(Number(elm.price_amount_yearly) / 100) ||
-    Math.round((Number(elm.price_amount) * 12 * 0.9) / 100)
-  );
 };
 
 const TierHeader = ({
@@ -68,26 +56,13 @@ const TierHeader = ({
   </div>
 );
 
-const TierBody = ({
-  elm,
-  billingPeriod,
-  price,
-}: {
-  elm: PricingTier;
-  billingPeriod: 'monthly' | 'yearly';
-  price: number;
-}) => (
+const TierBody = ({ elm }: { elm: PricingTier }) => (
   <>
     <h3 className="text-3xl mt-4 min-h-12 font-bold text-foreground">
       {elm.name}
     </h3>
 
-    <h5 className="text-2xl mt-2 font-bold">
-      &#36;<span className="text-3xl">{price}</span>
-      <span className="text-sm text-muted-foreground font-normal">
-        {billingPeriod === 'monthly' ? ' / month' : ' / year'}
-      </span>
-    </h5>
+    <h5 className="text-2xl mt-2 font-bold text-primary">Free</h5>
 
     <hr className="my-4 border-border/60" />
 
@@ -187,7 +162,6 @@ const TierFooter = ({
 const TierCard = ({
   elm,
   index,
-  billingPeriod,
   isFallback,
   handleSubscribe,
   submittingTier,
@@ -197,7 +171,6 @@ const TierCard = ({
 }: {
   elm: PricingTier;
   index: number;
-  billingPeriod: 'monthly' | 'yearly';
   isFallback: boolean;
   handleSubscribe: (tierLevel: number, tierIndex: number) => Promise<void>;
   submittingTier: number | null;
@@ -206,8 +179,7 @@ const TierCard = ({
   scheduledTierLevel?: number | null;
 }) => {
   const Icon = ICON_MAP[elm.level];
-  const price = getPrice(elm, billingPeriod);
-  
+
   const isCurrentPlan = currentTierLevel !== undefined && elm.level === currentTierLevel;
   const currentPlanClasses = 'bg-background scale-[1.02] z-10 before:absolute before:-inset-[2px] before:bg-gradient-to-r before:from-primary before:to-purple-500 before:rounded-[1.6rem] before:z-[-1] before:opacity-100 shadow-2xl shadow-primary/20';
   const popularClasses = 'bg-background scale-[1.02] z-10 before:absolute before:-inset-[2px] before:bg-gradient-to-r before:from-accent before:to-purple-500 before:rounded-[1.6rem] before:z-[-1] before:opacity-100 shadow-xl shadow-accent/20';
@@ -221,7 +193,7 @@ const TierCard = ({
     >
       <TierHeader Icon={Icon} isPopular={elm.is_popular} isCurrentPlan={isCurrentPlan} />
 
-      <TierBody elm={elm} billingPeriod={billingPeriod} price={price} />
+      <TierBody elm={elm} />
 
       <TierFooter
         isFallback={isFallback}
@@ -240,7 +212,6 @@ const TierCard = ({
 const PricingCards: React.FC<PricingCardsProps & { isCancelingAtPeriodEnd?: boolean; scheduledTierLevel?: number | null }> = ({
   isLoading,
   tiers,
-  billingPeriod,
   isFallback,
   handleSubscribe,
   submittingTier,
@@ -265,7 +236,6 @@ const PricingCards: React.FC<PricingCardsProps & { isCancelingAtPeriodEnd?: bool
           key={i}
           elm={elm}
           index={i}
-          billingPeriod={billingPeriod}
           isFallback={isFallback}
           handleSubscribe={handleSubscribe}
           submittingTier={submittingTier}

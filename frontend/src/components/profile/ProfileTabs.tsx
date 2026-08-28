@@ -16,9 +16,6 @@ export { type ProfileTabId } from '@/lib/profileRoutes';
 
 interface ProfileTabsProps {
   user: UserInterface | null;
-  isLoading: boolean;
-  error: string | null;
-  handleManageSubscription: () => Promise<void>;
   onOpenPasswordModal: () => void;
 }
 
@@ -109,9 +106,6 @@ const TabPanel: React.FC<{
 
 const ProfileTabs: React.FC<ProfileTabsProps> = ({
   user,
-  isLoading,
-  error,
-  handleManageSubscription,
   onOpenPasswordModal,
 }) => {
   const searchParams = useSearchParams();
@@ -142,15 +136,7 @@ const ProfileTabs: React.FC<ProfileTabsProps> = ({
     case 'tokens':
       return <TokenUsage embedded />;
     case 'subscription':
-      return (
-        <BillingSubscription
-          user={user}
-          error={error}
-          isLoading={isLoading}
-          handleManageSubscription={handleManageSubscription}
-          embedded
-        />
-      );
+      return <BillingSubscription user={user} embedded />;
     case 'security':
       return (
         <SecurityPreferences

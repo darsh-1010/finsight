@@ -7,8 +7,8 @@ import asyncio
 import hashlib
 from typing import Any, Dict, List, Tuple
 
+from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_openai import ChatOpenAI
 
 from config.settings import settings
 from src.core.exceptions import QueryAnalysisError
@@ -21,6 +21,7 @@ from src.core.models import (
 )
 from src.core.types import JsonDict
 from src.data_sources.yfinance_source import LIGHTWEIGHT_ENDPOINTS, YFinanceDataSource
+from src.llm.litellm_router import get_chat_model
 from src.llm.prompts import PromptLoader
 from src.services.ticker_service import TickerService
 from src.utils.json_parser import LLMResponseParser
@@ -42,7 +43,7 @@ class QueryService(IQueryService):
 
     def __init__(
         self,
-        llm: ChatOpenAI | None = None,
+        llm: BaseChatModel | None = None,
         ticker_service: ITickerService | None = None,
         data_source: IDataSource | None = None,
         **kwargs: Any,
@@ -65,11 +66,13 @@ class QueryService(IQueryService):
         if llm is not None:
             self.llm = llm
             self._fast_llm = llm
+            self._fast_model_name = model_name
         else:
-            self.llm = ChatOpenAI(model=model_name, temperature=temperature)
+            self.llm = get_chat_model(model_name, temperature=temperature)
             # Fast model for intent/slot-filling queries (simple definitions, single data lookups)
             fast_model = settings.gpt_4o_mini  # gpt-4.1-mini by default
-            self._fast_llm = ChatOpenAI(model=fast_model, temperature=temperature)
+            self._fast_llm = get_chat_model(fast_model, temperature=temperature)
+            self._fast_model_name = fast_model
 
         self._ticker_service = ticker_service
         self._data_source = data_source
@@ -182,7 +185,7 @@ class QueryService(IQueryService):
             logger.info("[MODEL_TIER] Selection: Full | Model: %s", self.model_name)
             return self._chain
         logger.info(
-            "[MODEL_TIER] Selection: Fast | Model: %s", self._fast_llm.model_name
+            "[MODEL_TIER] Selection: Fast | Model: %s", self._fast_model_name
         )
         return self._fast_chain
 

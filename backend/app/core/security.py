@@ -1,3 +1,4 @@
+import secrets
 from datetime import datetime, timedelta
 
 from jose import jwt
@@ -24,7 +25,13 @@ def verify_password(password: str, hashed: str):
 def create_access_token(data: dict):
     to_encode = data.copy()
     to_encode.update(
-        {"exp": datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)}
+        {
+            "exp": datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
+            # jti: exp only has second resolution, so two tokens issued for the same
+            # user within the same second would otherwise be byte-identical, colliding
+            # on user_sessions.token_hash's unique constraint.
+            "jti": secrets.token_urlsafe(16),
+        }
     )
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
@@ -32,6 +39,9 @@ def create_access_token(data: dict):
 def create_refresh_token(data: dict):
     to_encode = data.copy()
     to_encode.update(
-        {"exp": datetime.utcnow() + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)}
+        {
+            "exp": datetime.utcnow() + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),
+            "jti": secrets.token_urlsafe(16),
+        }
     )
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)

@@ -48,8 +48,6 @@ Create a `.env` file in the `backend/` directory:
 PROJECT_NAME="FinSight API"
 DATABASE_URL="sqlite:///./test.db"
 SECRET_KEY="your-super-secret-jwt-key"
-STRIPE_SECRET_KEY="sk_test_..."
-STRIPE_WEBHOOK_SECRET="whsec_..."
 OPENAI_API_KEY="sk-proj-..."
 TAVILY_API_KEY="tvly-..."
 AWS_ACCESS_KEY_ID="minioadmin"

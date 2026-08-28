@@ -18,39 +18,11 @@ const EmailVerificationNotice: React.FC = () => {
   const [resendStatus, setResendStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [checking, setChecking] = useState(false);
 
-  const [isPaymentRedirectPending, setIsPaymentRedirectPending] = useState(() => {
-    if (typeof window === 'undefined') return false;
-
-    return sessionStorage.getItem('payment_redirect_pending') === 'true';
-  });
-
   useEffect(() => {
-    // Failsafe: if payment redirect doesn't happen within 8 seconds, clear it.
-    if (isPaymentRedirectPending) {
-      const timer = setTimeout(() => {
-        sessionStorage.removeItem('payment_redirect_pending');
-        setIsPaymentRedirectPending(false);
-      }, 8000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [isPaymentRedirectPending]);
-
-  useEffect(() => {
-    if (user?.is_verified && !isPaymentRedirectPending) {
+    if (user?.is_verified) {
       navigate('/dashboard');
     }
-  }, [user, navigate, isPaymentRedirectPending]);
-
-  if (isPaymentRedirectPending) {
-    return (
-      <div className="flex flex-col items-center justify-center w-full">
-        <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
-        <h2 className="text-2xl font-bold mb-2">Processing...</h2>
-        <p className="text-muted-foreground">Redirecting to secure payment gateway...</p>
-      </div>
-    );
-  }
+  }, [user, navigate]);
 
   const handleResend = async () => {
     setResending(true);

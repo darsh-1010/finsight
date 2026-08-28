@@ -136,9 +136,6 @@ def _sync_tiers(db: Session):
         tier.price_amount = monthly
         tier.price_amount_yearly = yearly
         tier.currency = "usd"
-        tier.stripe_product_id = f"mock_prod_{level}"
-        tier.stripe_price_id = f"mock_price_{level}"
-        tier.stripe_yearly_price_id = f"mock_yearly_{level}" if yearly > 0 else None
         tier.highlights = t_data.get("highlights")
         tier.is_popular = t_data.get("is_popular", False)
         tier.icon = t_data.get("icon")
@@ -184,7 +181,7 @@ def seed_tiers():
         _sync_tier_entitlements(db, tier_map, ent_map)
 
         db.commit()
-        print("[SUCCESS] DB tiers synced successfully (without Stripe)")
+        print("[SUCCESS] DB tiers synced successfully")
 
     except Exception:
         db.rollback()

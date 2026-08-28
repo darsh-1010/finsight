@@ -2,9 +2,8 @@ import { Loader2, ArrowRight, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 
-import { createCheckoutSession, type PreviewSubscriptionResponse } from '@/api/payments';
+import { selectTier } from '@/api/payments';
 import PricingCards from '@/components/pricing/PricingCards';
-import PricingSwitch from '@/components/pricing/PricingSwitch';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,7 +23,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { useAuth } from '@/context/AuthContext';
-import type { PricingTier } from '@/lib/interfaces/Pricing';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import {
   fetchTiers,
@@ -33,34 +31,11 @@ import {
   selectIsFallback,
 } from '@/store/slices/tierSlice';
 
-const getPriceId = (
-  tier: PricingTier,
-  billingPeriod: 'monthly' | 'yearly',
-) => billingPeriod === 'monthly'
-  ? tier.price_id
-  : tier.yearly_price_id;
-
-const startCheckout = async (priceId: string) => {
-  const successUrl = `${window.location.origin}/payment-success`;
-  const cancelUrl = `${window.location.origin}/pricing`;
-
-  const { checkout_url } = await createCheckoutSession(
-    priceId,
-    successUrl,
-    cancelUrl,
-  );
-
-  window.location.assign(checkout_url);
-};
-
 const handleUnauthenticatedRedirect = (
   navigate: (path: string) => void,
-  billingPeriod: 'monthly' | 'yearly',
   tierLevel: number,
 ) => {
-  const planParam = billingPeriod === 'yearly' ? '&plan=yearly' : '';
-
-  navigate(`/signup?tier=${tierLevel}${planParam}`);
+  navigate(`/signup?tier=${tierLevel}`);
 };
 
 interface UpgradeModalProps {
@@ -69,8 +44,8 @@ interface UpgradeModalProps {
   scheduledTierLevel?: number | null;
 }
 
-const UpgradeModal: React.FC<UpgradeModalProps> = ({ 
-  isLoadingAuth = false, 
+const UpgradeModal: React.FC<UpgradeModalProps> = ({
+  isLoadingAuth = false,
   isCancelingAtPeriodEnd = false,
   scheduledTierLevel = null
 }) => {
@@ -80,24 +55,15 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({
 
   const [open, setOpen] = useState(false);
   const [submittingTier, setSubmittingTier] = useState<number | null>(null);
-  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
   const [successState, setSuccessState] = useState<{type: 'upgrade' | 'downgrade' | 'cancel' | 'resume', tierName: string} | null>(null);
   const [errorState, setErrorState] = useState<string | null>(null);
-  
+
   const [pendingAction, setPendingAction] = useState<{
     tierLevel: number;
     tierIndex: number;
     actionType: 'upgrade' | 'downgrade' | 'resume' | 'subscribe';
     tierName: string;
   } | null>(null);
-  const [previewData, setPreviewData] = useState<PreviewSubscriptionResponse | null>(null);
-  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
-
-  useEffect(() => {
-    if (false) {
-      setIsPreviewLoading(false);
-    }
-  }, []);
 
   const tiers = useAppSelector(selectTiers);
   const isLoading = useAppSelector(selectTiersLoading);
@@ -110,13 +76,12 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({
       setSuccessState(null);
       setErrorState(null);
       setPendingAction(null);
-      setPreviewData(null);
     }
   }, [open, dispatch, tiers.length]);
 
   const handleSubscribe = async (tierLevel: number, tierIndex: number) => {
     if (!user) {
-      handleUnauthenticatedRedirect(navigate, billingPeriod, tierLevel);
+      handleUnauthenticatedRedirect(navigate, tierLevel);
 
       return;
     }
@@ -141,35 +106,18 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({
 
   const executeSubscribe = async () => {
     if (!pendingAction || !user) return;
-    const { tierLevel, tierIndex } = pendingAction;
-    
+    const { tierLevel, tierIndex, actionType, tierName } = pendingAction;
+
     setPendingAction(null);
     setSubmittingTier(tierIndex);
     setErrorState(null);
 
     try {
-      const tier = tiers.find((t) => t.level === tierLevel);
-
-      if (!tier) {
-        setSubmittingTier(null);
-
-        return;
-      }
-
-      const priceId = getPriceId(tier, billingPeriod);
-
-      if (!priceId) {
-        setErrorState('This plan is not yet available for yearly billing.');
-        setSubmittingTier(null);
-
-        return;
-      }
-
-      await startCheckout(priceId);
-
+      await selectTier(tierLevel);
+      setSuccessState({ type: actionType === 'subscribe' ? 'upgrade' : actionType, tierName });
     } catch (e: any) {
-      console.error('Subscription error:', e);
-      const msg = e.response?.data?.detail || 'Failed to process subscription. Please try again.';
+      console.error('Tier switch error:', e);
+      const msg = e.response?.data?.detail || 'Failed to switch plans. Please try again.';
 
       setErrorState(msg);
     }
@@ -195,7 +143,7 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           ) : (
             <>
-              {user?.tier_level && user.tier_level > 1 ? 'Change Subscription' : 'Upgrade Subscription'}
+              Change Plan
               <ArrowRight
                 size={16}
                 className="ml-2 group-hover:translate-x-1 transition-transform"
@@ -204,7 +152,7 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({
           )}
         </Button>
       </DialogTrigger>
-      <DialogContent 
+      <DialogContent
         hideCloseButton={submittingTier !== null}
         onInteractOutside={(e) => submittingTier !== null && e.preventDefault()}
         onEscapeKeyDown={(e) => submittingTier !== null && e.preventDefault()}
@@ -217,7 +165,7 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({
               <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
               <h3 className="text-xl font-bold text-foreground text-center">Processing...</h3>
               <p className="text-sm text-muted-foreground mt-2 text-center">
-                Please wait while we securely update your subscription. Do not close this window.
+                Please wait while we switch your plan.
               </p>
             </div>
           </div>
@@ -225,24 +173,17 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({
 
         <DialogHeader className="mb-2">
           <DialogTitle className="text-2xl font-bold text-center">
-            Upgrade Your Subscription
+            Choose Your Plan
           </DialogTitle>
         </DialogHeader>
-        
-        <div className="flex flex-col items-center">
-          <PricingSwitch
-            billingPeriod={billingPeriod}
-            setBillingPeriod={setBillingPeriod}
-            className="mt-0"
-          />
 
-          <div className="w-full -mt-4">
+        <div className="flex flex-col items-center">
+          <div className="w-full">
             <PricingCards
               isLoading={isLoading}
               isFallback={isFallback}
               handleSubscribe={handleSubscribe}
               tiers={tiers}
-              billingPeriod={billingPeriod}
               submittingTier={submittingTier}
               currentTierLevel={user?.tier_level}
               isCancelingAtPeriodEnd={isCancelingAtPeriodEnd}
@@ -251,7 +192,7 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({
           </div>
         </div>
       </DialogContent>
-      
+
       {/* Success Alert Dialog */}
       <AlertDialog open={!!successState} onOpenChange={(open) => {
         if (!open) window.location.reload();
@@ -264,44 +205,15 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({
           </div>
           <AlertDialogHeader className="flex flex-col items-center">
             <AlertDialogTitle className="text-2xl font-bold text-center">
-              {successState?.type === 'downgrade' 
-                ? 'Successfully scheduled the downgrade' 
-                : `Successfully ${successState?.type === 'upgrade' ? 'Upgraded' : 'Resumed'}`}
+              Plan Updated
             </AlertDialogTitle>
             <AlertDialogDescription className="text-base text-left text-muted-foreground mt-2">
-              {successState?.type === 'downgrade' ? (
-                <>Your downgrade to the <span className="font-bold text-primary">{successState?.tierName}</span> plan has been successfully scheduled.</>
-              ) : successState?.type === 'resume' ? (
-                <>Your <span className="font-bold text-primary">{successState?.tierName}</span> plan has been successfully resumed and all pending changes have been canceled.</>
-              ) : (
-                <>You are now on the <span className="font-bold text-primary">{successState?.tierName}</span> plan.</>
-              )}
-              
-              <div className="bg-primary/5 border border-primary/20 p-4 rounded-xl text-sm text-left w-full mt-4 space-y-2">
-                <h4 className="font-bold text-foreground">How billing works:</h4>
-                {successState?.type === 'downgrade' ? (
-                  <p className="text-muted-foreground leading-relaxed">
-                    You will retain your current premium features until the end of your billing cycle. From the next billing period, your tier will be automatically updated and you will be billed for the new plan.
-                  </p>
-                ) : successState?.type === 'upgrade' ? (
-                  <p className="text-muted-foreground leading-relaxed">
-                    Your payment method has been securely charged the prorated difference for your new plan. Your billing cycle date remains the same.
-                  </p>
-                ) : successState?.type === 'resume' ? (
-                  <p className="text-muted-foreground leading-relaxed">
-                    Your current billing cycle will continue uninterrupted. Your plan will automatically renew on your next billing date.
-                  </p>
-                ) : (
-                  <p className="text-muted-foreground leading-relaxed">
-                    Your billing has been adjusted successfully.
-                  </p>
-                )}
-              </div>
+              You are now on the <span className="font-bold text-primary">{successState?.tierName}</span> plan.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="mt-6 w-full sm:justify-center">
-            <AlertDialogAction 
-              onClick={() => window.location.reload()} 
+            <AlertDialogAction
+              onClick={() => window.location.reload()}
               className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl h-12 w-full max-w-[200px]"
             >
               Done
@@ -313,7 +225,7 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({
       {/* Error Alert Dialog */}
       <AlertDialog open={!!errorState} onOpenChange={(open) => !open && setErrorState(null)}>
         <AlertDialogContent className="rounded-3xl max-w-md flex flex-col items-center text-center">
-          <button 
+          <button
             onClick={() => setErrorState(null)}
             className="absolute top-4 right-4 p-2 rounded-full hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-colors"
           >
@@ -333,8 +245,8 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="mt-6 w-full sm:justify-center">
-            <AlertDialogAction 
-              onClick={() => setErrorState(null)} 
+            <AlertDialogAction
+              onClick={() => setErrorState(null)}
               className="bg-red-500 hover:bg-red-600 text-white rounded-xl h-12 w-full max-w-[200px] border-none"
             >
               Try Again
@@ -342,7 +254,7 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      
+
       {/* Confirmation Alert Dialog */}
       <AlertDialog open={!!pendingAction} onOpenChange={(open) => !open && setPendingAction(null)}>
         <AlertDialogContent className="rounded-3xl max-w-md">
@@ -352,104 +264,20 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({
             </AlertDialogTitle>
             <AlertDialogDescription className="text-base text-left mt-2">
               {pendingAction?.actionType === 'resume' ? (
-                `Are you sure you want to resume the ${pendingAction?.tierName} plan and cancel any pending changes?`
+                `Are you sure you want to resume the ${pendingAction?.tierName} plan?`
               ) : pendingAction?.actionType === 'downgrade' ? (
-                `Are you sure you want to downgrade to the ${pendingAction?.tierName} plan? This change will take effect at the end of your current billing cycle.`
+                `Are you sure you want to downgrade to the ${pendingAction?.tierName} plan? This takes effect immediately.`
               ) : pendingAction?.actionType === 'subscribe' ? (
-                `You are about to start a new subscription to the ${pendingAction?.tierName} plan.`
+                `You are about to switch to the ${pendingAction?.tierName} plan.`
               ) : (
                 `Are you sure you want to upgrade to the ${pendingAction?.tierName} plan?`
               )}
-
-              {/* Preview Details */}
-              {isPreviewLoading ? (
-                <div className="mt-4 p-4 bg-muted/20 rounded-xl border border-border flex items-center justify-center">
-                  <Loader2 className="h-5 w-5 animate-spin text-primary" />
-                </div>
-              ) : previewData ? (
-                <div className="mt-4 p-4 bg-primary/5 rounded-xl border border-primary/20 space-y-3">
-                  <h4 className="font-semibold text-foreground border-b border-border/40 pb-2">Payment Breakdown</h4>
-                  
-                  {previewData.unused_credit_balance && previewData.unused_credit_balance > 0 ? (
-                    <>
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="text-muted-foreground">Cost of New Plan (This Cycle):</span>
-                        <span className="font-medium text-foreground">
-                          {previewData.credit_applied_today?.toFixed(2)} {previewData.currency}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="text-muted-foreground">Credit Applied Today:</span>
-                        <span className="font-medium text-green-500">
-                          -{previewData.credit_applied_today?.toFixed(2)} {previewData.currency}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center text-sm font-bold border-t border-border/40 pt-2 mt-2">
-                        <span className="text-foreground">Amount Due Today:</span>
-                        <span className="text-foreground">
-                          {previewData.amount_due_today === 0 ? 'No Charge' : `${previewData.amount_due_today.toFixed(2)} ${previewData.currency}`}
-                        </span>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-muted-foreground">Amount Due Today:</span>
-                      <span className="font-bold text-foreground">
-                        {previewData.amount_due_today === 0 ? 'No Charge' : `${previewData.amount_due_today.toFixed(2)} ${previewData.currency}`}
-                      </span>
-                    </div>
-                  )}
-                  
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-muted-foreground">Next Billing Date:</span>
-                    <span className="font-medium text-foreground">
-                      {new Date(previewData.next_billing_date * 1000).toLocaleDateString()}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-muted-foreground">Next Cycle Total:</span>
-                    <span className="font-bold text-primary">
-                      {previewData.new_total.toFixed(2)} {previewData.currency}
-                    </span>
-                  </div>
-
-                  {(previewData.unused_credit_balance ?? 0) > 0 && (
-                    <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 mt-3 space-y-2">
-                      <p className="text-xs text-blue-600 dark:text-blue-400 font-medium leading-relaxed">
-                        You have a remaining credit balance of <strong>${previewData.unused_credit_balance!.toFixed(2)}</strong> from your previous plan. This has been added to your account and will automatically be used to pay for future billing cycles until it runs out.
-                      </p>
-                      {previewData.new_total > 0 && (
-                        <p className="text-xs text-blue-600/80 dark:text-blue-400/80 italic border-t border-blue-500/20 pt-2">
-                          Based on your new plan's cost of ${previewData.new_total}/cycle, this credit will fully cover your bills for the next {Math.floor(previewData.unused_credit_balance! / previewData.new_total)} cycles, keeping your amount due at $0 until approximately <strong>{new Date((previewData.next_billing_date + (Math.floor(previewData.unused_credit_balance! / previewData.new_total) * 30 * 24 * 60 * 60)) * 1000).toLocaleDateString(undefined, {month: 'long', year: 'numeric'})}</strong>.
-                        </p>
-                      )}
-                    </div>
-                  )}
-
-                  {previewData.is_yearly_to_monthly && (
-                    <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mt-3">
-                      <p className="text-xs text-yellow-600 dark:text-yellow-400 font-medium leading-relaxed">
-                        <strong>Warning:</strong> You are switching from a Yearly plan to a Monthly plan. If your intention is to upgrade to the Yearly version of the {pendingAction?.tierName} plan, please click Cancel, toggle your billing period to "Yearly", and try upgrading again.
-                      </p>
-                    </div>
-                  )}
-
-                  {previewData.is_downgrade && (
-                    <p className="text-xs text-muted-foreground mt-2 pt-2 border-t border-border/40 italic">
-                      Your downgrade will be scheduled to take effect on the next billing date. You will retain current access until then.
-                    </p>
-                  )}
-                </div>
-              ) : null}
-
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="mt-6">
             <AlertDialogCancel className="rounded-xl h-12 px-6">Cancel</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={executeSubscribe} 
-              disabled={isPreviewLoading}
+            <AlertDialogAction
+              onClick={executeSubscribe}
               className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl h-12 px-6"
             >
               Confirm

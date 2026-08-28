@@ -26,9 +26,6 @@ const UserProfile: React.FC = () => {
 
       <ProfileTabs
         user={state.user}
-        error={state.error}
-        isLoading={state.isLoading}
-        handleManageSubscription={state.handleManageSubscription}
         onOpenPasswordModal={() => state.setIsPasswordModalOpen(true)}
       />
 

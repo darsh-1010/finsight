@@ -15,10 +15,12 @@ from app.core.security import (
     hash_password,
     verify_password,
 )
+from app.models.subscriptions import ChangeSource, ChangeType
 from app.models.tiers import Tier
 from app.models.users import (
     Role,
     User,
+    UserRole,
     UserSession,
     UserVerificationToken,
     VisitingUser,
@@ -36,7 +38,6 @@ from app.schemas.users import (
 )
 from app.services.entitlement_service import EntitlementService
 from app.services.ses_service import ses_service
-from app.services.stripe_service import StripeService
 from app.services.tier_service import TierService
 from app.services.token_service import TokenService
 
@@ -143,9 +144,12 @@ def signup(data: UserCreate, response: Response, db: Session = Depends(get_db)):
     if db.query(User).filter(User.email == data.email).first():
         raise HTTPException(400, "Email already exists")
 
-    role = db.query(Role).filter(Role.id == data.role_id).first()
+    # Public signup always gets the standard user role - never trust a client-supplied
+    # role_id (the "user" vs "admin" role ids aren't a stable/documented contract, and
+    # accepting one from the request let any signup request itself as an admin).
+    role = db.query(Role).filter(Role.role == UserRole.USER).first()
     if not role:
-        raise HTTPException(400, "Invalid role")
+        raise HTTPException(500, "Server misconfiguration: default user role not seeded")
 
     user = User(
         email=data.email,
@@ -158,7 +162,7 @@ def signup(data: UserCreate, response: Response, db: Session = Depends(get_db)):
 
     subscription = TierService.assign_default_subscription(db=db, user=user)
 
-    # Token wallet for the subscription tier active at signup (Foundation until checkout completes).
+    # Token wallet for the Foundation tier assigned above.
     signup_tier = db.query(Tier).filter(Tier.id == subscription.tier_id).first()
     if signup_tier:
         TokenService.create_wallet_for_user(
@@ -168,9 +172,6 @@ def signup(data: UserCreate, response: Response, db: Session = Depends(get_db)):
             transaction_type="signup_bonus",
         )
 
-    StripeService.get_or_create_customer(db=db, user=user)
-
-    is_paid_tier = False
     tier_name = "Foundation"
     tier_features = ["Access to basic features", "Community support"]
 
@@ -180,9 +181,17 @@ def signup(data: UserCreate, response: Response, db: Session = Depends(get_db)):
         if not requested_tier:
             raise HTTPException(status_code=400, detail="Invalid tier selected")
 
-        subscription.pending_tier_id = data.tier_level
-        subscription.pending_started_at = datetime.utcnow()
-        is_paid_tier = True
+        # Every tier is free, so apply the requested plan immediately - no checkout step.
+        subscription = TierService.change_tier(
+            db,
+            user,
+            data.tier_level,
+            change_type=ChangeType.UPGRADE,
+            source=ChangeSource.SYSTEM,
+        )
+        tier_name = requested_tier.name
+        if requested_tier.highlights:
+            tier_features = requested_tier.highlights
     else:
         foundation_tier = db.query(Tier).filter(Tier.level == 1).first()
         if foundation_tier:
