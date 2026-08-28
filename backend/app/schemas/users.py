@@ -6,7 +6,6 @@ from pydantic import BaseModel, EmailStr, Field
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
-    role_id: int
 
     # optional tier intent
     tier_level: int | None = 1  # default = free tier

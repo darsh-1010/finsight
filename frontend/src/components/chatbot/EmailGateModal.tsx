@@ -1,39 +1,41 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { PiEnvelopeSimpleFill, PiWarningCircleFill, PiArrowRightBold } from "react-icons/pi";
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
+import { PiEnvelopeSimpleFill, PiWarningCircleFill, PiArrowRightBold } from 'react-icons/pi';
+
+import {
+  visitingUsersApi,
+  storeVisitingUser,
+  isRegisteredUserError,
+  type VisitingUser,
+} from '@/api/auth';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import {
-  visitingUsersApi,
-  storeVisitingUser,
-  isRegisteredUserError,
-  type VisitingUser,
-} from "@/api/auth";
+} from '@/components/ui/dialog';
 
 interface EmailGateModalProps {
   isOpen: boolean;
   onSuccess: (visitingUser: VisitingUser) => void;
 }
 
-type ModalView = "email-form" | "already-registered";
+type ModalView = 'email-form' | 'already-registered';
 
 const EmailGateModal: React.FC<EmailGateModalProps> = ({ isOpen, onSuccess }) => {
-  const navigate = useNavigate();
-  const [view, setView] = useState<ModalView>("email-form");
-  const [email, setEmail] = useState("");
+  const navigate = useRouter().push;
+  const [view, setView] = useState<ModalView>('email-form');
+  const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
 
   const validateEmail = (value: string) => {
-    if (!value.trim()) return "Email is required";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return "Please enter a valid email";
+    if (!value.trim()) return 'Email is required';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Please enter a valid email';
+
     return null;
   };
 
@@ -42,8 +44,10 @@ const EmailGateModal: React.FC<EmailGateModalProps> = ({ isOpen, onSuccess }) =>
     setApiError(null);
 
     const validationError = validateEmail(email);
+
     if (validationError) {
       setEmailError(validationError);
+
       return;
     }
     setEmailError(null);
@@ -51,13 +55,14 @@ const EmailGateModal: React.FC<EmailGateModalProps> = ({ isOpen, onSuccess }) =>
 
     try {
       const visitingUser = await visitingUsersApi.register(email.trim().toLowerCase());
+
       storeVisitingUser(visitingUser);
       onSuccess(visitingUser);
     } catch (err: unknown) {
       if (isRegisteredUserError(err)) {
-        setView("already-registered");
+        setView('already-registered');
       } else {
-        setApiError("Something went wrong. Please try again.");
+        setApiError('Something went wrong. Please try again.');
       }
     } finally {
       setIsLoading(false);
@@ -77,7 +82,7 @@ const EmailGateModal: React.FC<EmailGateModalProps> = ({ isOpen, onSuccess }) =>
         onInteractOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
-        {view === "email-form" ? (
+        {view === 'email-form' ? (
           <>
             <DialogHeader className="flex flex-col items-center pt-6">
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
@@ -108,12 +113,12 @@ const EmailGateModal: React.FC<EmailGateModalProps> = ({ isOpen, onSuccess }) =>
                   autoFocus
                   autoComplete="email"
                   className={[
-                    "w-full px-4 py-3 rounded-xl border text-sm bg-background",
-                    "focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all",
+                    'w-full px-4 py-3 rounded-xl border text-sm bg-background',
+                    'focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all',
                     emailError
-                      ? "border-destructive focus:ring-destructive/30"
-                      : "border-gray-200 dark:border-gray-700",
-                  ].join(" ")}
+                      ? 'border-destructive focus:ring-destructive/30'
+                      : 'border-gray-200 dark:border-gray-700',
+                  ].join(' ')}
                 />
                 {emailError && (
                   <p className="text-xs text-destructive flex items-center gap-1 pl-1">
@@ -145,10 +150,10 @@ const EmailGateModal: React.FC<EmailGateModalProps> = ({ isOpen, onSuccess }) =>
 
               <div className="flex flex-col gap-4 pt-2">
                 <p className="text-center text-sm text-muted-foreground">
-                  Already have an account?{" "}
+                  Already have an account?{' '}
                   <button
                     type="button"
-                    onClick={() => navigate("/login")}
+                    onClick={() => navigate('/login')}
                     className="text-primary font-medium underline underline-offset-4 hover:opacity-80 transition-opacity cursor-pointer"
                   >
                     Log in
@@ -163,7 +168,7 @@ const EmailGateModal: React.FC<EmailGateModalProps> = ({ isOpen, onSuccess }) =>
 
                 <button
                   type="button"
-                  onClick={() => navigate("/")}
+                  onClick={() => navigate('/')}
                   className="text-center text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                 >
                   Return to Home Page
@@ -191,7 +196,7 @@ const EmailGateModal: React.FC<EmailGateModalProps> = ({ isOpen, onSuccess }) =>
             <div className="flex flex-col gap-3 mt-8 pb-4">
               <Button
                 className="w-full py-6 text-base rounded-xl shadow-lg shadow-primary/20"
-                onClick={() => navigate("/login")}
+                onClick={() => navigate('/login')}
               >
                 Log In to FinSight
               </Button>
@@ -199,8 +204,8 @@ const EmailGateModal: React.FC<EmailGateModalProps> = ({ isOpen, onSuccess }) =>
                 variant="outline"
                 className="w-full py-6 text-base rounded-xl border-gray-200 dark:border-gray-800"
                 onClick={() => {
-                  setView("email-form");
-                  setEmail("");
+                  setView('email-form');
+                  setEmail('');
                   setApiError(null);
                 }}
               >
@@ -215,7 +220,7 @@ const EmailGateModal: React.FC<EmailGateModalProps> = ({ isOpen, onSuccess }) =>
 
               <button
                 type="button"
-                onClick={() => navigate("/")}
+                onClick={() => navigate('/')}
                 className="text-center text-sm text-muted-foreground hover:text-foreground transition-colors mt-1"
               >
                 Return to Home Page

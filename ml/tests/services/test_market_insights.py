@@ -112,8 +112,8 @@ async def test_rag_retrieval(mock_weaviate_class: MagicMock) -> None:
 
 
 @pytest.mark.anyio
-@patch("src.services.market_insights.llm_engine.FallbackAsyncOpenAI")
-async def test_llm_classification_success(mock_openai_class: MagicMock) -> None:
+@patch("src.services.market_insights.llm_engine.get_structured_llm_client")
+async def test_llm_classification_success(mock_get_client: MagicMock) -> None:
     """Test standard 30-topic classification via LLM engine."""
     mock_completion = MagicMock()
     mock_message = MagicMock()
@@ -129,7 +129,7 @@ async def test_llm_classification_success(mock_openai_class: MagicMock) -> None:
 
     mock_client = MagicMock()
     mock_client.beta.chat.completions.parse = AsyncMock(return_value=mock_completion)
-    mock_openai_class.return_value = mock_client
+    mock_get_client.return_value = mock_client
 
     engine = LLMEngine()
     event = MarketEvent(

@@ -79,23 +79,17 @@ const KpiCard: React.FC<KpiCardProps> = ({
   delay,
 }) => (
   <div
-    className="kpi-card glass-panel bento-hover p-5 rounded-xl flex flex-col gap-3 group will-change-transform"
-    style={{ animationDelay: delay, opacity: 0, transform: 'translateY(28px)' }}
+    className="kpi-card flex items-center gap-4 py-4 px-5 will-change-transform"
+    style={{ animationDelay: delay, opacity: 0, transform: 'translateY(16px)' }}
   >
-    <div className="flex items-center justify-between">
-      <span className="text-sm font-semibold text-muted-foreground">{title}</span>
-      <div className="p-2 rounded-xl bg-secondary text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
-        {icon}
-      </div>
-    </div>
-    <div>
-      <p className="text-2xl font-bold text-foreground tracking-tight">{value}</p>
-      <div className="flex items-center gap-2 mt-1.5">
+    <div className="text-muted-foreground/70 shrink-0">{icon}</div>
+    <div className="min-w-0">
+      <span className="text-xs font-medium text-muted-foreground">{title}</span>
+      <div className="flex items-baseline gap-2 flex-wrap">
+        <p className="text-xl font-semibold text-foreground tracking-tight">{value}</p>
         <span
-          className={`inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full ${
-            changePositive
-              ? "bg-primary/10 text-primary dark:bg-primary/20"
-              : "bg-destructive/10 text-destructive"
+          className={`inline-flex items-center gap-1 text-xs font-medium ${
+            changePositive ? "text-emerald-600 dark:text-emerald-400" : "text-destructive"
           }`}
         >
           {changePositive ? (
@@ -105,8 +99,8 @@ const KpiCard: React.FC<KpiCardProps> = ({
           )}
           {change}
         </span>
-        <span className="text-xs text-muted-foreground">{subtext}</span>
       </div>
+      <span className="text-xs text-muted-foreground/70">{subtext}</span>
     </div>
   </div>
 );
@@ -155,31 +149,31 @@ const HeaderComponent = () => {
   }, []);
 
   return (
-    <div className="dashboard-header flex flex-col md:flex-row md:items-center justify-between gap-4" style={{ opacity: 0 }}>
+    <div className="dashboard-header flex flex-col md:flex-row md:items-center justify-between gap-3" style={{ opacity: 0 }}>
       <div>
-        <div className="flex items-center gap-2 mb-1">
-          <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse" />
-          <span className="text-xs font-semibold text-primary uppercase tracking-widest">
+        <div className="flex items-center gap-1.5 mb-1">
+          <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest">
             Live
           </span>
         </div>
-        <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+        <h1 className="text-xl md:text-2xl font-semibold text-foreground">
           Market Intelligence Dashboard
         </h1>
-        <p className="text-muted-foreground mt-1 text-sm">
+        <p className="text-muted-foreground mt-0.5 text-sm">
           Real-time insights and technical analysis.
         </p>
       </div>
-      <div className="flex items-center gap-3 bg-secondary/50 border border-border/40 px-4 py-2 rounded-xl">
-        <Clock className="w-4 h-4 text-muted-foreground" />
-        <span className="text-sm font-mono font-semibold text-foreground">
+      <div className="flex items-center gap-2 text-muted-foreground">
+        <Clock className="w-3.5 h-3.5" />
+        <span className="text-sm font-mono text-foreground/80">
           {time.toLocaleTimeString("en-US", {
             hour: "2-digit",
             minute: "2-digit",
             second: "2-digit",
           })}
         </span>
-        <span className="text-xs text-muted-foreground">{time.toLocaleDateString()}</span>
+        <span className="text-xs">{time.toLocaleDateString()}</span>
       </div>
     </div>
   );
@@ -190,10 +184,10 @@ const SectionLabel: React.FC<{ icon: React.ReactNode; label: string }> = ({
   icon,
   label,
 }) => (
-  <div className="flex items-center gap-2 mb-4">
-    <div className="p-1.5 rounded-lg bg-primary/10 text-primary">{icon}</div>
-    <h2 className="text-base font-bold text-foreground">{label}</h2>
-    <div className="flex-1 h-px bg-border/50 ml-2" />
+  <div className="flex items-center gap-2 mb-4 text-muted-foreground">
+    {icon}
+    <h2 className="text-sm font-semibold text-foreground/90 tracking-wide">{label}</h2>
+    <div className="flex-1 h-px bg-border/40 ml-2" />
   </div>
 );
 
@@ -241,12 +235,12 @@ const Dashboard: React.FC = () => {
       {/* Ticker Tape */}
       <TradingViewTickerTape />
 
-      <div className="p-4 md:p-6 space-y-8">
+      <div className="p-4 md:p-6 space-y-10">
         {/* Header */}
         <HeaderComponent />
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y divide-border/40 sm:divide-y-0 sm:divide-x rounded-xl border border-border/40">
           {kpiData.map((kpi, i) => (
             <KpiCard key={i} {...kpi} delay={`${i * 100}ms`} />
           ))}

@@ -1,13 +1,14 @@
 'use client';
 
 import { Suspense } from 'react';
-import PaymentSuccess from '@/views/PaymentSuccess';
+
 import Loader from '@/components/common/Loader';
+import ResetPasswordPage from '@/views/ResetPasswordPage';
 
 export default function Page() {
   return (
     <Suspense fallback={<Loader />}>
-      <PaymentSuccess />
+      <ResetPasswordPage />
     </Suspense>
   );
 }

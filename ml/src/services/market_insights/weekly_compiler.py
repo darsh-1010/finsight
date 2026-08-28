@@ -19,6 +19,7 @@ import yfinance as yf
 from openai import OpenAIError
 
 from src.llm.fallback_client import FallbackAsyncOpenAI
+from src.llm.litellm_router import get_structured_llm_client
 from src.services.market_insights.models import (
     AlertPayload,
     InsightCategory,
@@ -191,6 +192,12 @@ class WeeklySummaryCompiler:
                 if api_key
                 else FallbackAsyncOpenAI()
             )
+
+        # Structured-output calls (.beta.chat.completions.parse) go through the
+        # litellm-backed client; the Responses API + web_search_preview tool
+        # above stays on FallbackAsyncOpenAI, which litellm doesn't cover.
+        # An injected openai_client (tests) still serves both, unchanged.
+        self._structured_client = openai_client or get_structured_llm_client()
 
         self._redis = redis_client or get_async_redis()
 
@@ -514,7 +521,7 @@ class WeeklySummaryCompiler:
             )
             instructions, response_format = self._get_tier_prompts_and_format(user_tier)
 
-            completion = await self._client.beta.chat.completions.parse(
+            completion = await self._structured_client.beta.chat.completions.parse(
                 model=os.getenv("MARKET_INSIGHTS_LLM_MODEL", "gpt-4o-mini"),
                 messages=[
                     {

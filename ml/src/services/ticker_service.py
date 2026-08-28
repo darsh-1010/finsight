@@ -7,14 +7,16 @@ import asyncio
 import json
 import re
 
+import redis
+from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_openai import ChatOpenAI
 
 from config.settings import settings
 from src.core.exceptions import TickerResolutionError
 from src.core.interfaces import IDataSource, ITickerService
 from src.core.types import JsonDict, ValidationStatus
 from src.data_sources.yfinance_source import YFinanceDataSource
+from src.llm.litellm_router import get_chat_model
 from src.llm.prompts import PromptLoader
 from src.utils.json_parser import LLMResponseParser
 from src.utils.logger import get_logger
@@ -33,7 +35,7 @@ class TickerService(ITickerService):
 
     def __init__(
         self,
-        llm: ChatOpenAI | None = None,
+        llm: BaseChatModel | None = None,
         data_source: IDataSource | None = None,
         validate_tickers: bool | None = None,
         model_name: str | None = None,
@@ -54,8 +56,8 @@ class TickerService(ITickerService):
             else settings.validate_tickers
         )
 
-        self.llm = llm or ChatOpenAI(
-            model=model_name, temperature=settings.ticker_resolution_temperature
+        self.llm = llm or get_chat_model(
+            model_name, temperature=settings.ticker_resolution_temperature
         )
         self._data_source = data_source
         self.validate_tickers = validate_tickers
@@ -135,7 +137,11 @@ class TickerService(ITickerService):
                     TypeError,
                     ValueError,
                     RuntimeError,
+                    redis.exceptions.RedisError,
                 ) as cache_err:
+                    # RedisError (e.g. ConnectionError when Redis is briefly down) isn't
+                    # a subclass of any builtin caught above - must be listed explicitly
+                    # or a Redis outage crashes resolution instead of skipping the cache.
                     logger.debug(f"[TICKER] Cache lookup skipped: {cache_err}")
 
                 # ── Level 3: LLM resolution ────────────────────────────────────────────
@@ -209,6 +215,7 @@ class TickerService(ITickerService):
                         TypeError,
                         ValueError,
                         RuntimeError,
+                        redis.exceptions.RedisError,
                     ) as cache_err:
                         logger.debug(f"[TICKER] Cache write failed: {cache_err}")
 

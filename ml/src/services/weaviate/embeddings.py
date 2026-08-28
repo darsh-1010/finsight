@@ -1,10 +1,9 @@
 """Embedding service."""
 
-from typing import List
-
-from langchain_openai import OpenAIEmbeddings
+from typing import Any
 
 from config.settings import settings
+from src.llm.litellm_router import get_embedding_model_group, get_llm_router
 from src.utils.logger import get_logger
 from src.utils.perf_utils import timed
 
@@ -13,44 +12,41 @@ from .config import EMBEDDING_BATCH_SIZE
 logger = get_logger(__name__)
 
 
-class FallbackOpenAIEmbeddings:
-    """Wrapper that tries primary FreeLLMAPI first, then falls back to OpenAI."""
+def _extract_vectors(response: Any) -> list[list[float]]:
+    """Pull the raw float vectors out of a litellm EmbeddingResponse."""
+    vectors = []
+    for item in response.data:
+        vectors.append(item["embedding"] if isinstance(item, dict) else item.embedding)
+    return vectors
 
-    def __init__(self, primary: OpenAIEmbeddings, fallback: OpenAIEmbeddings):
-        self.primary = primary
-        self.fallback = fallback
+
+class FallbackOpenAIEmbeddings:
+    """Embeddings via the shared litellm Router (FreeLLMAPI-primary, OpenAI-fallback).
+
+    Keeps the exact method names/signatures the rest of the app already
+    depends on (embed_documents/embed_query, sync and async) - callers need
+    no changes.
+    """
+
+    def __init__(self, model: str) -> None:
+        self._model_group = get_embedding_model_group(model)
 
     def embed_documents(self, texts: list[str]) -> list[list[float]]:
-        try:
-            return self.primary.embed_documents(texts)
-        except Exception as e:
-            logger.warning(f"Primary embeddings failed: {e}. Falling back to OpenAI.")
-            return self.fallback.embed_documents(texts)
+        response = get_llm_router().embedding(model=self._model_group, input=texts)
+        return _extract_vectors(response)
 
     async def aembed_documents(self, texts: list[str]) -> list[list[float]]:
-        try:
-            return await self.primary.aembed_documents(texts)
-        except Exception as e:
-            logger.warning(
-                f"Primary async embeddings failed: {e}. Falling back to OpenAI."
-            )
-            return await self.fallback.aembed_documents(texts)
+        response = await get_llm_router().aembedding(
+            model=self._model_group, input=texts
+        )
+        return _extract_vectors(response)
 
     def embed_query(self, text: str) -> list[float]:
-        try:
-            return self.primary.embed_query(text)
-        except Exception as e:
-            logger.warning(f"Primary embed query failed: {e}. Falling back to OpenAI.")
-            return self.fallback.embed_query(text)
+        return self.embed_documents([text])[0]
 
     async def aembed_query(self, text: str) -> list[float]:
-        try:
-            return await self.primary.aembed_query(text)
-        except Exception as e:
-            logger.warning(
-                f"Primary async embed query failed: {e}. Falling back to OpenAI."
-            )
-            return await self.fallback.aembed_query(text)
+        vectors = await self.aembed_documents([text])
+        return vectors[0]
 
 
 # FIX-004: In-process LRU cache for query embeddings.
@@ -65,18 +61,7 @@ class EmbeddingService:
 
     def __init__(self):
         """Initialize embedding service."""
-        primary_embeddings = OpenAIEmbeddings(
-            model=settings.embedding_model,
-            openai_api_base=settings.freellmapi_base_url,
-            api_key=settings.freellmapi_key or "dummy-key",
-        )
-        fallback_embeddings = OpenAIEmbeddings(
-            model=settings.embedding_model,
-            api_key=settings.openai_api_key,
-        )
-        self.embeddings = FallbackOpenAIEmbeddings(
-            primary_embeddings, fallback_embeddings
-        )
+        self.embeddings = FallbackOpenAIEmbeddings(settings.embedding_model)
 
     async def aembed_documents(self, texts: list[str]) -> list[list[float]]:
         """

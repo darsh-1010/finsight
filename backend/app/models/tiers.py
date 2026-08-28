@@ -1,5 +1,3 @@
-from typing import Any
-
 from sqlalchemy import (
     JSON,
     Boolean,
@@ -27,32 +25,6 @@ class Tier(Base):
     price_amount = Column(Integer, nullable=False)  # in paise
     price_amount_yearly = Column(Integer, nullable=True)  # in paise for yearly
     currency = Column(String, default="inr")
-
-
-    # Stripe mapping properties for schema and seed compatibility
-    @property
-    def stripe_product_id(self) -> str:
-        return f"mock_prod_{self.level}"
-
-    @stripe_product_id.setter
-    def stripe_product_id(self, value: Any) -> None:
-        pass
-
-    @property
-    def stripe_price_id(self) -> str:
-        return f"mock_price_{self.level}"
-
-    @stripe_price_id.setter
-    def stripe_price_id(self, value: Any) -> None:
-        pass
-
-    @property
-    def stripe_yearly_price_id(self) -> str | None:
-        return f"mock_yearly_{self.level}" if self.level > 1 else None
-
-    @stripe_yearly_price_id.setter
-    def stripe_yearly_price_id(self, value: Any) -> None:
-        pass
 
     # UI / catalog metadata
     highlights = Column(JSON, nullable=True)

@@ -1,6 +1,8 @@
+import { useRouter } from 'next/navigation';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { PiSparkleFill } from 'react-icons/pi';
+
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -9,7 +11,6 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 
 interface TrialJoinModalProps {
   isOpen: boolean;
@@ -17,7 +18,7 @@ interface TrialJoinModalProps {
 }
 
 const TrialJoinModal: React.FC<TrialJoinModalProps> = ({ isOpen, onClose }) => {
-  const navigate = useNavigate();
+  const navigate = useRouter().push;
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>

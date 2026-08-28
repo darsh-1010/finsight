@@ -12,6 +12,7 @@ from .api.routes import (
     onboarding,
     payments,
     portfolio,
+    research,
     scraping,
     tiers,
     tokens,
@@ -46,6 +47,7 @@ app.include_router(market.router)
 app.include_router(tokens.router)
 app.include_router(notifications.router)
 app.include_router(portfolio.router)
+app.include_router(research.router)
 
 from .services.cron import cron_service
 

@@ -23,7 +23,6 @@ export interface LoginCredentials {
 export interface SignupCredentials {
   email: string;
   password: string;
-  role_id: number;
   tier_level?: number;
 }
 

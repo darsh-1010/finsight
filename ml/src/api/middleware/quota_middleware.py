@@ -25,9 +25,13 @@ class QuotaMiddleware(BaseHTTPMiddleware):
         if not settings.tier_enforcement_enabled:
             return await call_next(request)
 
-        # Only enforce on chat/upload endpoints
+        # Only enforce on chat/upload/research endpoints
         path = request.url.path
-        if not (path.startswith("/api/v1/chat") or path.startswith("/api/v1/upload")):
+        if not (
+            path.startswith("/api/v1/chat")
+            or path.startswith("/api/v1/upload")
+            or path.startswith("/api/v1/research")
+        ):
             return await call_next(request)
 
         user_id = self._get_user_id(request)

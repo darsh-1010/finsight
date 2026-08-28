@@ -1,13 +1,14 @@
 'use client';
 
 import { Suspense } from 'react';
-import ResetPasswordPage from '@/views/ResetPasswordPage';
+
 import Loader from '@/components/common/Loader';
+import VerifyEmailPage from '@/views/VerifyEmailPage';
 
 export default function Page() {
   return (
     <Suspense fallback={<Loader />}>
-      <ResetPasswordPage />
+      <VerifyEmailPage />
     </Suspense>
   );
 }

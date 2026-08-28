@@ -174,9 +174,13 @@ class YFinanceDataSource(BaseDataSource):
 
             return data
 
-        except (ValueError, TypeError, AttributeError, RuntimeError) as e:
+        except (ValueError, TypeError, AttributeError, RuntimeError, KeyError) as e:
+            # KeyError included: yfinance's lazy fast_info/metadata properties raise a
+            # bare KeyError (e.g. missing "currentTradingPeriod") for delisted/invalid
+            # tickers instead of a clean 404 - this is the single boundary that must
+            # normalize every such failure into YFinanceError for callers.
             error_msg = str(e)
-            if "404" in error_msg or "Not Found" in error_msg:
+            if "404" in error_msg or "Not Found" in error_msg or isinstance(e, KeyError):
                 logger.warning(
                     "yFinance data not found (expected for invalid tickers): ticker=%s",
                     ticker,

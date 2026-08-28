@@ -1,11 +1,12 @@
 import { FileUp, Clock, History } from 'lucide-react';
 import React from 'react';
-import { useSearchParams } from 'react-router-dom';
+
 
 import FrequencySetting from '@/components/admin/scraping/FrequencySetting';
 import PDFIngestion from '@/components/admin/scraping/PDFIngestion';
 import ScrapingContent from '@/components/admin/scraping/ScrapingContent';
 import ScrapingHistory from '@/components/admin/scraping/ScrapingHistory';
+import { useSearchParams, useUpdateSearchParams } from '@/hooks/useSearchParamsUpdater';
 import { cn } from '@/lib/utils';
 
 type MainTab = 'ingest' | 'frequency' | 'content' | 'history';
@@ -114,7 +115,8 @@ const MainTabSelector: React.FC<{
 );
 
 const AdminScrapingPage: React.FC = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const searchParams = useSearchParams();
+  const setSearchParams = useUpdateSearchParams();
   const tabParam = searchParams.get('tab');
   
   const activeTab: MainTab = (tabParam === 'ingest' || tabParam === 'frequency' || tabParam === 'content' || tabParam === 'history')

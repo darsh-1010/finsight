@@ -1,5 +1,5 @@
+import { useRouter } from 'next/navigation';
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { OnboardingApi, type Question, type AnswerCreate } from '@/api/auth';
 import { useAuth } from '@/context/AuthContext';
@@ -74,7 +74,7 @@ const formatAnswers = (
 }));
 
 const useOnboardingSubmit = (
-  navigate: ReturnType<typeof useNavigate>,
+  navigate: (path: string) => void,
   checkAuth: () => void,
 ) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -150,7 +150,7 @@ const useOnboardingActions = (
   currentStep: number,
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>,
   setOpen: (v: boolean) => void,
-  navigate: ReturnType<typeof useNavigate>,
+  navigate: (path: string) => void,
   checkAuth: () => void,
 ) => {
   const { isSubmitting, submit } = useOnboardingSubmit(navigate, checkAuth);
@@ -174,7 +174,7 @@ const useOnboardingActions = (
 };
 
 export const useUserOnboarding = () => {
-  const navigate = useNavigate();
+  const navigate = useRouter().push;
   const { checkAuth } = useAuth();
 
   const [currentStep, setCurrentStep] = useState(0);

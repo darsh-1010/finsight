@@ -1,8 +1,9 @@
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
+
 import { Button } from '../ui/button';
 
 const Footer = () => {
-  const navigate = useNavigate();
+  const navigate = useRouter().push;
 
   return (
     <footer className="bg-gradient-to-b from-background to-secondary/20 border-t border-border/40 transition-colors duration-300">

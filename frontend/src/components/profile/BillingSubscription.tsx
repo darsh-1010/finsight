@@ -1,4 +1,4 @@
-import { CreditCard, Loader2 } from "lucide-react";
+import { CreditCard } from "lucide-react";
 import React from "react";
 import type { User as UserInterface } from "@/api/auth";
 import { getTierIcon } from "@/lib/utils";
@@ -6,9 +6,6 @@ import UpgradeModal from "./UpgradeModal";
 
 interface BillingSubscriptionProps {
   user: UserInterface | null;
-  isLoading: boolean;
-  error: string | null;
-  handleManageSubscription?: () => Promise<void>;
   embedded?: boolean;
 }
 
@@ -25,8 +22,6 @@ const ICON_MAP: Record<number, IconType> = {
 
 const BillingSubscription: React.FC<BillingSubscriptionProps> = ({
   user,
-  isLoading,
-  error,
   embedded = false,
 }) => {
   const Icon = ICON_MAP[user?.tier_level ?? 0] || CreditCard;
@@ -44,11 +39,7 @@ const BillingSubscription: React.FC<BillingSubscriptionProps> = ({
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="p-2.5 bg-background/80 backdrop-blur-md rounded-xl shadow-inner border border-primary/20 text-primary">
-                {isLoading ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                ) : (
-                  <Icon size={20} />
-                )}
+                <Icon size={20} />
               </div>
               <div>
                 <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-[0.15em] mb-0.5">
@@ -87,16 +78,11 @@ const BillingSubscription: React.FC<BillingSubscriptionProps> = ({
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2">
             <div className="flex-1">
-              <UpgradeModal isLoadingAuth={isLoading} />
+              <UpgradeModal />
             </div>
           </div>
         </div>
       </div>
-      {error && (
-        <p className="text-xs text-red-500 mt-2 bg-red-500/10 p-3 rounded-lg border border-red-500/20">
-          {error}
-        </p>
-      )}
     </div>
   );
 

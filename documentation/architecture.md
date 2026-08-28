@@ -7,13 +7,13 @@ This document details the system architecture of the Finsight application, detai
 ## High-Level System Architecture
 
 Finsight consists of three primary modules:
-1. **Frontend UI**: Single-page application built using React, Vite, and styled with Tailwind CSS v4.
-2. **Core Backend (FastAPI)**: Manages database persistence, authentication, billing (via Stripe integration), onboarding answers, and subscription tiers.
+1. **Frontend UI**: Application built using Next.js (App Router) and React, styled with Tailwind CSS v4.
+2. **Core Backend (FastAPI)**: Manages database persistence, authentication, onboarding answers, and subscription tiers (all tiers are free).
 3. **ML Service**: Performs real-time sentiment analysis, RAG (Retrieval-Augmented Generation) document search, and structured insights classifications.
 
 ```mermaid
 graph TD
-    subgraph Frontend [Frontend SPA - React/Vite]
+    subgraph Frontend [Frontend - Next.js/React]
         UI[User Interface]
         Client[Axios API Client]
         WS[WebSocket Listener]
@@ -58,6 +58,6 @@ graph TD
 - **Weaviate Vector Database**: Hosts indexed PDF reports for Retrieval-Augmented Generation queries.
 
 ### 3. Frontend Client
-- **Vite & React**: Fast compilation and SPA bundle execution.
+- **Next.js (App Router) & React**: Server/client component rendering with route groups for public, auth, and protected areas.
 - **Redux Toolkit**: Centralizes state management for subscription tiers and onboarding flows.
-- **Tailwind CSS v4 & Glassmorphism**: Provides high-end styling cues, custom theme variables, and consistent layout tokens.
+- **Tailwind CSS v4**: Provides the Purple/Black theme's custom theme variables and consistent layout tokens.

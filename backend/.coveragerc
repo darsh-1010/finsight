@@ -3,4 +3,3 @@ omit =
     app/seeds/*
     app/scripts/*
     app/cron.py
-    app/schemas/stripe.py

@@ -1,13 +1,14 @@
 'use client';
 
 import { Suspense } from 'react';
-import LoginPage from '@/views/LoginPage';
+
 import Loader from '@/components/common/Loader';
+import Research from '@/views/Research';
 
 export default function Page() {
   return (
     <Suspense fallback={<Loader />}>
-      <LoginPage />
+      <Research />
     </Suspense>
   );
 }

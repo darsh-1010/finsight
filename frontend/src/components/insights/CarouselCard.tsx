@@ -1,16 +1,18 @@
-import React from "react";
-import { ExternalLink, Lock, Zap } from "lucide-react";
-import { Link } from "react-router-dom";
-import type { MarketInsight } from "./marketInsightTypes";
-import { useAuth } from "@/context/AuthContext";
-import { cn } from "@/lib/utils";
+import { ExternalLink, Lock, Zap } from 'lucide-react';
+import Link from 'next/link';
+import React from 'react';
+
 import {
   formatPriceChange,
   getTrendStyle,
   getFaviconUrl,
   getShortLabel,
   getRelativeTime,
-} from "./helpers";
+} from './helpers';
+import type { MarketInsight } from './marketInsightTypes';
+
+import { useAuth } from '@/context/AuthContext';
+import { cn } from '@/lib/utils';
 
 interface CarouselCardProps {
   insight: MarketInsight;
@@ -39,37 +41,37 @@ export const CarouselCard: React.FC<CarouselCardProps> = ({
     <article
       id={`insight-card-${insight.id}`}
       className={cn(
-        "absolute inset-0 rounded-2xl border border-border bg-card text-left shadow-lg transition-all duration-500 overflow-hidden flex flex-col md:grid md:grid-cols-12",
+        'absolute inset-0 rounded-2xl border border-border bg-card text-left shadow-lg transition-all duration-500 overflow-hidden flex flex-col md:grid md:grid-cols-12',
         isActive
-          ? "opacity-100 scale-100 translate-x-0 z-10 pointer-events-auto"
-          : "opacity-0 scale-95 pointer-events-none z-0",
+          ? 'opacity-100 scale-100 translate-x-0 z-10 pointer-events-auto'
+          : 'opacity-0 scale-95 pointer-events-none z-0',
         isHighlighted &&
-          "ring-2 ring-indigo-500 ring-offset-2 dark:ring-offset-[#120F1D] animate-pulse shadow-[0_0_25px_rgba(99,102,241,0.6)]",
+          'ring-2 ring-indigo-500 ring-offset-2 dark:ring-offset-[#120F1D] animate-pulse shadow-[0_0_25px_rgba(176, 160, 212,0.6)]',
       )}
     >
       {/* Sidebar Area: Trend & Ticker */}
       <div
         className={cn(
-          "md:col-span-4 flex flex-row md:flex-col justify-between items-center md:items-start p-4 md:p-5 border-b md:border-b-0 md:border-r border-border/40 shrink-0",
-          insight.trend === "Bullish"
-            ? "bg-gradient-to-br from-rose-500/10 via-rose-500/5 to-transparent dark:from-rose-500/15 dark:via-rose-500/2"
-            : insight.trend === "Bearish"
-              ? "bg-gradient-to-br from-red-500/10 via-red-500/5 to-transparent dark:from-red-500/15 dark:via-red-500/2"
-              : "bg-gradient-to-br from-sky-500/10 via-sky-500/5 to-transparent dark:from-sky-500/15 dark:via-sky-500/2",
-          isLocked ? "blur-sm select-none opacity-50" : "",
+          'md:col-span-4 flex flex-row md:flex-col justify-between items-center md:items-start p-4 md:p-5 border-b md:border-b-0 md:border-r border-border/40 shrink-0',
+          insight.trend === 'Bullish'
+            ? 'bg-gradient-to-br from-rose-500/10 via-rose-500/5 to-transparent dark:from-rose-500/15 dark:via-rose-500/2'
+            : insight.trend === 'Bearish'
+              ? 'bg-gradient-to-br from-red-500/10 via-red-500/5 to-transparent dark:from-red-500/15 dark:via-red-500/2'
+              : 'bg-gradient-to-br from-sky-500/10 via-sky-500/5 to-transparent dark:from-sky-500/15 dark:via-sky-500/2',
+          isLocked ? 'blur-sm select-none opacity-50' : '',
         )}
       >
         {/* Ticker Emblem */}
         <div className="flex items-center gap-3 md:flex-col md:items-start md:gap-4 w-full md:h-full justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 md:h-12 md:w-12 text-sm shrink-0 items-center justify-center rounded-xl border border-border bg-background shadow-sm font-mono font-extrabold text-[#5546FF] tracking-wider">
-              {insight.ticker || "MKT"}
+            <div className="flex h-10 w-10 md:h-12 md:w-12 text-sm shrink-0 items-center justify-center rounded-xl border border-border bg-background shadow-sm font-mono font-extrabold text-[#9683C2] tracking-wider">
+              {insight.ticker || 'MKT'}
             </div>
             <div className="md:hidden flex flex-col">
               {insight.trend && (
                 <span
                   className={cn(
-                    "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold",
+                    'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold',
                     trendStyle.labelClass,
                   )}
                 >
@@ -85,7 +87,7 @@ export const CarouselCard: React.FC<CarouselCardProps> = ({
             {insight.trend && (
               <span
                 className={cn(
-                  "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold w-fit",
+                  'inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold w-fit',
                   trendStyle.labelClass,
                 )}
               >
@@ -95,15 +97,15 @@ export const CarouselCard: React.FC<CarouselCardProps> = ({
             )}
             {insight.price_change_pct !== undefined &&
               insight.price_change_pct !== null && (
-                <span
-                  className={cn(
-                    "text-8xl font-bold tracking-tight",
-                    isPositive ? "text-rose-500" : "text-red-500",
-                  )}
-                >
-                  {formatPriceChange(insight.price_change_pct)}
-                </span>
-              )}
+              <span
+                className={cn(
+                  'text-8xl font-bold tracking-tight',
+                  isPositive ? 'text-rose-500' : 'text-red-500',
+                )}
+              >
+                {formatPriceChange(insight.price_change_pct)}
+              </span>
+            )}
           </div>
 
           {/* Right/Bottom Info Badge */}
@@ -111,16 +113,16 @@ export const CarouselCard: React.FC<CarouselCardProps> = ({
             {/* Mobile price change */}
             {insight.price_change_pct !== undefined &&
               insight.price_change_pct !== null && (
-                <span
-                  className={cn(
-                    "md:hidden text-xs font-bold",
-                    isPositive ? "text-rose-500" : "text-red-500",
-                  )}
-                >
-                  {formatPriceChange(insight.price_change_pct)}
-                </span>
-              )}
-            <span className="inline-flex items-center gap-1 rounded-full bg-[#5546FF]/10 text-[#5546FF] px-2.5 py-1 text-[10px] md:text-xs font-bold border border-[#5546FF]/20 shadow-[0_0_10px_rgba(85,70,255,0.1)]">
+              <span
+                className={cn(
+                  'md:hidden text-xs font-bold',
+                  isPositive ? 'text-rose-500' : 'text-red-500',
+                )}
+              >
+                {formatPriceChange(insight.price_change_pct)}
+              </span>
+            )}
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#9683C2]/10 text-[#9683C2] px-2.5 py-1 text-[10px] md:text-xs font-bold border border-[#9683C2]/20 shadow-[0_0_10px_rgba(150, 131, 194,0.1)]">
               <Zap className="h-3 w-3 fill-current" /> Top Signal
             </span>
           </div>
@@ -130,8 +132,8 @@ export const CarouselCard: React.FC<CarouselCardProps> = ({
       {/* Main Content Area */}
       <div
         className={cn(
-          "md:col-span-8 flex flex-col justify-between p-4 md:p-5 h-full space-y-4",
-          isLocked ? "blur-sm select-none opacity-50" : "",
+          'md:col-span-8 flex flex-col justify-between p-4 md:p-5 h-full space-y-4',
+          isLocked ? 'blur-sm select-none opacity-50' : '',
         )}
       >
         <div className="space-y-2 md:space-y-2">
@@ -164,6 +166,7 @@ export const CarouselCard: React.FC<CarouselCardProps> = ({
             {insight.citations?.map((citation) => {
               const faviconUrl = getFaviconUrl(citation);
               const label = getShortLabel(citation);
+
               return (
                 <a
                   key={citation}
@@ -207,7 +210,7 @@ export const CarouselCard: React.FC<CarouselCardProps> = ({
                         className="h-4.5 w-4.5 object-contain"
                         onError={(e) => {
                           (e.currentTarget as HTMLImageElement).style.display =
-                            "none";
+                            'none';
                         }}
                       />
                     </div>
@@ -238,15 +241,15 @@ export const CarouselCard: React.FC<CarouselCardProps> = ({
 
       {isLocked && (
         <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-background/60 backdrop-blur-md transition-all duration-300">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#5546FF]/10 text-[#5546FF] border border-[#5546FF]/20 shadow-[0_0_15px_rgba(85,70,255,0.2)] mb-2 animate-bounce">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#9683C2]/10 text-[#9683C2] border border-[#9683C2]/20 shadow-[0_0_15px_rgba(150, 131, 194,0.2)] mb-2 animate-bounce">
             <Lock className="h-5 w-5" />
           </div>
           <h3 className="mb-3 text-base font-extrabold text-foreground tracking-tight">
             Premium Insight
           </h3>
           <Link
-            to="/pricing"
-            className="rounded-full bg-gradient-to-r from-[#6366F1] to-[#5546FF] px-5 py-1.5 text-xs font-bold text-white shadow-md hover:shadow-[0_0_15px_rgba(99,102,241,0.4)] transition-all duration-200 hover:scale-105"
+            href="/pricing"
+            className="rounded-full bg-gradient-to-r from-[#B0A0D4] to-[#9683C2] px-5 py-1.5 text-xs font-bold text-white shadow-md hover:shadow-[0_0_15px_rgba(176, 160, 212,0.4)] transition-all duration-200 hover:scale-105"
           >
             Upgrade to Unlock
           </Link>

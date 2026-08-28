@@ -1,8 +1,9 @@
-import { useNavigate } from "react-router-dom";
-import { PiSparkleFill, PiArrowUpRightBold } from "react-icons/pi";
-import { PROFILE_SUBSCRIPTION_PATH } from "@/lib/profileRoutes";
-import { cn } from "@/lib/utils";
-import { useAuth } from "@/context/AuthContext";
+import { useRouter } from 'next/navigation';
+import { PiSparkleFill, PiArrowUpRightBold } from 'react-icons/pi';
+
+import { useAuth } from '@/context/AuthContext';
+import { PROFILE_SUBSCRIPTION_PATH } from '@/lib/profileRoutes';
+import { cn } from '@/lib/utils';
 
 interface AttachmentLockedPopoverProps {
   popoverRef?: React.RefObject<HTMLDivElement | null>;
@@ -12,22 +13,22 @@ interface AttachmentLockedPopoverProps {
 }
 
 const FEATURES = [
-  "Portfolio Performance Deep-Dive",
-  "Deep Context Analysis",
-  "Multi-Document Intelligence",
+  'Portfolio Performance Deep-Dive',
+  'Deep Context Analysis',
+  'Multi-Document Intelligence',
 ];
 
 const AttachmentLockedPopover = ({
   popoverRef,
-  ctaLabel = "Click to Upgrade",
+  ctaLabel = 'Click to Upgrade',
   onClose,
 }: AttachmentLockedPopoverProps) => {
-  const navigate = useNavigate();
+  const navigate = useRouter().push;
   const { isLoggedIn } = useAuth();
 
   const handleCtaClick = () => {
     onClose();
-    navigate(isLoggedIn ? PROFILE_SUBSCRIPTION_PATH : "/signup");
+    navigate(isLoggedIn ? PROFILE_SUBSCRIPTION_PATH : '/signup');
   };
 
   return (
@@ -35,15 +36,15 @@ const AttachmentLockedPopover = ({
       ref={popoverRef}
       className={cn(
         // Position
-        "absolute bottom-full left-0 mb-3 z-50",
+        'absolute bottom-full left-0 mb-3 z-50',
         // Size & shape
-        "w-64 rounded-2xl overflow-hidden",
+        'w-64 rounded-2xl overflow-hidden',
         // Light theme
-        "bg-white border border-gray-200 shadow-xl",
+        'bg-white border border-gray-200 shadow-xl',
         // Dark theme
-        "dark:bg-gray-950 dark:border-gray-800/80 dark:shadow-2xl dark:shadow-black/60",
+        'dark:bg-gray-950 dark:border-gray-800/80 dark:shadow-2xl dark:shadow-black/60',
         // Entrance animation
-        "animate-in fade-in zoom-in-95 duration-200 origin-bottom-left",
+        'animate-in fade-in zoom-in-95 duration-200 origin-bottom-left',
       )}
     >
       {/* Top accent bar */}
@@ -81,14 +82,14 @@ const AttachmentLockedPopover = ({
         <button
           onClick={handleCtaClick}
           className={cn(
-            "w-full mt-1 py-2 rounded-xl",
-            "flex items-center justify-center gap-1.5",
-            "text-[11px] font-bold tracking-widest uppercase",
+            'w-full mt-1 py-2 rounded-xl',
+            'flex items-center justify-center gap-1.5',
+            'text-[11px] font-bold tracking-widest uppercase',
             // Light
-            "border border-primary/60 text-primary",
+            'border border-primary/60 text-primary',
             // Hover (works for both themes)
-            "hover:bg-primary hover:text-white hover:border-primary",
-            "transition-all duration-200",
+            'hover:bg-primary hover:text-white hover:border-primary',
+            'transition-all duration-200',
           )}
         >
           {ctaLabel}

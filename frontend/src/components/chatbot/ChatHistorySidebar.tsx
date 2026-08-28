@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { PiPlusBold, PiTrashSimpleBold, PiXBold } from "react-icons/pi";
-import { useNavigate, useParams } from "react-router-dom";
+import { useRouter, useParams } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import { PiPlusBold, PiTrashSimpleBold, PiXBold } from 'react-icons/pi';
 
-import { Button } from "../ui/button";
+import { Button } from '../ui/button';
 import {
   Dialog,
   DialogContent,
@@ -10,17 +10,17 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "../ui/dialog";
+} from '../ui/dialog';
 
-import type { SubSidebarProps } from "@/lib/interfaces/Sidebar";
-import { cn } from "@/lib/utils";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import type { SubSidebarProps } from '@/lib/interfaces/Sidebar';
+import { cn } from '@/lib/utils';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   selectConversations,
   fetchSessions,
   deleteSession,
-} from "@/store/slices/chatSlice";
-import type { Conversation } from "@/store/slices/chatSlice";
+} from '@/store/slices/chatSlice';
+import type { Conversation } from '@/store/slices/chatSlice';
 
 interface DeleteSessionModalProps {
   pendingDeleteId: string | null;
@@ -31,15 +31,15 @@ interface DeleteSessionModalProps {
 function extractFirst30Words(markdown: string): string {
   const text = markdown
     // Remove markdown links: [text](url) -> text
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
     // Remove markdown symbols
-    .replace(/[*_#>`~-]/g, "")
+    .replace(/[*_#>`~-]/g, '')
     // Remove inline code backticks
-    .replace(/`+/g, "")
+    .replace(/`+/g, '')
     // Normalize whitespace
     .trim();
 
-  return text.split(/\s+/).slice(0, 30).join(" ");
+  return text.split(/\s+/).slice(0, 30).join(' ');
 }
 
 const DeleteSessionModal = ({
@@ -88,8 +88,8 @@ interface ConversationItemProps {
 const ChatTime = ({ updatedAt }: { updatedAt: string }) => (
   <span className="text-[10px] text-gray-400 whitespace-nowrap shrink-0 ml-1 group-hover:hidden">
     {new Date(updatedAt).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
+      hour: '2-digit',
+      minute: '2-digit',
     })}
   </span>
 );
@@ -104,19 +104,19 @@ const ConversationItem = ({
     key={chat.id}
     onClick={() => navigate(`/ask_finsight/c/${chat.id}`)}
     className={cn(
-      "w-full text-left p-3 rounded-2xl transition-all duration-200 group relative",
+      'w-full text-left p-3 rounded-2xl transition-all duration-200 group relative',
       activeId === chat.id
-        ? "bg-primary/5 dark:bg-primary/10 border border-primary/20"
-        : "hover:bg-gray-50 dark:hover:bg-gray-900 border border-transparent",
+        ? 'bg-primary/5 dark:bg-primary/10 border border-primary/20'
+        : 'hover:bg-gray-50 dark:hover:bg-gray-900 border border-transparent',
     )}
   >
     <div className="flex justify-between items-start mb-1 min-w-0">
       <span
         className={cn(
-          "font-medium text-sm truncate pr-8 flex-1",
+          'font-medium text-sm truncate pr-8 flex-1',
           activeId === chat.id
-            ? "text-primary"
-            : "text-gray-900 dark:text-gray-100",
+            ? 'text-primary'
+            : 'text-gray-900 dark:text-gray-100',
         )}
       >
         {chat.title}
@@ -125,8 +125,8 @@ const ConversationItem = ({
       <button
         onClick={(e) => handleDeleteClick(e, chat.id)}
         className={cn(
-          "absolute right-3 top-3.5 p-1 text-gray-400",
-          "hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10",
+          'absolute right-3 top-3.5 p-1 text-gray-400',
+          'hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10',
         )}
         title="Delete chat"
       >
@@ -159,7 +159,7 @@ const SidebarHeader = ({
       <Button
         variant="ghost"
         size="icon"
-        onClick={() => navigate("/ask_finsight")}
+        onClick={() => navigate('/ask_finsight')}
         className="h-8 w-8 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
       >
         <PiPlusBold size={18} />
@@ -211,9 +211,9 @@ const ConversationList = ({
 );
 
 const useChatHistory = () => {
-  const navigate = useNavigate();
+  const navigate = useRouter().push;
   const dispatch = useAppDispatch();
-  const { conversationId: activeId } = useParams();
+  const { conversationId: activeId } = useParams<{ conversationId?: string }>();
   const conversations = useAppSelector(selectConversations);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
@@ -251,16 +251,16 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({
 }) => (
   <aside
     className={cn(
-      "flex flex-col h-full",
-      "transition-all duration-300 bg-white dark:bg-[#08070A]",
+      'flex flex-col h-full',
+      'transition-all duration-300 bg-white dark:bg-[#08070A]',
       isMobile
         ? cn(
-            "fixed inset-y-0 left-0 z-50 transition-transform duration-300 transform",
-            sidebarCollapsed ? "-translate-x-full" : "translate-x-0",
-          )
-        : cn("relative", sidebarCollapsed ? "w-0 overflow-hidden" : "w-80"),
+          'fixed inset-y-0 left-0 z-50 transition-transform duration-300 transform',
+          sidebarCollapsed ? '-translate-x-full' : 'translate-x-0',
+        )
+        : cn('relative', sidebarCollapsed ? 'w-0 overflow-hidden' : 'w-80'),
     )}
-    style={isMobile ? { width: "min(320px, 85vw)" } : {}}
+    style={isMobile ? { width: 'min(320px, 85vw)' } : {}}
   >
     <SidebarHeader
       isMobile={isMobile}
@@ -301,7 +301,7 @@ const ChatHistorySidebar: React.FC<SubSidebarProps> = (props) => {
     dispatch(deleteSession(pendingDeleteId));
 
     if (activeId === pendingDeleteId) {
-      navigate("/ask_finsight");
+      navigate('/ask_finsight');
     }
 
     setPendingDeleteId(null);

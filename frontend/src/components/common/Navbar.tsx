@@ -1,18 +1,19 @@
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import React from 'react';
 import { PiSunDim, PiMoon, PiList } from 'react-icons/pi';
-import { Link, NavLink } from 'react-router-dom';
 
 import { useTheme } from '../../context/ThemeContext';
 
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
-const navLinkClasses = ({ isActive }: { isActive: boolean }) => `relative text-sm font-medium transition-all duration-300 hover:text-primary py-1 ${
+const navLinkClasses = (isActive: boolean) => `relative text-sm font-medium transition-all duration-300 hover:text-primary py-1 ${
   isActive
     ? 'text-primary after:content-[""] after:absolute after:-bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1.5 after:h-1.5 after:bg-primary after:rounded-full after:shadow-[0_0_8px_var(--color-primary)]'
     : 'text-muted-foreground'
 }`;
 
-const mobileNavLinkClasses = ({ isActive }: { isActive: boolean }) => `text-lg font-medium transition-all duration-200 hover:text-primary ${
+const mobileNavLinkClasses = (isActive: boolean) => `text-lg font-medium transition-all duration-200 hover:text-primary ${
   isActive ? 'text-primary' : 'text-muted-foreground'
 }`;
 
@@ -28,7 +29,7 @@ const navLinks = [
 /* -------------------- Sub Components -------------------- */
 
 const Logo: React.FC = () => (
-  <Link to="/" className="hover:opacity-90 transition-opacity flex items-center gap-2">
+  <Link href="/" className="hover:opacity-90 transition-opacity flex items-center gap-2">
     <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold text-lg shadow-sm">F</span>
     <h3 className="text-2.5xl md:text-3xl font-logo tracking-wider bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent font-extrabold">
       FinSight
@@ -36,15 +37,19 @@ const Logo: React.FC = () => (
   </Link>
 );
 
-const DesktopNav: React.FC = () => (
-  <div className="hidden lg:flex gap-8">
-    {navLinks.map((link) => (
-      <NavLink key={link.to} to={link.to} className={navLinkClasses}>
-        {link.label}
-      </NavLink>
-    ))}
-  </div>
-);
+const DesktopNav: React.FC = () => {
+  const pathname = usePathname();
+
+  return (
+    <div className="hidden lg:flex gap-8">
+      {navLinks.map((link) => (
+        <Link key={link.to} href={link.to} className={navLinkClasses(pathname === link.to)}>
+          {link.label}
+        </Link>
+      ))}
+    </div>
+  );
+};
 
 interface ThemeToggleProps {
   theme: string;
@@ -63,7 +68,7 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({ theme, toggleTheme }) => (
 
 const DesktopCTA: React.FC = () => (
   <Link
-    to="/login"
+    href="/login"
     className="hidden sm:block px-6 py-2.5 bg-primary text-primary-foreground rounded-full font-semibold hover:bg-primary/95 shadow-xl shadow-primary/20 hover:shadow-primary/30 hover:-translate-y-0.5 active:scale-95 transition-all duration-300"
   >
     Get Started
@@ -72,6 +77,7 @@ const DesktopCTA: React.FC = () => (
 
 const MobileMenu: React.FC = () => {
   const [open, setOpen] = React.useState(false);
+  const pathname = usePathname();
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -90,18 +96,18 @@ const MobileMenu: React.FC = () => {
       >
         <nav className="flex flex-col items-center gap-8 pt-12">
           {navLinks.map((link) => (
-            <NavLink 
-              key={link.to} 
-              to={link.to} 
-              className={mobileNavLinkClasses}
+            <Link
+              key={link.to}
+              href={link.to}
+              className={mobileNavLinkClasses(pathname === link.to)}
               onClick={() => setOpen(false)}
             >
               {link.label}
-            </NavLink>
+            </Link>
           ))}
 
           <Link
-            to="/login"
+            href="/login"
             className="sm:hidden px-8 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors shadow-lg mt-4"
             onClick={() => setOpen(false)}
           >

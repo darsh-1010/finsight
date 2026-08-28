@@ -160,9 +160,6 @@ def seed_database():
             tier.price_amount = t_data["price_amount"]
             tier.price_amount_yearly = int(t_data["price_amount"] * 12 * 0.9)
             tier.currency = "usd"
-            tier.stripe_product_id = f"prod_mock_{level}"
-            tier.stripe_price_id = f"price_mock_month_{level}"
-            tier.stripe_yearly_price_id = f"price_mock_year_{level}"
             tier.highlights = t_data.get("highlights")
             tier.is_popular = t_data.get("is_popular", False)
             tier.icon = t_data.get("icon")

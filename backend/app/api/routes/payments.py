@@ -1,81 +1,49 @@
-import uuid
-
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user, get_db
-from app.models.subscriptions import (
-    Subscription,
-    SubscriptionSource,
-    SubscriptionStatus,
-)
-from app.models.tiers import Tier
+from app.models.subscriptions import ChangeSource, ChangeType
 from app.models.users import User
+from app.services.tier_service import TierService
 
 router = APIRouter(prefix="/api/v1/payments", tags=["payments"])
 
 
-class CheckoutSessionRequest(BaseModel):
-    price_id: str
-    success_url: str
-    cancel_url: str
+class TierSelectRequest(BaseModel):
+    tier_level: int
 
 
-class MockSessionResponse(BaseModel):
-    checkout_url: str
-    session_id: str
+class TierSelectResponse(BaseModel):
+    status: str
+    tier_level: int
 
 
-@router.post("/create-checkout-session", response_model=MockSessionResponse)
-def create_checkout_session(
-    request: CheckoutSessionRequest,
+@router.post("/select-tier", response_model=TierSelectResponse)
+def select_tier(
+    request: TierSelectRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     """
-    Mock endpoint to create a checkout session.
-    It will bypass Stripe and directly transition to the success URL.
+    Switch the current user to any tier, free of charge and immediately.
     """
-    # Simply create a fake session id
-    session_id = f"mock_session_{uuid.uuid4().hex}"
+    current_level = 1
+    if current_user.subscription and current_user.subscription.tier:
+        current_level = current_user.subscription.tier.level
 
-    # We can automatically upgrade them here, or let the success page trigger it.
-    # We'll upgrade them here so when they land on success, it's done.
-    # Parse the tier level from price_id (e.g., "mock_price_2" or "mock_yearly_2")
-    level = None
-    if request.price_id:
-        if "price_" in request.price_id:
-            try:
-                level = int(request.price_id.split("price_")[-1])
-            except ValueError:
-                pass
-        elif "yearly_" in request.price_id:
-            try:
-                level = int(request.price_id.split("yearly_")[-1])
-            except ValueError:
-                pass
+    change_type = (
+        ChangeType.UPGRADE
+        if request.tier_level >= current_level
+        else ChangeType.DOWNGRADE
+    )
 
-    tier = None
-    if level is not None:
-        tier = db.query(Tier).filter(Tier.level == level).first()
+    TierService.change_tier(
+        db,
+        current_user,
+        request.tier_level,
+        change_type=change_type,
+        source=ChangeSource.USER,
+    )
 
-
-    if tier:
-        # Update or create subscription locally
-        subscription = db.query(Subscription).filter_by(user_id=current_user.id).first()
-        if not subscription:
-            subscription = Subscription(user_id=current_user.id)
-            db.add(subscription)
-
-        subscription.tier_id = tier.id
-        subscription.status = SubscriptionStatus.active
-        subscription.source = SubscriptionSource.free  # Mocked
-
-        current_user.tier_id = tier.id
-        db.commit()
-
-    # Append the session_id so frontend knows it succeeded
-    success_url = request.success_url.replace("{CHECKOUT_SESSION_ID}", session_id)
-
-    return {"checkout_url": success_url, "session_id": session_id}
+    return {"status": "success", "tier_level": request.tier_level}

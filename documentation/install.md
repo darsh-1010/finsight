@@ -48,8 +48,6 @@ Create a `.env` file in the `backend/` directory:
 PROJECT_NAME="FinSight API"
 DATABASE_URL="sqlite:///./test.db"
 SECRET_KEY="your-super-secret-jwt-key"
-STRIPE_SECRET_KEY="sk_test_..."
-STRIPE_WEBHOOK_SECRET="whsec_..."
 OPENAI_API_KEY="sk-proj-..."
 TAVILY_API_KEY="tvly-..."
 AWS_ACCESS_KEY_ID="minioadmin"
@@ -94,7 +92,7 @@ pytest tests/ -v --tb=short
 
 ## 3. Frontend Setup
 
-The frontend is built with React, Vite, and Tailwind CSS v4.
+The frontend is built with Next.js 15 (App Router), React 19, and Tailwind CSS v4.
 
 ### Install Dependencies
 ```bash
@@ -103,16 +101,16 @@ npm install
 ```
 
 ### Configuration (Environment Variables)
-Create a `.env` file in the `frontend/` directory:
+Create a `.env.local` file in the `frontend/` directory:
 ```ini
-VITE_API_BASE_URL=http://localhost:8000/api/v1
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8000/api/v1
 ```
 
 ### Run the Frontend Development Server
 ```bash
 npm run dev
 ```
-The app will open at `http://localhost:5173`.
+The app will open at `http://localhost:3000`.
 
 ---
 

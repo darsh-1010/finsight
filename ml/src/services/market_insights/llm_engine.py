@@ -19,7 +19,7 @@ import httpx
 from pydantic import BaseModel, Field
 
 from src.core.exceptions import LLMError
-from src.llm.fallback_client import FallbackAsyncOpenAI
+from src.llm.litellm_router import get_structured_llm_client
 from src.services.market_insights.models import (
     InsightCategory,
     InsightResult,
@@ -92,15 +92,9 @@ class LLMEngine:
     token-generation level — no post-hoc JSON parsing required.
     """
 
-    def __init__(self, openai_api_key: str | None = None) -> None:
-        """Initialise the engine with an optional API key override.
-
-        Args:
-            openai_api_key: OpenAI key; defaults to OPENAI_API_KEY env var.
-        """
-        self._client = FallbackAsyncOpenAI(
-            api_key=openai_api_key or os.getenv("OPENAI_API_KEY")
-        )
+    def __init__(self) -> None:
+        """Initialise the engine with the shared litellm structured-output client."""
+        self._client = get_structured_llm_client()
         self._tavily_key: str | None = os.getenv("TAVILY_API_KEY")
 
     async def classify_event(

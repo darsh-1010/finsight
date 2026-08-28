@@ -18,7 +18,7 @@ finsight/
 ├── Dockerfile.frontend     ← FE image (Next.js standalone production build)
 ├── nginx.conf              ← Nginx config for the web proxy
 │
-├── backend/                ← FastAPI Backend (auth, DB, Stripe, chat proxy)
+├── backend/                ← FastAPI Backend (auth, DB, chat proxy)
 │   ├── app/
 │   ├── alembic/
 │   ├── requirements.txt
@@ -30,7 +30,7 @@ finsight/
 │   ├── requirements.txt
 │   └── ...
 │
-└── frontend/               ← Next.js + React + Tailwind + TypeScript frontend (Violet/Lavender theme)
+└── frontend/               ← Next.js + React + Tailwind + TypeScript frontend (Purple/Black theme)
     ├── src/
     ├── package.json
     └── ...

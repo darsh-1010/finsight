@@ -29,7 +29,7 @@ const InsightCard: React.FC<{
     <div className="group flex items-center gap-4 rounded-xl border border-border bg-card p-4 transition-colors hover:bg-secondary/10">
       {/* Ticker Box */}
       <div className="flex flex-col items-center justify-center h-14 w-14 shrink-0 rounded-lg bg-secondary/30 border border-border">
-        <span className="text-[10px] font-bold text-[#5546FF] uppercase">
+        <span className="text-[10px] font-bold text-[#9683C2] uppercase">
           {insight.ticker || 'MKT'}
         </span>
         {insight.price_change_pct !== null &&
@@ -67,7 +67,7 @@ const InsightCard: React.FC<{
           </span>
           {insight.price_change_pct !== null &&
             insight.price_change_pct !== undefined && (
-            <span className="rounded bg-[#5546FF]/10 text-[#5546FF] px-2 py-0.5 font-bold">
+            <span className="rounded bg-[#9683C2]/10 text-[#9683C2] px-2 py-0.5 font-bold">
               {insight.price_change_pct.toFixed(2)}%
             </span>
           )}

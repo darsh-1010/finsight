@@ -18,10 +18,11 @@ import asyncio
 import logging
 from typing import Any
 
-from langchain_openai import ChatOpenAI
+from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel, Field
 
 from config.settings import settings
+from src.llm.litellm_router import get_chat_model
 from src.utils.perf_utils import timed
 
 logger = logging.getLogger(__name__)
@@ -84,11 +85,8 @@ class RetrievalGrader:
         filtered = await grader.grade_and_filter(query, chunks)
     """
 
-    def __init__(self, llm: ChatOpenAI | None = None) -> None:
-        self._llm = llm or ChatOpenAI(
-            model=settings.gpt_4o_mini,
-            temperature=0.0,
-        )
+    def __init__(self, llm: BaseChatModel | None = None) -> None:
+        self._llm = llm or get_chat_model(settings.gpt_4o_mini, temperature=0.0)
         self._grader = self._llm.with_structured_output(GradeResult)
 
     @timed("retrieval_grader.grade_batch", warn_threshold_s=3.0)

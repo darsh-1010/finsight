@@ -1,7 +1,7 @@
 /* eslint-disable max-lines-per-function */
 import { Globe, FileText, AlertCircle, Activity, ChevronRight } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -26,7 +26,7 @@ const MetricsGrid: React.FC<MetricsGridProps> = ({
   successRate,
   isScrapingHistoryLoading,
 }) => {
-  const navigate = useNavigate();
+  const navigate = useRouter().push;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

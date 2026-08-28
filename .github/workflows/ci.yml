@@ -136,7 +136,6 @@ jobs:
       POSTGRES_DB: "test"
       BACKEND_CORS_ORIGINS: '["http://localhost:3000"]'
       COOKIE_SECURE: "false"
-      STRIPE_SECRET_KEY: "sk_test_placeholder"
       AWS_ACCESS_KEY_ID: "test"
       AWS_SECRET_ACCESS_KEY: "test"
       AWS_REGION: "us-east-1"

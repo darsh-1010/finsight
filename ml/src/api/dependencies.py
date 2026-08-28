@@ -11,6 +11,7 @@ from config.settings import settings
 from src.core.container import Container
 from src.core.interfaces import IChatService, IQueryService, IRAGService, ITickerService
 from src.llm.fallback_client import FallbackAsyncOpenAI
+from src.llm.litellm_router import get_structured_llm_client
 from src.services.chat.context_manager import ContextManager
 from src.services.chat.history_service import ChatHistoryService
 from src.services.chat.message_manager import MessageManager
@@ -18,6 +19,7 @@ from src.services.chat.response_generator import ResponseGenerator
 from src.services.chat_service import ChatService
 from src.services.query_service import QueryService
 from src.services.rag import RAGService
+from src.services.research.report_compiler import ResearchReportCompiler
 from src.services.session_service import SessionService
 from src.services.ticker_service import TickerService
 from src.services.uploads.user_upload_service import UserUploadService
@@ -119,3 +121,11 @@ def get_user_upload_service() -> "UserUploadService":
 def get_chat_history_service() -> ChatHistoryService:
     """Get chat-history service instance used for Redis hydration."""
     return ChatHistoryService()
+
+
+@lru_cache
+def get_research_service() -> ResearchReportCompiler:
+    """Get ResearchReportCompiler instance."""
+    return ResearchReportCompiler(
+        openai_client=get_structured_llm_client(), redis_client=get_async_redis()
+    )

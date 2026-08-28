@@ -1,12 +1,15 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { authApi } from '../api/auth';
 import { Loader2, CheckCircle, XCircle } from 'lucide-react';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import React, { useEffect, useState, useRef } from 'react';
+
+import { authApi } from '../api/auth';
+import { useAuth } from '../context/AuthContext';
+
 
 const VerifyEmailPage: React.FC = () => {
   const { updateUser } = useAuth();
-  const [searchParams] = useSearchParams();
+  const searchParams = useSearchParams();
   const token = searchParams.get('token');
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('');
@@ -16,6 +19,7 @@ const VerifyEmailPage: React.FC = () => {
     if (!token) {
       setStatus('error');
       setMessage('Invalid or missing verification token.');
+
       return;
     }
 
@@ -54,7 +58,7 @@ const VerifyEmailPage: React.FC = () => {
             <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Email Verified!</h2>
             <p className="text-gray-600 dark:text-gray-300 mb-8">{message}</p>
             <Link 
-              to="/dashboard" 
+              href="/dashboard" 
               className="w-full py-3 bg-primary text-primary-foreground rounded-lg font-bold hover:bg-primary/90 transition-all active:scale-95 shadow-md inline-block"
             >
               Go to Dashboard
@@ -68,7 +72,7 @@ const VerifyEmailPage: React.FC = () => {
             <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Verification Failed</h2>
             <p className="text-gray-600 dark:text-gray-300 mb-8">{message}</p>
             <Link 
-              to="/user_profile" 
+              href="/user_profile" 
               className="w-full py-3 border border-border text-foreground rounded-lg font-bold hover:bg-secondary/80 transition-all inline-block"
             >
               Back to Profile

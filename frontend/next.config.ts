@@ -26,7 +26,6 @@ const nextConfig: NextConfig = {
   },
 
   webpack: (config, { webpack }) => {
-    config.resolve.alias['react-router-dom'] = path.resolve(__dirname, 'src/lib/react-router-dom-shim.tsx');
     config.plugins.push(
       new webpack.DefinePlugin({
         'import.meta.env.VITE_API_BASE_URL': JSON.stringify(process.env.NEXT_PUBLIC_API_BASE_URL || process.env.VITE_API_BASE_URL || ''),

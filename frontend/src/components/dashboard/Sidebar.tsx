@@ -4,8 +4,11 @@ import {
   ChevronDown,
   ChevronRight,
   Briefcase,
+  FileSearch,
   Newspaper,
 } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 import {
   PiLayoutDuotone,
@@ -14,7 +17,6 @@ import {
   PiCaretRightBold,
   PiChatCircleTextDuotone,
 } from 'react-icons/pi';
-import { Link, useLocation } from 'react-router-dom';
 
 import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
@@ -39,7 +41,7 @@ interface AdminSidebarSectionProps {
   adminOpen: boolean;
   setAdminOpen: (open: boolean) => void;
   isAdminPath: boolean;
-  location: ReturnType<typeof useLocation>;
+  location: { pathname: string };
 }
 
 const navItems = [
@@ -62,6 +64,11 @@ const navItems = [
     label: 'Portfolio Sandbox',
     icon: <Briefcase size={22} />,
     path: '/sandbox',
+  },
+  {
+    label: 'Research',
+    icon: <FileSearch size={22} />,
+    path: '/research',
   },
 ];
 
@@ -86,7 +93,7 @@ const adminSubItems = [
 // Sub-components
 const SidebarHeader: React.FC<{ collapsed: boolean }> = ({ collapsed }) => (
   <div className="h-20 flex items-center px-6 mb-4 justify-center md:justify-start">
-    <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+    <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
       {collapsed ? (
         <span className="font-extrabold text-2xl tracking-tight font-logo text-primary">FS</span>
       ) : (
@@ -102,7 +109,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
   collapsed,
 }) => (
   <Link
-    to={item.path}
+    href={item.path}
     className={cn(
       'flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative cursor-pointer font-medium text-sm',
       isActive
@@ -137,7 +144,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
 const AdminSubMenu: React.FC<{
   adminOpen: boolean;
   collapsed: boolean;
-  location: ReturnType<typeof useLocation>;
+  location: { pathname: string };
 }> = ({ adminOpen, collapsed, location }) => {
   if (!adminOpen && !collapsed) return null;
 
@@ -149,7 +156,7 @@ const AdminSubMenu: React.FC<{
         return (
           <Link
             key={sub.path}
-            to={sub.path}
+            href={sub.path}
             className={cn(
               'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group relative',
               isSubActive
@@ -275,7 +282,7 @@ const SidebarContent: React.FC<{
   collapsed: boolean;
   setCollapsed: (v: boolean) => void;
   mobileOpen?: boolean;
-  location: ReturnType<typeof useLocation>;
+  location: { pathname: string };
   isAdmin: boolean;
   adminOpen: boolean;
   setAdminOpen: (v: boolean) => void;
@@ -333,7 +340,7 @@ interface SidebarContainerProps extends SidebarProps {
   isAdminPath: boolean;
   adminOpen: boolean;
   setAdminOpen: (v: boolean) => void;
-  location: ReturnType<typeof useLocation>;
+  location: { pathname: string };
 }
 
 const MobileSidebar: React.FC<SidebarContainerProps> = ({
@@ -399,7 +406,8 @@ const Sidebar: React.FC<SidebarProps> = ({
   mobileOpen,
   adminOnly,
 }) => {
-  const location = useLocation();
+  const pathname = usePathname();
+  const location = { pathname };
   const { user } = useAuth();
 
   const isAdmin = user?.role === 'admin';

@@ -20,9 +20,6 @@ class TierResponse(BaseModel):
     price_amount: int
     price_amount_yearly: int | None = None
     currency: str
-    stripe_product_id: str | None = None
-    stripe_price_id: str | None = None
-    stripe_yearly_price_id: str | None = None
     highlights: Any | None = None
     is_popular: bool
     icon: str | None = None

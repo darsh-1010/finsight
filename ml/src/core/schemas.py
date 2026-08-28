@@ -111,6 +111,69 @@ class RequestMetadata(BaseModel):
     ui_channel: str | None = Field(None, description="UI channel (web, mobile, api)")
 
 
+# ============================================================================
+# Research Report Schemas
+# ============================================================================
+
+
+class ResearchReportRequest(BaseModel):
+    """Request model for the research report endpoint."""
+
+    ticker: str = Field(
+        ...,
+        description="Stock ticker symbol or company name to research",
+        min_length=1,
+        max_length=100,
+    )
+    tier: int = Field(
+        default=1,
+        description="User tier level (0-4). Defaults to 1.",
+    )
+
+
+class ResearchReportLLMOutput(BaseModel):
+    """Structured LLM synthesis output for a research report (OpenAI structured outputs)."""
+
+    summary: str = Field(
+        ..., description="2-3 sentence plain-language TL;DR of the company's current position"
+    )
+    valuation_take: str = Field(
+        ..., description="Short analysis of whether the stock looks cheap, fair, or expensive"
+    )
+    growth_take: str = Field(..., description="Short analysis of growth trends and drivers")
+    risk_take: str = Field(..., description="Short analysis of key risks")
+    filing_highlights: list[str] = Field(
+        default_factory=list,
+        description="2-4 notable points pulled from the latest SEC filing excerpt, if provided",
+    )
+
+
+class ResearchReportResponse(BaseModel):
+    """Response model for the research report endpoint."""
+
+    ticker: str = Field(..., description="Resolved stock ticker symbol")
+    company_name: str | None = Field(None, description="Company name")
+    generated_at: str = Field(..., description="ISO8601 timestamp when the report was generated")
+    summary: str = Field(..., description="Plain-language TL;DR")
+    valuation_take: str = Field(..., description="Valuation analysis")
+    growth_take: str = Field(..., description="Growth analysis")
+    risk_take: str = Field(..., description="Risk analysis")
+    filing_highlights: list[str] = Field(default_factory=list)
+    financial_context: dict[str, Any] | None = Field(
+        None, description="Raw structured financial data used to build this report"
+    )
+    sources: list[Source] = Field(
+        default_factory=list,
+        description="Provenance: yfinance and SEC EDGAR sources used for this report",
+    )
+    confidence: float = Field(default=0.0, ge=0.0, le=1.0)
+    warnings: list[str] = Field(
+        default_factory=list,
+        description="Anti-hallucination / data-quality warnings, if any",
+    )
+    from_cache: bool = Field(default=False, description="Whether this report was served from cache")
+
+
 class ChatRequest(BaseModel):
     """Request model for chat endpoint."""
 

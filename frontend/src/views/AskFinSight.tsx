@@ -1,12 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { PiCaretLeftBold, PiCaretRightBold } from "react-icons/pi";
-import { useParams, useNavigate } from "react-router-dom";
+import { AlertTriangle, X } from 'lucide-react';
+import { useParams, useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { PiCaretLeftBold, PiCaretRightBold } from 'react-icons/pi';
 
-import ChatBody from "@/components/chatbot/ChatBody";
-import ChatHistorySidebar from "@/components/chatbot/ChatHistorySidebar";
-import ChatInput from "@/components/chatbot/ChatInput";
-import { cn } from "@/lib/utils";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { chatApi } from '@/api/chat';
+import { tokensApi } from '@/api/tokens';
+import ChatBody from '@/components/chatbot/ChatBody';
+import ChatHistorySidebar from '@/components/chatbot/ChatHistorySidebar';
+import ChatInput from '@/components/chatbot/ChatInput';
+import WelcomeScreen from '@/components/chatbot/WelcomeScreen';
+import { useAlert } from '@/context/AlertContext';
+import { PROFILE_SUBSCRIPTION_PATH } from '@/lib/profileRoutes';
+import { cn } from '@/lib/utils';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   addMessage,
   addConversation,
@@ -20,13 +26,7 @@ import {
   selectIsBotTyping,
   selectChatError,
   type Message,
-} from "@/store/slices/chatSlice";
-import WelcomeScreen from "@/components/chatbot/WelcomeScreen";
-import { chatApi } from "@/api/chat";
-import { tokensApi } from "@/api/tokens";
-import { useAlert } from "@/context/AlertContext";
-import { AlertTriangle, X } from "lucide-react";
-import { PROFILE_SUBSCRIPTION_PATH } from "@/lib/profileRoutes";
+} from '@/store/slices/chatSlice';
 
 /* -------------------- Hook -------------------- */
 
@@ -61,26 +61,28 @@ const useSendMessage = (
   onTokenLimitExceeded: () => void,
 ) => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+  const navigate = useRouter().replace;
   const { showAlert } = useAlert();
 
   const hasEnoughAvailableTokens = async () => {
     try {
       const { tokensLeft, dailyTokensUsed, dailyTokenLimit } = await getAvailableTokenBalance();
 
-      console.log("[Token Check] tokensLeft:", tokensLeft);
+      console.log('[Token Check] tokensLeft:', tokensLeft);
 
       if (tokensLeft <= AVAILABALE_DAILY_TOKEN_BUFFER) {
         onTokenLimitExceeded();
+
         return false;
       }
 
       // Alert if 75% or more of daily tokens are used
       if (dailyTokenLimit > 0) {
         const percentUsed = (dailyTokensUsed / dailyTokenLimit) * 100;
+
         if (percentUsed >= 75) {
           showAlert(
-            "Daily Token Limit Warning",
+            'Daily Token Limit Warning',
             `You have used ${Math.round(percentUsed)}% of your daily token limit. Once your daily limit is reached, you will need to wait for the next refill or upgrade your plan.`
           );
         }
@@ -88,12 +90,13 @@ const useSendMessage = (
 
       return true;
     } catch (error) {
-      console.error("[Token Check Error]", error);
+      console.error('[Token Check Error]', error);
 
       showAlert(
-        "Unable to Check Token Usage",
-        "We could not verify your daily token balance right now. Please try again shortly.",
+        'Unable to Check Token Usage',
+        'We could not verify your daily token balance right now. Please try again shortly.',
       );
+
       return false;
     }
   };
@@ -122,10 +125,10 @@ const useSendMessage = (
 
       try {
         if (!currentSessionId) {
-          const title = content.trim() ? content.slice(0, 50) : (files[0]?.name || "New Chat").slice(0, 50);
+          const title = content.trim() ? content.slice(0, 50) : (files[0]?.name || 'New Chat').slice(0, 50);
           const newSession = await chatApi.createSession({
             title: title,
-            model: "standard",
+            model: 'standard',
           });
 
           currentSessionId = newSession.session_id;
@@ -137,17 +140,17 @@ const useSendMessage = (
           files,
         );
 
-        console.log("[Attachment Upload Result]", uploadResult);
+        console.log('[Attachment Upload Result]', uploadResult);
 
         const failed = uploadResult.results.filter((r) => !r.attached);
 
         if (failed.length > 0) {
           const details = failed
             .map((r) => `• ${r.filename}: ${r.message}`)
-            .join("\n");
+            .join('\n');
 
           showAlert(
-            "Attachment Upload Failed",
+            'Attachment Upload Failed',
             `The following file(s) could not be attached:\n\n${details}\n\nPlease upload a smaller file and try again.`,
           );
 
@@ -162,17 +165,17 @@ const useSendMessage = (
           .filter((r) => r.id)
           .map((r) => r.id as string);
 
-        console.log("[Attachment IDs]", attachmentIds);
+        console.log('[Attachment IDs]', attachmentIds);
       } catch (err) {
-        console.error("[Attachment Upload Error]", err);
+        console.error('[Attachment Upload Error]', err);
 
         if (isNewSession && currentSessionId) {
           await chatApi.deleteSession(currentSessionId).catch(() => {});
         }
 
         showAlert(
-          "Attachment Error",
-          "An unexpected error occurred while uploading your files. Please try again.",
+          'Attachment Error',
+          'An unexpected error occurred while uploading your files. Please try again.',
         );
 
         return false;
@@ -185,12 +188,11 @@ const useSendMessage = (
     if (!currentSessionId) {
       dispatch(
         sendMessage({
-          sessionId: "null",
+          sessionId: 'null',
           content,
-          model: "standard",
+          model: 'standard',
           attachment_ids: attachmentIds,
-          onSessionCreated: (id) =>
-            navigate(`/ask_finsight/c/${id}`, { replace: true }),
+          onSessionCreated: (id) => navigate(`/ask_finsight/c/${id}`),
         }),
       );
 
@@ -202,29 +204,30 @@ const useSendMessage = (
       file_name: f.name,
       file_type: f.type,
       file_size: f.size,
-      status: "uploaded",
+      status: 'uploaded',
       created_at: new Date().toISOString(),
     }));
 
     if (isNewSession) {
-      const title = content.trim() ? content.slice(0, 50) : (files[0]?.name || "New Chat").slice(0, 50);
+      const title = content.trim() ? content.slice(0, 50) : (files[0]?.name || 'New Chat').slice(0, 50);
+
       dispatch(
         addConversation({
           id: currentSessionId,
           title: title,
-          firstMessage: content.trim() ? content : (files.length > 0 ? "Uploaded files" : ""),
+          firstMessage: content.trim() ? content : (files.length > 0 ? 'Uploaded files' : ''),
           attachments: optimisticAttachments,
         }),
       );
 
-      navigate(`/ask_finsight/c/${currentSessionId}`, { replace: true });
+      navigate(`/ask_finsight/c/${currentSessionId}`);
 
       dispatch(setActiveConversation(currentSessionId));
     } else {
       dispatch(
         addMessage({
           conversationId: currentSessionId,
-          message: { role: "user", content },
+          message: { role: 'user', content },
           attachments: optimisticAttachments,
         }),
       );
@@ -234,7 +237,7 @@ const useSendMessage = (
       sendMessage({
         sessionId: currentSessionId,
         content,
-        model: "standard",
+        model: 'standard',
         attachment_ids: attachmentIds,
       }),
     ).then(async (result) => {
@@ -242,11 +245,11 @@ const useSendMessage = (
         try {
           await chatApi.deleteSession(currentSessionId);
         } catch (e) {
-          console.error("Failed to delete session", e);
+          console.error('Failed to delete session', e);
         }
 
         dispatch(removeConversation(currentSessionId));
-        navigate("/ask_finsight", { replace: true });
+        navigate('/ask_finsight');
       }
     });
 
@@ -310,9 +313,9 @@ const useAskFinSightEffects = (
       setIsMobile(window.innerWidth < 768);
     };
 
-    window.addEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
 
-    return () => window.removeEventListener("resize", handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, [setIsMobile]);
 
   useEffect(() => {
@@ -360,8 +363,10 @@ const AskSidebar: React.FC<SidebarProps> = ({
 );
 
 const TokenLimitSnackbar = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
-  const navigate = useNavigate();
+  const navigate = useRouter().push;
+
   if (!isOpen) return null;
+
   return (
     <div className="w-full flex justify-center px-2 sm:px-4 mb-2 shrink-0 animate-in fade-in slide-in-from-bottom-4">
       <div className="w-full max-w-4xl p-3 sm:p-4 bg-orange-50 dark:bg-[#1A1005] border border-orange-200 dark:border-orange-900/50 rounded-2xl shadow-lg flex items-center justify-between gap-4">
@@ -438,8 +443,8 @@ const SidebarToggle: React.FC<ToggleProps> = ({
   <button
     onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
     className={cn(
-      "absolute z-50 top-1/2 -translate-y-1/2 hidden md:block bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-full p-1.5 shadow-sm hover:shadow-md transition-all duration-300",
-      sidebarCollapsed ? "-left-1" : "left-0 -translate-x-1/2",
+      'absolute z-50 top-1/2 -translate-y-1/2 hidden md:block bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-full p-1.5 shadow-sm hover:shadow-md transition-all duration-300',
+      sidebarCollapsed ? '-left-1' : 'left-0 -translate-x-1/2',
     )}
   >
     {sidebarCollapsed ? (

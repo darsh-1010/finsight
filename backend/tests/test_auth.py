@@ -76,6 +76,21 @@ def test_signup_success(client, db):
     assert user.subscription.tier_id == 1
 
 
+def test_signup_ignores_client_supplied_role(client, db):
+    """Public signup must always get the 'user' role, regardless of what the
+    client sends - it must never be able to self-assign admin (role id 2).
+    """
+    response = client.post(
+        "/api/v1/auth/signup",
+        json={"email": "wouldbeadmin@example.com", "password": "password123", "role_id": 2},
+    )
+    assert response.status_code == 200
+
+    user = db.query(User).filter(User.email == "wouldbeadmin@example.com").first()
+    assert user is not None
+    assert user.role.role == UserRole.USER
+
+
 def test_login_success(client, db):
     # Create user first
     client.post(

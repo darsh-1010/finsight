@@ -1,23 +1,21 @@
 import { CreditCard, Shield, User } from 'lucide-react';
 import React, { useEffect, useMemo } from 'react';
 import { PiCoinsDuotone } from 'react-icons/pi';
-import { useSearchParams } from 'react-router-dom';
+
 
 import type { User as UserInterface } from '@/api/auth';
 import BillingSubscription from '@/components/profile/BillingSubscription';
 import PersonalInfo from '@/components/profile/PersonalInfo';
 import SecurityPreferences from '@/components/profile/SecurityPreferences';
 import TokenUsage from '@/components/profile/TokenUsage';
-import { cn } from '@/lib/utils';
+import { useSearchParams, useUpdateSearchParams } from '@/hooks/useSearchParamsUpdater';
 import { isProfileTab, type ProfileTabId } from '@/lib/profileRoutes';
+import { cn } from '@/lib/utils';
 
 export { type ProfileTabId } from '@/lib/profileRoutes';
 
 interface ProfileTabsProps {
   user: UserInterface | null;
-  isLoading: boolean;
-  error: string | null;
-  handleManageSubscription: () => Promise<void>;
   onOpenPasswordModal: () => void;
 }
 
@@ -108,12 +106,10 @@ const TabPanel: React.FC<{
 
 const ProfileTabs: React.FC<ProfileTabsProps> = ({
   user,
-  isLoading,
-  error,
-  handleManageSubscription,
   onOpenPasswordModal,
 }) => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const searchParams = useSearchParams();
+  const setSearchParams = useUpdateSearchParams();
 
   const tabParam = searchParams.get('tab');
   const activeTab = useMemo(
@@ -140,15 +136,7 @@ const ProfileTabs: React.FC<ProfileTabsProps> = ({
     case 'tokens':
       return <TokenUsage embedded />;
     case 'subscription':
-      return (
-        <BillingSubscription
-          user={user}
-          error={error}
-          isLoading={isLoading}
-          handleManageSubscription={handleManageSubscription}
-          embedded
-        />
-      );
+      return <BillingSubscription user={user} embedded />;
     case 'security':
       return (
         <SecurityPreferences

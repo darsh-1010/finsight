@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 
-import { useAuth } from '../context/AuthContext';
 import { getStoredVisitingUser } from '../api/auth';
+import { useAuth } from '../context/AuthContext';
 
 interface LoginFormProps {
   handleLogin: (e: React.FormEvent) => Promise<void>;
@@ -58,7 +59,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
         </div>
       </div>
       <div className="flex justify-end -mt-2">
-        <Link to="/forgot-password" className="text-sm text-primary hover:underline font-medium">
+        <Link href="/forgot-password" className="text-sm text-primary hover:underline font-medium">
           Forgot password?
         </Link>
       </div>
@@ -84,7 +85,7 @@ const useLoginForm = () => {
 
 const LoginPage: React.FC = () => {
   const { login } = useAuth();
-  const navigate = useNavigate();
+  const navigate = useRouter().push;
   const { email, setEmail, password, setPassword, error, setError, isSubmitting, setIsSubmitting } = useLoginForm();
 
   const performLogin = async () => {
@@ -95,11 +96,13 @@ const LoginPage: React.FC = () => {
       const e = err as { response?: { data?: { detail?: string | { msg: string }[] } } };
 
       let errorMsg = 'Failed to login. Please check your credentials and try again.';
+
       if (e.response?.data?.detail) {
         if (typeof e.response.data.detail === 'string') {
           errorMsg = e.response.data.detail;
         } else if (Array.isArray(e.response.data.detail) && e.response.data.detail.length > 0) {
           const detailObj = e.response.data.detail[0];
+
           errorMsg = detailObj?.msg || errorMsg;
         }
       }
@@ -130,10 +133,6 @@ const LoginPage: React.FC = () => {
         <div className="bg-card/30 backdrop-blur-xl border border-border/50 rounded-3xl p-8 sm:p-10 shadow-2xl shadow-black/10 dark:shadow-black/40">
           {/* Header */}
           <div className="text-center mb-8">
-            <Link to="/" className="inline-flex items-center gap-2 mb-6 hover:opacity-80 transition-opacity">
-              <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold text-lg">F</span>
-              <span className="text-xl font-bold tracking-wide bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">FinSight</span>
-            </Link>
             <h2 className="text-2xl font-bold text-foreground">Welcome back</h2>
             <p className="text-muted-foreground text-sm mt-1.5">Sign in to access your investment intelligence</p>
           </div>
@@ -155,7 +154,7 @@ const LoginPage: React.FC = () => {
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
             Don&apos;t have an account?{' '}
-            <Link to="/signup" className="text-primary font-semibold hover:underline cursor-pointer">
+            <Link href="/signup" className="text-primary font-semibold hover:underline cursor-pointer">
               Sign up free
             </Link>
           </p>
