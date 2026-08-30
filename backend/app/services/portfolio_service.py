@@ -558,10 +558,15 @@ class PortfolioService:
             risk_level = "concentrated"
 
         max_ticker, max_weight = max(normalized.items(), key=lambda item: item[1])
+        # Round before comparing to the threshold: normalizing by total_weight (itself a
+        # float sum) can push an exact-at-threshold position a hair above it in floating
+        # point (e.g. sum([0.1] * 10) is 1.0 on Python 3.12 but 0.9999999999999999 on
+        # 3.11), which would spuriously flag it. 4dp is well below the 1e-4 threshold
+        # granularity we display anyway.
         flagged_positions = [
             {"ticker": ticker, "weight": round(weight, 4)}
             for ticker, weight in normalized.items()
-            if weight > SINGLE_POSITION_FLAG_THRESHOLD
+            if round(weight, 4) > SINGLE_POSITION_FLAG_THRESHOLD
         ]
 
         sector_breakdown: dict[str, float] = {}
@@ -572,7 +577,7 @@ class PortfolioService:
         flagged_sectors = [
             {"sector": sector, "weight": round(weight, 4)}
             for sector, weight in sector_breakdown.items()
-            if weight > SECTOR_FLAG_THRESHOLD
+            if round(weight, 4) > SECTOR_FLAG_THRESHOLD
         ]
 
         return {
