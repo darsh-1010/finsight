@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd backend*)",
+      "Bash(cd ml*)",
+      "Bash(cd frontend*)",
+      "Bash(make lint*)",
+      "Bash(make format*)",
+      "Bash(make test*)",
+      "Bash(make security*)",
+      "Bash(make ci*)",
+      "Bash(ruff check*)",
+      "Bash(ruff format*)",
+      "Bash(pylint*)",
+      "Bash(pytest*)",
+      "Bash(npm run lint*)",
+      "Bash(npm run test*)",
+      "Bash(npm run dev*)",
+      "Bash(npm run build*)",
+      "Bash(npx vitest*)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(alembic history*)",
+      "Bash(alembic current*)",
+      "Bash(alembic show*)"
+    ]
+  }
+}
