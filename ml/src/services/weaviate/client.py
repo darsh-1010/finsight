@@ -6,7 +6,7 @@ import time
 import weaviate
 from weaviate.classes.init import AdditionalConfig, Auth, Timeout
 from weaviate.client import WeaviateClient
-from weaviate.exceptions import WeaviateConnectionError
+from weaviate.exceptions import WeaviateConnectionError, WeaviateGRPCUnavailableError
 
 from config.settings import settings
 from src.utils.logger import get_logger
@@ -38,6 +38,7 @@ class WeaviateClientManager:
                 ValueError,
                 RuntimeError,
                 ConnectionError,
+                WeaviateGRPCUnavailableError,
             ) as ex:
                 logger.error("[WEAVIATE_RECONNECT_FAIL] Reconnection failed: %s", ex)
                 # Fall through to re-creation
@@ -103,6 +104,7 @@ class WeaviateClientManager:
             RuntimeError,
             ConnectionError,
             WeaviateConnectionError,
+            WeaviateGRPCUnavailableError,
         ) as ex:
             # Log the error summary only — the full traceback is too noisy for a
             # known-offline scenario and gets printed by the Weaviate SDK internally.

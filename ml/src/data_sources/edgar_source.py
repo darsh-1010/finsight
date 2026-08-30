@@ -244,4 +244,5 @@ def _strip_html(html: str) -> str:
     for entity, char in [("&amp;", "&"), ("&lt;", "<"), ("&gt;", ">"),
                          ("&nbsp;", " "), ("&quot;", '"'), ("&#39;", "'")]:
         text = text.replace(entity, char)
-    return text
+    # Collapse the whitespace left behind by each stripped tag becoming a space.
+    return " ".join(text.split())
