@@ -18,6 +18,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   work, etc.), use it instead of re-deriving the same steps inline.
 - **graphify**: only follow the graphify section if those tools are actually present in this session —
   don't invent a `graphify` shell invocation that isn't installed.
+- **Reuse before writing**: before adding a function, component, constant, or type, search for an
+  existing equivalent (`graphify query "<question>"`, then `grep`/`Glob`) and reuse or extend it
+  instead of writing a parallel implementation — cheaper in tokens and in future bugs than a
+  duplicate. Only write new code when nothing close already exists.
+- **Modular, reusable code**: one function/component does one job (AGENTS.md §3); factor shared
+  logic into a helper instead of copy-pasting it at two call sites. Watch for the specific failure
+  mode of a duplicate top-level `class`/`def` silently shadowing the original (ruff `F811`) — this
+  repo has had that bug twice (a duplicate `class PortfolioService` and a duplicate `downgrade()`
+  in an Alembic migration); `ruff check --select F401,F811,F841` catches it and plain unused
+  imports/variables in one pass.
 
 Keep this file and `AGENTS.md` each under ~200 lines — both load in full every session regardless of
 the `@import` split, so trim content rather than relocating it.
@@ -77,7 +87,7 @@ make test                                                   # backend + ml, no c
 make test-backend / make test-ml                            # with --cov-fail-under=60
 cd backend && pytest tests/test_auth.py::test_login -v      # single backend test
 cd ml && pytest tests/services/test_chat_guardrails.py -v   # single ml test
-cd frontend && npx vitest run src/__tests__/App.test.tsx    # single frontend test
+cd frontend && npx vitest run path/to/file.test.tsx         # single frontend test (no test files yet)
 
 # Security / full local CI
 make security                                                # bandit SAST, backend + ml
