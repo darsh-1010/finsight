@@ -9,7 +9,7 @@ from typing import Any
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 
-from src.data_sources.edgar_source import EdgarSource, SUPPORTED_FILING_TYPES
+from src.data_sources.edgar_source import SUPPORTED_FILING_TYPES, EdgarSource
 from src.scripts.edgar_ingestion import ingest_filings
 from src.utils.logger import get_logger
 

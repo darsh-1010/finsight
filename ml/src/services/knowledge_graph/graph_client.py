@@ -20,7 +20,7 @@ logger = get_logger(__name__)
 
 # Lazy import — neo4j driver is optional; the system degrades gracefully.
 try:
-    from neo4j import AsyncGraphDatabase, AsyncDriver  # type: ignore[import-untyped]
+    from neo4j import AsyncDriver, AsyncGraphDatabase  # type: ignore[import-untyped]
     _NEO4J_AVAILABLE = True
 except ImportError:
     _NEO4J_AVAILABLE = False
@@ -98,7 +98,7 @@ class GraphClient:
                 )
                 return records
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             logger.warning("[GRAPH] Query timed out after %.1fs: %.80s", timeout, cypher)
             return []
         except Exception as exc:

@@ -7,19 +7,6 @@ import re
 from collections.abc import AsyncGenerator
 from typing import Any
 
-# Strip any code fences the LLM produces despite the no-code rule.
-# Catches ``` ... ``` blocks (with or without language tag) in all responses.
-_CODE_BLOCK_RE = re.compile(r"```[^\n`]*\n?[\s\S]*?```", re.DOTALL)
-
-
-def _strip_code_blocks(text: str) -> str:
-    """Remove markdown code blocks from LLM output before returning to user."""
-    stripped = _CODE_BLOCK_RE.sub("", text)
-    # Collapse multiple blank lines left behind by removed blocks
-    stripped = re.sub(r"\n{3,}", "\n\n", stripped)
-    return stripped.strip()
-
-
 from langchain_core.messages import BaseMessage
 from langchain_openai import ChatOpenAI
 from openai import BadRequestError
@@ -31,6 +18,18 @@ from src.llm.prompts import PromptLoader
 from src.utils.perf_utils import timed
 
 logger = logging.getLogger(__name__)
+
+# Strip any code fences the LLM produces despite the no-code rule.
+# Catches ``` ... ``` blocks (with or without language tag) in all responses.
+_CODE_BLOCK_RE = re.compile(r"```[^\n`]*\n?[\s\S]*?```", re.DOTALL)
+
+
+def _strip_code_blocks(text: str) -> str:
+    """Remove markdown code blocks from LLM output before returning to user."""
+    stripped = _CODE_BLOCK_RE.sub("", text)
+    # Collapse multiple blank lines left behind by removed blocks
+    stripped = re.sub(r"\n{3,}", "\n\n", stripped)
+    return stripped.strip()
 
 
 class ResponseGenerator:
@@ -135,13 +134,7 @@ class ResponseGenerator:
                     dict(response.usage_metadata) if response.usage_metadata else None
                 )
                 return response_text, usage
-            except (
-                ValueError,
-                TypeError,
-                AttributeError,
-                RuntimeError,
-                asyncio.TimeoutError,
-            ) as exc:
+            except (TimeoutError, ValueError, TypeError, AttributeError, RuntimeError) as exc:
                 is_rate_limit = (
                     getattr(exc, "status_code", None) == 429
                     or "rate limit" in str(exc).lower()
@@ -247,13 +240,7 @@ class ResponseGenerator:
                 yield {"type": "usage", "data": tokens_used}
             yield {"type": "complete_text", "data": full_response}
 
-        except (
-            ValueError,
-            TypeError,
-            AttributeError,
-            RuntimeError,
-            asyncio.TimeoutError,
-        ) as exc:
+        except (TimeoutError, ValueError, TypeError, AttributeError, RuntimeError) as exc:
             logger.error("Stream failed: %s", exc, exc_info=True)
             yield {"type": "error", "data": str(exc)}
 
@@ -285,13 +272,7 @@ class ResponseGenerator:
         except BadRequestError as exc:
             logger.error("[FILE_STREAM_BAD_REQUEST] %s", exc)
             yield {"type": "error", "data": str(exc)}
-        except (
-            ValueError,
-            TypeError,
-            OSError,
-            RuntimeError,
-            asyncio.TimeoutError,
-        ) as exc:
+        except (TimeoutError, ValueError, TypeError, OSError, RuntimeError) as exc:
             logger.error("[FILE_STREAM_ERROR] %s", exc, exc_info=True)
             yield {"type": "error", "data": str(exc)}
 
@@ -339,13 +320,7 @@ class ResponseGenerator:
         except BadRequestError as exc:
             logger.error("[FILE_GENERATION_BAD_REQUEST] %s", exc)
             return "", None
-        except (
-            ValueError,
-            TypeError,
-            OSError,
-            RuntimeError,
-            asyncio.TimeoutError,
-        ) as exc:
+        except (TimeoutError, ValueError, TypeError, OSError, RuntimeError) as exc:
             logger.error("Failed to generate with files using responses api: %s", exc)
             return "", None
 

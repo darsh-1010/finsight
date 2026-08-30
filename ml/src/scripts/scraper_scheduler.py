@@ -21,7 +21,6 @@ import os
 import sys
 from collections.abc import Callable
 from datetime import UTC, datetime
-from typing import Union
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -150,7 +149,7 @@ async def _ingest_and_log_results(
 
 
 async def _execute_scraper_loop(
-    scraper_entry: Union[type, Callable],
+    scraper_entry: type | Callable,
     name: str,
     run_params: dict,
     internal_queue: ScraperJobQueue,
@@ -181,8 +180,8 @@ async def _execute_scraper_loop(
             # Enforce hard wall-clock timeout to prevent ghost/zombie hangs
             try:
                 await asyncio.wait_for(coro, timeout=run_params["max_runtime"])
-            except asyncio.TimeoutError:
-                raise asyncio.TimeoutError(
+            except TimeoutError:
+                raise TimeoutError(
                     f"Scraper '{name}' exceeded max runtime of {run_params['max_runtime']}s"
                 ) from None
 
@@ -236,7 +235,7 @@ async def _execute_scraper_loop(
 
 async def run_scraper(
     name: str,
-    scraper_entry: Union[type, Callable],
+    scraper_entry: type | Callable,
     config: dict,
     *,
     is_test: bool = False,

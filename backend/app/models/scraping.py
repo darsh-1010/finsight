@@ -7,7 +7,7 @@ from sqlalchemy.orm import relationship
 from app.core.database import Base
 
 
-class ScrapingFrequency(str, enum.Enum):
+class ScrapingFrequency(enum.StrEnum):
     HOURLY = "HOURLY"
     DAILY = "DAILY"
     WEEKLY = "WEEKLY"
@@ -62,7 +62,7 @@ class ScrapingSubURL(Base):
     scraping_url = relationship("ScrapingURL", back_populates="sub_urls")
 
 
-class ScrapingStatus(str, enum.Enum):
+class ScrapingStatus(enum.StrEnum):
     QUEUED = "queued"
     STARTED = "started"
     IN_PROGRESS = "in_progress"

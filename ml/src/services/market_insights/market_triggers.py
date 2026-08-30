@@ -70,7 +70,7 @@ class MarketTriggerService:
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
         events: list[MarketEvent] = []
-        for ticker, result in zip(upper_tickers, results):
+        for ticker, result in zip(upper_tickers, results, strict=True):
             if isinstance(result, Exception):
                 logger.warning("[SCAN_SKIP] Ticker: %s | Reason: %s", ticker, result)
                 continue

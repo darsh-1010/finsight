@@ -200,7 +200,7 @@ async def refresh_openai_canary() -> None:
             )
             details = f"embedding canary ok ({settings.embedding_model})"
             _set_openai_canary_status(True, details)
-        except asyncio.TimeoutError:
+        except TimeoutError:
             _set_openai_canary_status(False, "OpenAI canary timed out")
         except (
             APIConnectionError,

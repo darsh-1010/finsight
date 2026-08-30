@@ -1,7 +1,7 @@
 """Type definitions and type aliases for the application."""
 
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 from typing import Any, TypeAlias
 
 # Type aliases for common patterns
@@ -11,7 +11,7 @@ QueryId: TypeAlias = str
 SessionId: TypeAlias = str
 
 
-class IntentCategory(str, Enum):
+class IntentCategory(StrEnum):
     """Categories for query intent classification."""
 
     ANALYSIS = "analysis"
@@ -21,7 +21,7 @@ class IntentCategory(str, Enum):
     FORECAST = "forecast"
 
 
-class DataQuality(str, Enum):
+class DataQuality(StrEnum):
     """Data quality levels for financial context."""
 
     COMPLETE = "complete"
@@ -29,7 +29,7 @@ class DataQuality(str, Enum):
     MINIMAL = "minimal"
 
 
-class ValidationStatus(str, Enum):
+class ValidationStatus(StrEnum):
     """Validation status for ticker resolution."""
 
     VALIDATED = "validated"

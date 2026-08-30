@@ -265,7 +265,7 @@ class WeaviateService:
         base_metadata = doc_metadata["base_metadata"]
         objects = []
         current_time = datetime.utcnow().isoformat() + "Z"
-        for i, (chunk_text, vector) in enumerate(zip(chunks, vectors)):
+        for i, (chunk_text, vector) in enumerate(zip(chunks, vectors, strict=True)):
             props = {
                 "content": chunk_text,
                 "document_id": doc_id,

@@ -317,9 +317,10 @@ app = create_app()
 
 def main() -> None:
     """Run the API with Uvicorn."""
+    # Binding to all interfaces is intentional here - this is the container entrypoint.
     uvicorn.run(
         "src.api.main:app",
-        host="0.0.0.0",
+        host="0.0.0.0",  # nosec B104
         port=8000,
         reload=True,
     )

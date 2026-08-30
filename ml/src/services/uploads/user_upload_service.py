@@ -313,9 +313,9 @@ class UserUploadService:
         # Scrub PDF metadata to prevent metadata injection
         if content_type == "application/pdf":
             try:
-                fitz_open = getattr(fitz, "open")
+                fitz_open = fitz.open
                 with fitz_open(stream=file_content, filetype="pdf") as doc:
-                    doc.set_metadata({k: "" for k in doc.metadata.keys()})
+                    doc.set_metadata(dict.fromkeys(doc.metadata.keys(), ""))
                     file_content = doc.tobytes()
             except (ValueError, RuntimeError, OSError, AttributeError) as exc:
                 logger.warning(
@@ -526,7 +526,7 @@ class UserUploadService:
         """Extract text from a document file for validation and estimation."""
         if ext == ".pdf":
             try:
-                fitz_open = getattr(fitz, "open")
+                fitz_open = fitz.open
                 with fitz_open(stream=content, filetype="pdf") as doc:
                     return "".join(page.get_text() for page in doc)
             except (ValueError, RuntimeError, OSError) as exc:

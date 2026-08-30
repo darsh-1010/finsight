@@ -119,7 +119,7 @@ async def seed_graph(tickers: list[str] | None = None) -> dict[str, int]:
                 stats["errors"] += 1
 
         # Seed relationships.
-        active_tickers = set(t.upper() for t in tickers)
+        active_tickers = {t.upper() for t in tickers}
         for from_t, to_t, rel_type in _RELATIONSHIPS:
             if from_t in active_tickers and to_t in active_tickers:
                 try:

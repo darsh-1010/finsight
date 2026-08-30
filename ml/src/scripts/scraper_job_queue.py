@@ -14,7 +14,7 @@ Run via scraper_scheduler.py; not intended to be executed standalone.
 import json
 from dataclasses import asdict, dataclass
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 
 import redis
 
@@ -26,7 +26,7 @@ logger = get_logger(__name__)
 JOB_KEY_TTL_SECONDS = 86400
 
 
-class JobStatus(str, Enum):
+class JobStatus(StrEnum):
     """Lifecycle statuses for a single scraper job."""
 
     QUEUED = "QUEUED"
@@ -280,7 +280,7 @@ class ScraperJobQueue:
                 except (json.JSONDecodeError, TypeError, ValueError) as exc:
                     logger.error(f"Failed to decode job in get_all_recent_jobs: {exc}")
 
-        return sorted(list(latest_jobs.values()), key=lambda x: x.name)
+        return sorted(latest_jobs.values(), key=lambda x: x.name)
 
     def cleanup_stale_jobs(self) -> int:
         """Mark any lingering 'STARTED' or 'IN_PROGRESS' jobs from past runs as FAILED.
@@ -323,7 +323,7 @@ class ScraperJobQueue:
                 run_ids.add(parts[2])
         if not run_ids:
             return None
-        return sorted(list(run_ids), reverse=True)[0]
+        return sorted(run_ids, reverse=True)[0]
 
     def get_all_jobs(self, run_id: str | None = None) -> list[ScraperJob]:
         """Return a list of all ScraperJob objects for a specific run_id.

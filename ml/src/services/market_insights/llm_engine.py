@@ -216,7 +216,7 @@ class LLMEngine:
                 "[TAVILY_OK] Ticker: %s | Results: %d", event.ticker, len(results)
             )
             return results
-        except asyncio.TimeoutError:
+        except TimeoutError:
             logger.warning(
                 "[TAVILY_TIMEOUT] Ticker: %s | Query timed out", event.ticker
             )

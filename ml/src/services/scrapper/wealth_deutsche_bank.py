@@ -85,8 +85,8 @@ def resolve_url(href: str, page_url: str) -> str:
 def is_known_domain(url: str) -> bool:
     """Check if URL belongs to DW domains."""
     host = urlparse(url).netloc.lower()
-    return host in KNOWN_DOMAINS or host.lstrip("www.") in {
-        d.lstrip("www.") for d in KNOWN_DOMAINS
+    return host in KNOWN_DOMAINS or host.removeprefix("www.") in {
+        d.removeprefix("www.") for d in KNOWN_DOMAINS
     }
 
 

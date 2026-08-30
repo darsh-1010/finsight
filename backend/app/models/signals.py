@@ -16,13 +16,13 @@ from sqlalchemy.orm import relationship
 from app.core.database import Base
 
 
-class SignalType(str, enum.Enum):
+class SignalType(enum.StrEnum):
     BUY = "BUY"
     SELL = "SELL"
     HOLD = "HOLD"
 
 
-class SignalStatus(str, enum.Enum):
+class SignalStatus(enum.StrEnum):
     ACTIVE = "ACTIVE"
     CLOSED = "CLOSED"
     CANCELLED = "CANCELLED"

@@ -280,9 +280,9 @@ class SeekingAlphaScraper:
                     full_text: ""
                 };
 
-                const artBody = document.querySelector("[data-test-id='article-content']") 
+                const artBody = document.querySelector("[data-test-id='article-content']")
                              || document.querySelector("article");
-                
+
                 if (artBody) {
                     artBody.querySelectorAll('p').forEach(p => {
                         const text = p.innerText.trim();
@@ -291,7 +291,7 @@ class SeekingAlphaScraper:
                         }
                     });
                 }
-                
+
                 data.full_text = data.paragraphs.join(' ');
 
                 // Metadata

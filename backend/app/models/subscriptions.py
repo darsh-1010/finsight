@@ -8,7 +8,7 @@ from app.core.database import Base
 # ---------------- ENUMS ---------------- #
 
 
-class SubscriptionStatus(str, enum.Enum):
+class SubscriptionStatus(enum.StrEnum):
     ACTIVE = "active"
     TRAILING = "trailing"
     CANCELED = "canceled"
@@ -16,20 +16,20 @@ class SubscriptionStatus(str, enum.Enum):
     PENDING_PAYMENT = "pending_payment"
 
 
-class SubscriptionSource(str, enum.Enum):
+class SubscriptionSource(enum.StrEnum):
     FREE = "free"
     STRIPE = "stripe"
     ADMIN = "admin"
 
 
-class ChangeType(str, enum.Enum):
+class ChangeType(enum.StrEnum):
     UPGRADE = "upgrade"
     DOWNGRADE = "downgrade"
     SIGNUP = "signup"
     EXPIRE = "expire"
 
 
-class ChangeSource(str, enum.Enum):
+class ChangeSource(enum.StrEnum):
     USER = "user"
     ADMIN = "admin"
     SYSTEM = "system"

@@ -73,7 +73,7 @@ async def seed_company(
         c.industry = $industry,
         c.updated_at = datetime()
     """
-    for key, value in extra.items():
+    for key in extra:
         cypher += f", c.{key} = ${key}\n"
 
     params = {"ticker": ticker.upper(), "name": name, "sector": sector, "industry": industry}

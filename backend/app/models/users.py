@@ -17,23 +17,23 @@ from app.core.database import Base
 # ---------------- ENUMS ---------------- #
 
 
-class UserRole(str, enum.Enum):
+class UserRole(enum.StrEnum):
     ADMIN = "admin"
     USER = "user"
 
 
-class UserStatus(str, enum.Enum):
+class UserStatus(enum.StrEnum):
     ACTIVE = "active"
     INACTIVE = "inactive"
 
 
-class ExperienceLevel(str, enum.Enum):
+class ExperienceLevel(enum.StrEnum):
     BEGINNER = "beginner"
     INTERMEDIATE = "intermediate"
     ADVANCED = "advanced"
 
 
-class RiskBucket(str, enum.Enum):
+class RiskBucket(enum.StrEnum):
     NO_RISK = "no_risk"
     RISK_AVERSE = "risk_averse"
     CONSERVATIVE = "conservative"

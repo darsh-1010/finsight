@@ -30,8 +30,8 @@ from src.services.scrapper.resilience import (
     build_playwright_retry_defaults,
     wait_for_any_selector,
 )
-from src.utils.logger import get_logger
 from src.services.scrapper.utils import dismiss_overlays, save_results
+from src.utils.logger import get_logger
 
 # ── ONLY hardcoded URL ───────────────────────────────────────────────────────
 SOURCE_NAME = "deutsche_bank"

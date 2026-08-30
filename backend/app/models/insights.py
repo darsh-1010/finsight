@@ -19,12 +19,12 @@ from sqlalchemy.orm import relationship
 from app.core.database import Base
 
 
-class TrendType(str, enum.Enum):
+class TrendType(enum.StrEnum):
     DAILY = "daily"
     WEEKLY = "weekly"
 
 
-class InsightStatus(str, enum.Enum):
+class InsightStatus(enum.StrEnum):
     DRAFT = "draft"
     APPROVED = "approved"
     REJECTED = "rejected"

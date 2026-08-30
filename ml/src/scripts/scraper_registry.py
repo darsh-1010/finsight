@@ -6,7 +6,6 @@ within the line limit.
 """
 
 from collections.abc import Callable
-from typing import Union
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Scraper Service Imports
@@ -28,7 +27,7 @@ from src.services.scrapper.wealth_deutsche_bank import (
 )
 
 # Mapping of internal names to their entry point (Class or Async function)
-SCRAPER_MAP: dict[str, Union[type, Callable]] = {
+SCRAPER_MAP: dict[str, type | Callable] = {
     # Instance-based scrapers (Classes with scrape_async())
     "man_institute": ManInstituteScraper,
     "jefferies": JefferiesScraper,

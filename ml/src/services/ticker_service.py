@@ -249,7 +249,7 @@ class TickerService(ITickerService):
 
         # Handle exceptions
         resolutions: list[JsonDict] = []
-        for name, result in zip(names, results):
+        for name, result in zip(names, results, strict=True):
             if isinstance(result, BaseException):
                 logger.error(f"Failed to resolve {name}: {result}")
                 resolutions.append(
@@ -312,7 +312,7 @@ class TickerService(ITickerService):
                 *[_check_fast(alt) for alt in alternatives], return_exceptions=True
             )
 
-            for alt, valid in zip(alternatives, validation_results):
+            for alt, valid in zip(alternatives, validation_results, strict=True):
                 if valid is True:
                     result["ticker"] = alt
                     result["validation_status"] = ValidationStatus.VALIDATED.value

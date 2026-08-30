@@ -4,6 +4,8 @@ from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
+from .config import settings
+
 
 @compiles(sa.UUID, "sqlite")
 def compile_uuid_sqlite(element, compiler, **kw):
@@ -14,8 +16,6 @@ def compile_uuid_sqlite(element, compiler, **kw):
 def compile_array_sqlite(element, compiler, **kw):
     return "TEXT"
 
-
-from .config import settings
 
 SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
 

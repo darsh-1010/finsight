@@ -115,7 +115,7 @@ class RetrievalGrader:
 
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
-        for chunk, result in zip(chunks, results):
+        for chunk, result in zip(chunks, results, strict=True):
             if isinstance(result, GradeResult):
                 chunk["_grade"] = result.model_dump()
             elif isinstance(result, Exception):
@@ -194,6 +194,6 @@ class RetrievalGrader:
                 timeout=_GRADER_TIMEOUT_SECONDS,
             )
             return result
-        except asyncio.TimeoutError:
+        except TimeoutError:
             logger.warning("[GRADER] Chunk grading timed out — fail-open")
             return GradeResult(relevant=True, reason="Grading timed out — fail-open.")

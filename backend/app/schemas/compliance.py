@@ -1,14 +1,8 @@
 from datetime import datetime
-from enum import Enum
 
 from pydantic import BaseModel
 
-
-class DisclosureType(str, Enum):
-    RISK = "risk"
-    INFO = "info"
-    WARNING = "warning"
-    SUCCESS = "success"
+from app.models.compliance import DisclosureType
 
 
 class ComplianceDisclosureBase(BaseModel):

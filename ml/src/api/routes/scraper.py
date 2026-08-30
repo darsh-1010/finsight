@@ -22,13 +22,13 @@ logger = get_logger(__name__)
 router = APIRouter(prefix="/scraper", tags=["Scraper & RAG"])
 
 
-@lru_cache()
+@lru_cache
 def get_scrapper_service() -> ScrapperService:
     """Get or create scrapper service instance."""
     return ScrapperService()
 
 
-@lru_cache()
+@lru_cache
 def get_rag_service() -> RAGService:
     """Get or create RAG service instance."""
     return RAGService()

@@ -7,7 +7,7 @@ plus the core data transfer objects used across all pipeline layers.
 from __future__ import annotations
 
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -17,7 +17,7 @@ from pydantic import BaseModel, Field
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-class EventType(str, Enum):
+class EventType(StrEnum):
     """Primitive market events detected by the trigger layer."""
 
     INTRADAY_DROP = "intraday_drop"  # >5% fall from the day's open
@@ -36,7 +36,7 @@ class EventType(str, Enum):
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-class InsightCategory(str, Enum):
+class InsightCategory(StrEnum):
     """High-level groupings for the 30 insight topics."""
 
     PRICE_ACTION = "Price Action"
@@ -47,7 +47,7 @@ class InsightCategory(str, Enum):
     RISK_REGULATORY = "Risk & Regulatory"
 
 
-class InsightTopic(str, Enum):
+class InsightTopic(StrEnum):
     """Strict taxonomy of 30 topics the LLM must classify events into."""
 
     # ── Price Action (1-5) ────────────────────────────────────────────────────

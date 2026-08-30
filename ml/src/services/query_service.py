@@ -383,13 +383,7 @@ class QueryService(IQueryService):
                 expansion, contexts, errors, request_id
             )
 
-        except (
-            ValueError,
-            TypeError,
-            AttributeError,
-            RuntimeError,
-            asyncio.TimeoutError,
-        ) as e:
+        except (TimeoutError, ValueError, TypeError, AttributeError, RuntimeError) as e:
             logger.error("[PIPELINE_ERROR] ReqId: %s | Error: %s", request_id, e)
             return {
                 "status": "failed",
@@ -404,7 +398,7 @@ class QueryService(IQueryService):
         expansion_data = await self.analyze(query)
         expansion = QueryExpansionResult(**expansion_data)
 
-        ents: QueryEntities = getattr(expansion, "entities")
+        ents: QueryEntities = expansion.entities
         if sess_tick and not ents.tickers:
             ents.tickers = [sess_tick]
             logger.info("[PIPELINE_INJECT] ReqId: %s | Ticker: %s", rid, sess_tick)
@@ -422,7 +416,7 @@ class QueryService(IQueryService):
 
         contexts = []
         errors = []
-        for ticker, res in zip(tickers, fetch_results):
+        for ticker, res in zip(tickers, fetch_results, strict=True):
             if isinstance(res, BaseException):
                 logger.error(
                     "[FETCH_ERROR] ReqId: %s | Ticker: %s | Error: %s", rid, ticker, res

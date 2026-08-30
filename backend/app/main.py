@@ -20,6 +20,7 @@ from .api.routes import (
 )
 from .core.config import settings
 from .core.database import Base, engine
+from .services.cron import cron_service
 
 Base.metadata.create_all(bind=engine)
 
@@ -48,8 +49,6 @@ app.include_router(tokens.router)
 app.include_router(notifications.router)
 app.include_router(portfolio.router)
 app.include_router(research.router)
-
-from .services.cron import cron_service
 
 
 @app.on_event("startup")

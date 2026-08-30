@@ -19,7 +19,7 @@ import asyncio
 import logging
 from collections.abc import Sequence
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from playwright.async_api import Error as PlaywrightError
@@ -67,7 +67,7 @@ _CHROMIUM_STABLE_ARGS: tuple[str, ...] = (
 )
 
 
-class FailureCategory(str, Enum):
+class FailureCategory(StrEnum):
     """High-level failure types used for retry policy decisions."""
 
     TRANSIENT_NETWORK = "TRANSIENT_NETWORK"

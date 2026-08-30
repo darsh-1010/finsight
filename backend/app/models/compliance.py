@@ -16,7 +16,7 @@ from sqlalchemy.orm import relationship
 from app.core.database import Base
 
 
-class DisclosureType(str, enum.Enum):
+class DisclosureType(enum.StrEnum):
     RISK = "risk"
     INFO = "info"
     WARNING = "warning"

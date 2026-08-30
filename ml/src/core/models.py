@@ -197,17 +197,17 @@ class QueryExpansionResult(BaseModel):
 
     def get_primary_ticker(self) -> str | None:
         """Get the first ticker if available."""
-        ents: QueryEntities = getattr(self, "entities")
+        ents: QueryEntities = self.entities
         return ents.primary_ticker()
 
     def get_all_tickers(self) -> list[str]:
         """Get all identified tickers."""
-        ents: QueryEntities = getattr(self, "entities")
+        ents: QueryEntities = self.entities
         return ents.tickers
 
     def is_comparative(self) -> bool:
         """Check if this is a comparative analysis."""
-        ents: QueryEntities = getattr(self, "entities")
+        ents: QueryEntities = self.entities
         return ents.is_comparative()
 
     def get_high_priority_queries(self, max_priority: int = 2) -> list[ExpandedQuery]:
@@ -220,7 +220,7 @@ class QueryExpansionResult(BaseModel):
 
     def to_summary(self) -> dict[str, Any]:
         """Get a concise summary of the analysis."""
-        ents: QueryEntities = getattr(self, "entities")
+        ents: QueryEntities = self.entities
         return {
             "intent": self.intent,
             "confidence": self.confidence,
@@ -539,7 +539,7 @@ class SearchResult(BaseModel):
 
     def to_citation(self) -> dict[str, Any]:
         """Convert result to a standard citation format."""
-        meta: dict[str, Any] = getattr(self, "metadata")
+        meta: dict[str, Any] = self.metadata
         return {
             "source": "document",
             "url": self.source_url,

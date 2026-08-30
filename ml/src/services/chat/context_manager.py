@@ -120,13 +120,7 @@ class ContextManager:
 
             return (*processed, raw_vector, resolved_files)
 
-        except (
-            ValueError,
-            TypeError,
-            AttributeError,
-            RuntimeError,
-            asyncio.TimeoutError,
-        ) as e:
+        except (TimeoutError, ValueError, TypeError, AttributeError, RuntimeError) as e:
             logger.error(
                 "[CONTEXT_ERROR] ReqId: %s | Phase: Orchestration | Error: %s",
                 request_id,
@@ -252,13 +246,7 @@ class ContextManager:
             if features and features.search_depth <= 0:
                 return {"expansion": analysis_data, "contexts": []}
             return analysis_data
-        except (
-            ValueError,
-            TypeError,
-            AttributeError,
-            RuntimeError,
-            asyncio.TimeoutError,
-        ) as exc:
+        except (TimeoutError, ValueError, TypeError, AttributeError, RuntimeError) as exc:
             logger.error("[CONTEXT][%s] Financial analysis failed: %s", request_id, exc)
             # Return a sentinel distinguishable from a valid empty result.
             # The guard in chat_service.py reads _analysis_failed and handles it safely.
@@ -596,13 +584,7 @@ class ContextManager:
 
             return "\n\n".join(context_parts), citations
 
-        except (
-            ValueError,
-            TypeError,
-            AttributeError,
-            RuntimeError,
-            asyncio.TimeoutError,
-        ) as exc:
+        except (TimeoutError, ValueError, TypeError, AttributeError, RuntimeError) as exc:
             logger.warning(
                 "[RAG] Failed to get document context: %s", exc, exc_info=True
             )
@@ -816,13 +798,7 @@ class ContextManager:
 
             return "\n\n".join(parts), cits
 
-        except (
-            ValueError,
-            TypeError,
-            AttributeError,
-            RuntimeError,
-            asyncio.TimeoutError,
-        ) as e:
+        except (TimeoutError, ValueError, TypeError, AttributeError, RuntimeError) as e:
             logger.warning(f"[RAG] Failed to get article context: {e}", exc_info=True)
             return None, []
 

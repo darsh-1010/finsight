@@ -484,7 +484,7 @@ class DomainGuard:
             )
             return decision
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             logger.warning(
                 "[DOMAIN_GUARD] Classifier timed out after %.1fs — failing open | session=%s",
                 _CLASSIFIER_TIMEOUT_SECONDS,

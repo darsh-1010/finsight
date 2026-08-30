@@ -153,7 +153,7 @@ class CypherGenerator:
                 ]),
                 timeout=_CYPHER_TIMEOUT,
             )
-        except asyncio.TimeoutError:
+        except TimeoutError:
             logger.warning("[CYPHER_GEN] Generation timed out for: %.80s", query)
             return None
         except Exception as exc:

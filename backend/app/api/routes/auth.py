@@ -1,3 +1,4 @@
+import logging
 import secrets
 from datetime import datetime, timedelta
 
@@ -40,6 +41,8 @@ from app.services.entitlement_service import EntitlementService
 from app.services.ses_service import ses_service
 from app.services.tier_service import TierService
 from app.services.token_service import TokenService
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/v1/auth", tags=["Auth"])
 
@@ -639,8 +642,10 @@ def resend_verification(
             tier_name=tier_name,
             tier_features=tier_features,
         )
-    except Exception as e:
-        print(f"Failed to send verification email: {e}")
-        raise HTTPException(status_code=500, detail="Failed to send verification email")
+    except Exception as exc:
+        logger.error("[VERIFICATION_EMAIL_FAIL] User: %s | Error: %s", user.id, exc)
+        raise HTTPException(
+            status_code=500, detail="Failed to send verification email"
+        ) from exc
 
     return {"message": "Verification email sent successfully"}

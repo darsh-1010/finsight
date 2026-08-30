@@ -17,7 +17,7 @@ import logging
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
@@ -232,7 +232,10 @@ async def _run_weekly_email_briefing_job(stop_event: asyncio.Event) -> None:
             if perf_data:
                 # Load Jinja template
                 template_dir = Path(__file__).parent.parent / "templates" / "email"
-                env = Environment(loader=FileSystemLoader(str(template_dir)))
+                env = Environment(
+                    loader=FileSystemLoader(str(template_dir)),
+                    autoescape=select_autoescape(["html", "xml"]),
+                )
                 template = env.get_template("weekly_briefing.html")
 
                 # Fetch all active users who have an email

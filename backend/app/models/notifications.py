@@ -17,13 +17,13 @@ from sqlalchemy.orm import relationship
 from app.core.database import Base
 
 
-class NotificationPriority(str, enum.Enum):
+class NotificationPriority(enum.StrEnum):
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
 
 
-class AudienceType(str, enum.Enum):
+class AudienceType(enum.StrEnum):
     ALL = "all"
     TIER = "tier"
     USER = "user"

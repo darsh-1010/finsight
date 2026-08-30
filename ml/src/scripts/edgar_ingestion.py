@@ -19,7 +19,7 @@ import asyncio
 import re
 from typing import Any
 
-from src.data_sources.edgar_source import EdgarSource, SUPPORTED_FILING_TYPES
+from src.data_sources.edgar_source import SUPPORTED_FILING_TYPES, EdgarSource
 from src.services.rag.rag_service import RAGService
 from src.utils.logger import get_logger
 
