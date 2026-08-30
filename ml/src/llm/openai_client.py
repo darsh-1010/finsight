@@ -1,6 +1,6 @@
 """OpenAI LLM client implementation."""
 
-from typing import Type, TypeVar, cast
+from typing import TypeVar, cast
 
 from langchain_openai import ChatOpenAI
 

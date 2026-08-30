@@ -30,8 +30,3 @@ def downgrade() -> None:
     # Enums are hard to downgrade in Postgres without recreating the type.
     # We will leave as is for now as it's safe to have extra values.
     pass
-
-
-def downgrade() -> None:
-    """Downgrade schema."""
-    pass

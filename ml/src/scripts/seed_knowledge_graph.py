@@ -22,7 +22,6 @@ from src.services.knowledge_graph.graph_client import GraphClient
 from src.services.knowledge_graph.graph_schema import (
     ensure_schema,
     seed_company,
-    seed_executive,
     seed_relationship,
 )
 from src.utils.logger import get_logger

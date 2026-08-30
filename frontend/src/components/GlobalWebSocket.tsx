@@ -25,7 +25,7 @@ export const GlobalWebSocket = () => {
         if (payload.type === 'NEW_NOTIFICATION') {
           dispatch(apiSlice.util.invalidateTags(['Notification']));
         }
-      } catch (e) {
+      } catch {
         // Ignore non-JSON messages or parse errors
       }
     }

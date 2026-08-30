@@ -113,11 +113,6 @@ async def seed_relationship(
         logger.warning("[GRAPH_SCHEMA] Invalid relationship type: %s", rel_type)
         return
 
-    props_str = ""
-    if properties:
-        prop_pairs = ", ".join(f"{k}: ${k}" for k in properties)
-        props_str = f" {{{prop_pairs}}}"
-
     cypher = f"""
     MATCH (a:Company {{ticker: $from_ticker}})
     MATCH (b:Company {{ticker: $to_ticker}})

@@ -25,7 +25,6 @@ Usage
 import asyncio
 import logging
 import re
-from typing import Optional
 
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI

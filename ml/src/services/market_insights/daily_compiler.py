@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import asyncio
 import os
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 import pandas as pd

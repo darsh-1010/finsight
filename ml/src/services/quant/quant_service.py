@@ -1,7 +1,7 @@
 """Quantitative analysis service (Institutional Mock)."""
 
 import random
-from typing import Any, Dict
+from typing import Any
 
 from src.utils.logger import get_logger
 

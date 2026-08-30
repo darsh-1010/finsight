@@ -3,7 +3,7 @@
 import asyncio
 import json
 import uuid
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 from weaviate.classes.query import Filter
 

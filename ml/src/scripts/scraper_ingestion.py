@@ -7,7 +7,7 @@ manages file path resolution for scraper outputs.
 import json
 import logging
 import os
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from src.scripts.scraper_snapshot import (

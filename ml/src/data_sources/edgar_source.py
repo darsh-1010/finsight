@@ -9,7 +9,6 @@ SEC rate limit: 10 requests/second — enforced via asyncio.Semaphore.
 
 import asyncio
 import re
-from datetime import datetime
 from typing import Any
 
 import httpx

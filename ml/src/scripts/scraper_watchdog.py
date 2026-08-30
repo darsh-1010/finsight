@@ -20,8 +20,7 @@ Redis key schema (all with 48-hour TTL):
 """
 
 import logging
-from datetime import UTC, datetime, timedelta, timezone
-from typing import Optional
+from datetime import UTC, datetime, timedelta
 
 from redis.exceptions import RedisError
 

@@ -7,7 +7,6 @@ Integration point: called from ContextManager when the query analysis
 detects a relational/multi-hop intent.
 """
 
-import asyncio
 from typing import Any
 
 from src.services.knowledge_graph.cypher_generator import CypherGenerator

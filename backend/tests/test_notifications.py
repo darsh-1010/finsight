@@ -10,7 +10,6 @@ Notifications seeded via the admin API are committed separately so they
 are visible to the route handler's DB session.
 """
 
-import pytest
 
 
 class TestGetNotifications:

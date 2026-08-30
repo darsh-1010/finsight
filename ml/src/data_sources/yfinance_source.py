@@ -4,7 +4,7 @@ import asyncio
 import threading
 import time
 from datetime import datetime
-from typing import Any, Dict, List, cast
+from typing import Any, cast
 
 import pandas as pd
 import yfinance as yf

@@ -30,7 +30,7 @@ from src.services.scrapper.resilience import (
     wait_for_any_selector,
 )
 from src.utils.logger import get_logger
-from src.services.scrapper.utils import dismiss_overlays, save_results, safe_filename
+from src.services.scrapper.utils import dismiss_overlays, save_results
 
 # ── Configuration ─────────────────────────────────────────────────────────────
 SOURCE_NAME = "barrons"

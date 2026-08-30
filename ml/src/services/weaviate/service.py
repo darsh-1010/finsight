@@ -3,7 +3,7 @@
 import asyncio
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from weaviate.classes.data import DataObject

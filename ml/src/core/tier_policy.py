@@ -1,7 +1,6 @@
 """Tier policy definitions and feature flags."""
 
 from dataclasses import dataclass
-from typing import Dict
 
 from config.settings import settings
 

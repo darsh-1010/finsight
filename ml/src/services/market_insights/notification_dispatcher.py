@@ -11,7 +11,7 @@ channel based on user tier entitlement:
 
 from __future__ import annotations
 
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 
 import redis.asyncio as aioredis
 from pydantic import ValidationError

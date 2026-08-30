@@ -1,6 +1,6 @@
 """Tests for SEC EDGAR data source."""
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 

@@ -2,7 +2,6 @@
 
 import asyncio
 import time
-from typing import Optional
 
 import weaviate
 from weaviate.classes.init import AdditionalConfig, Auth, Timeout

@@ -5,11 +5,9 @@ Tests the local in-memory fallback path (no Redis required).
 All tests run fully offline.
 """
 
-import asyncio
 import sys
-import time
 from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 

@@ -291,7 +291,6 @@ class ResponsePostprocessor:
         """
         from datetime import (  # Local import to avoid top-level bloat if not needed
             datetime,
-            timezone,
         )
 
         sources = []

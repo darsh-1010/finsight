@@ -36,7 +36,7 @@ from src.services.scrapper.resilience import (
     wait_for_post_action_settle,
 )
 from src.utils.logger import get_logger
-from src.services.scrapper.utils import save_results, safe_filename
+from src.services.scrapper.utils import save_results
 
 # ── Configuration ─────────────────────────────────────────────────────────────
 SOURCE_NAME = "investing_com"

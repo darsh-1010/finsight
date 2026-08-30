@@ -6,7 +6,6 @@ All TradingView network calls are mocked so this test suite runs fully offline.
 
 from unittest.mock import patch
 
-import pytest
 from fastapi.testclient import TestClient
 
 

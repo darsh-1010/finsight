@@ -20,8 +20,8 @@ import logging
 import os
 import sys
 from collections.abc import Callable
-from datetime import UTC, datetime, timezone
-from typing import Optional, Union
+from datetime import UTC, datetime
+from typing import Union
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger

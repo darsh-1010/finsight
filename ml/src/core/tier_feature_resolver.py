@@ -1,7 +1,7 @@
 """Tier feature resolution logic (Trust but Verify)."""
 
 import json
-from typing import Any, Optional
+from typing import Any
 
 import httpx
 

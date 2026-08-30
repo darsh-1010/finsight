@@ -6,7 +6,7 @@ with the new canonical schema.
 
 import asyncio
 import sys
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from src.scripts.scraper_ingestion import ingest_to_weaviate

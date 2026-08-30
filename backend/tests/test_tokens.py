@@ -9,7 +9,6 @@ Note: The token usage endpoint requires the user to have an active subscription
       the TokenUsage Pydantic model: available_tokens, total_used_tokens, etc.
 """
 
-import pytest
 
 
 class TestTokenUsage:

@@ -6,7 +6,7 @@ import asyncio
 import inspect
 import time
 from contextlib import suppress
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from openai import (

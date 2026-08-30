@@ -5,7 +5,7 @@ Orchestrates query analysis, ticker resolution, and data fetching.
 
 import asyncio
 import hashlib
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate

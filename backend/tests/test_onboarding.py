@@ -5,7 +5,6 @@ Tests for onboarding endpoints.
   POST /api/v1/onboarding/answers
 """
 
-import pytest
 
 
 class TestGetOnboardingQuestions:

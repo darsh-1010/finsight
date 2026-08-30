@@ -8,7 +8,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from src.core.exceptions import LLMError, RAGError, YFinanceError
+from src.core.exceptions import LLMError, YFinanceError
 from src.services.market_insights.llm_engine import LLMEngine
 from src.services.market_insights.market_triggers import MarketTriggerService
 from src.services.market_insights.models import EventType, MarketEvent

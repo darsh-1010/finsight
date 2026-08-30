@@ -1,7 +1,6 @@
 """Scraper mapping utilities for Website IDs."""
 
 import os
-from typing import Optional
 
 import httpx
 

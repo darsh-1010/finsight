@@ -3,7 +3,6 @@ AWS S3 utility for downloading PDF files.
 """
 
 import os
-from typing import Tuple
 from urllib.parse import unquote_plus, urlparse
 
 from config.settings import settings

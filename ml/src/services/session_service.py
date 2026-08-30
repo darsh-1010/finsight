@@ -5,7 +5,7 @@ Handles Redis interactions for session state and conversation history.
 
 import asyncio
 import json
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from config.settings import settings

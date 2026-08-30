@@ -1,7 +1,6 @@
 """Quota enforcement middleware."""
 
 import time
-from typing import Optional
 
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint

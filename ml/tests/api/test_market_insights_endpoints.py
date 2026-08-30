@@ -6,24 +6,19 @@ missing headers, weekly report compilation, and preservation of user_id.
 """
 
 import asyncio
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from fastapi import FastAPI, Header, HTTPException
-from fastapi.exceptions import RequestValidationError
 from fastapi.testclient import TestClient
 
-from config.settings import settings
-from src.api.dependencies import get_ticker_service
 from src.api.main import app
 from src.core.exceptions import AppError
 from src.services.market_insights.models import (AlertPayload, EventType,
                                                  InsightCategory,
                                                  InsightResult, InsightTopic,
                                                  MarketEvent, ScanRequest,
-                                                 ScanResponse,
                                                  WeeklyStockHighlight,
                                                  WeeklySummaryReport)
 from src.services.market_insights.notification_dispatcher import \
@@ -149,9 +144,6 @@ async def test_scan_watchlist_case_a_standard_resolution(
     mock_ticker_service = MockTickerService()
 
     mock_trigger_service = mock_trigger_service_class.return_value
-    mock_rag_client = mock_rag_client_class.return_value
-    mock_llm_engine = mock_llm_engine_class.return_value
-
     mock_trigger_service.scan_watchlist = AsyncMock(return_value=[])
 
     # ScanRequest with duplicates and natural names
@@ -607,7 +599,6 @@ async def test_case_k_programmatic_user_id_preservation(
     )
     mock_openai.beta.chat.completions.parse = AsyncMock(return_value=mock_completion)
 
-    import pandas as pd
     mock_fetch.return_value = ([], [], [])
 
     compiler = WeeklySummaryCompiler(openai_api_key="fake-key")
@@ -657,7 +648,6 @@ async def test_case_l_empty_redis_queue_fallback(
     fake_redis = FakeRedis()
     mock_redis_func.return_value = fake_redis
 
-    import pandas as pd
     mock_fetch.return_value = ([], [], [])
     
     mock_openai = mock_openai_class.return_value

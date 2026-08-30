@@ -6,7 +6,6 @@ and JWT decode behaviour — all run offline with no DB or network calls.
 """
 
 import time
-from datetime import datetime, timedelta
 
 import pytest
 from jose import JWTError, jwt

@@ -1,6 +1,6 @@
 """Tests for the knowledge graph service."""
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 

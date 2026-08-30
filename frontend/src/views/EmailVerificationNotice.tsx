@@ -30,7 +30,7 @@ const EmailVerificationNotice: React.FC = () => {
     try {
       await authApi.resendVerification();
       setResendStatus('success');
-    } catch (err) {
+    } catch {
       setResendStatus('error');
     } finally {
       setResending(false);
