@@ -13,39 +13,6 @@ import yfinance as yf
 logger = logging.getLogger(__name__)
 
 
-class PortfolioService:
-    @staticmethod
-    def _fetch_historical_data(
-        tickers: list[str], start: str, end: str
-    ) -> pd.DataFrame:
-        """Fetch historical close prices for a list of tickers using yfinance."""
-        if not tickers:
-            return pd.DataFrame()
-
-        try:
-            # Download data quietly
-            data = yf.download(tickers, start=start, end=end, progress=False)
-            if data.empty:
-                return pd.DataFrame()
-
-            # Handle multi-index columns vs single-index depending on number of tickers
-            if isinstance(data.columns, pd.MultiIndex):
-                if "Close" in data.columns.get_level_values(0):
-                    close_prices = data["Close"]
-                else:
-                    return pd.DataFrame()
-            else:
-                # If only one ticker is requested, it returns a single level DF where 'Close' is a column
-                close_prices = pd.DataFrame({tickers[0]: data["Close"]})
-
-            # Forward fill to handle missing daily data, then drop any remaining NaNs
-            return close_prices.ffill().dropna()
-
-        except Exception as exc:
-            logger.error("[PORTFOLIO_FETCH_FAIL] Failed to fetch data: %s", exc)
-            return pd.DataFrame()
-
-
 STRESS_SCENARIOS = {
     # 1. Historical Crashes
     "1987_Black_Monday": {
@@ -375,43 +342,48 @@ STRESS_SCENARIOS = {
 }
 
 
-def _classify_sector(ticker: str) -> str:
-    ticker = ticker.upper().strip()
-    tech_tickers = {
-        "AAPL",
-        "MSFT",
-        "GOOGL",
-        "AMZN",
-        "TSLA",
-        "NVDA",
-        "NFLX",
-        "META",
-        "QQQ",
-        "SMH",
-    }
-    reit_tickers = {"VNQ", "O", "AMT", "PLD", "CCI", "EQIX", "WY", "PSA"}
-    energy_tickers = {"XLE", "XOM", "CVX", "COP", "SLB", "EOG", "PXD"}
-    renewables_tickers = {"ICLN", "TAN", "ENPH", "FSLR", "NEE", "RUN"}
-    commodity_tickers = {"GLD", "SLV", "USO", "UNG", "DBC", "PDBC", "IAU"}
-    defensive_tickers = {"XLP", "XLV", "XLU", "PG", "JNJ", "KO", "PEP", "WMT", "LLY"}
-    bond_tickers = {"BND", "TLT", "IEF", "SHY", "LQD", "HYG", "AGG"}
+# HHI bands: an equal-weighted N-stock portfolio has HHI = 1/N, so 0.15 ~ 7 holdings and
+# 0.25 ~ 4 holdings - below that many effective holdings is thin diversification by common
+# practitioner guidance.
+HHI_DIVERSIFIED_MAX = 0.15
+HHI_MODERATE_MAX = 0.25
+# A single position above 10% of the portfolio, or a sector above 20%, is flagged as
+# concentration risk per practitioner thresholds (Guardfolio, 2026).
+SINGLE_POSITION_FLAG_THRESHOLD = 0.10
+SECTOR_FLAG_THRESHOLD = 0.20
 
-    if ticker in tech_tickers:
-        return "TECH"
-    elif ticker in reit_tickers:
-        return "REITS"
-    elif ticker in energy_tickers:
-        return "ENERGY"
-    elif ticker in renewables_tickers:
-        return "RENEWABLES"
-    elif ticker in commodity_tickers:
-        return "COMMODITIES"
-    elif ticker in defensive_tickers:
-        return "DEFENSIVES"
-    elif ticker in bond_tickers:
-        return "BONDS"
-    else:
-        return "OTHER"
+
+# Hardcoded ticker -> sector map, used as a fallback when live sector lookup fails.
+_TICKER_SECTORS: dict[str, str] = {
+    **dict.fromkeys(
+        ("AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "NVDA", "NFLX", "META", "QQQ", "SMH"),
+        "TECH",
+    ),
+    **dict.fromkeys(("VNQ", "O", "AMT", "PLD", "CCI", "EQIX", "WY", "PSA"), "REITS"),
+    **dict.fromkeys(("XLE", "XOM", "CVX", "COP", "SLB", "EOG", "PXD"), "ENERGY"),
+    **dict.fromkeys(("ICLN", "TAN", "ENPH", "FSLR", "NEE", "RUN"), "RENEWABLES"),
+    **dict.fromkeys(("GLD", "SLV", "USO", "UNG", "DBC", "PDBC", "IAU"), "COMMODITIES"),
+    **dict.fromkeys(
+        ("XLP", "XLV", "XLU", "PG", "JNJ", "KO", "PEP", "WMT", "LLY"), "DEFENSIVES"
+    ),
+    **dict.fromkeys(("BND", "TLT", "IEF", "SHY", "LQD", "HYG", "AGG"), "BONDS"),
+}
+
+
+def _classify_sector(ticker: str) -> str:
+    return _TICKER_SECTORS.get(ticker.upper().strip(), "OTHER")
+
+
+def _resolve_sector(ticker: str) -> str:
+    """Best-effort sector lookup: real Yahoo Finance data first, hardcoded map as fallback."""
+    try:
+        info = yf.Ticker(ticker).info
+        sector = info.get("sector") if info else None
+        if sector:
+            return sector
+    except (ValueError, TypeError, AttributeError, RuntimeError, KeyError) as exc:
+        logger.warning("[PORTFOLIO_SECTOR_FALLBACK] Ticker: %s | Error: %s", ticker, exc)
+    return _classify_sector(ticker)
 
 
 class PortfolioService:
@@ -447,6 +419,87 @@ class PortfolioService:
             return pd.DataFrame()
 
     @staticmethod
+    def _no_data_result() -> dict:
+        return {"return_pct": 0.0, "max_drawdown": 0.0, "status": "no_data"}
+
+    @staticmethod
+    def _summarize_performance(port_daily_return: pd.Series) -> dict:
+        """Turn a daily return series into a rounded period return / max drawdown result."""
+        cum_return = (1 + port_daily_return).cumprod()
+        period_return = (
+            float(cum_return.iloc[-1] - 1) if not cum_return.empty else 0.0
+        )
+        rolling_max = cum_return.cummax()
+        drawdown = (cum_return - rolling_max) / rolling_max
+        max_drawdown = float(drawdown.min()) if not drawdown.empty else 0.0
+        return {
+            "return_pct": round(period_return * 100, 2),
+            "max_drawdown": round(max_drawdown * 100, 2),
+            "status": "success",
+        }
+
+    @staticmethod
+    def _weighted_daily_return(
+        daily_returns: pd.DataFrame, normalized_portfolio: dict
+    ) -> pd.Series:
+        """Blend each ticker's daily returns by its normalized portfolio weight."""
+        port_daily_return = pd.Series(0.0, index=daily_returns.index)
+        for ticker, weight in normalized_portfolio.items():
+            if ticker in daily_returns.columns:
+                port_daily_return += daily_returns[ticker] * weight
+        return port_daily_return
+
+    @staticmethod
+    def _weighted_synthetic_return(
+        daily_returns: pd.DataFrame, normalized_portfolio: dict, shifts: dict
+    ) -> pd.Series:
+        """Apply a synthetic scenario's per-sector shift on top of baseline daily returns."""
+        num_days = len(daily_returns)
+        port_daily_return = pd.Series(0.0, index=daily_returns.index)
+        for ticker, weight in normalized_portfolio.items():
+            if ticker not in daily_returns.columns:
+                continue
+            sector = _classify_sector(ticker)
+            shift = shifts.get(sector, shifts.get("OTHER", 0.0))
+            # (1 + shift) total return multiplier over the baseline, spread daily
+            factor = (
+                (1.0 + shift) ** (1.0 / num_days) if (1.0 + shift) > 0 else 0.0
+            )
+            asset_daily = (1 + daily_returns[ticker]) * factor - 1
+            port_daily_return += asset_daily * weight
+        return port_daily_return
+
+    @staticmethod
+    def _run_scenario(
+        name: str, tickers: list[str], normalized_portfolio: dict
+    ) -> dict:
+        """Run one stress scenario (historical replay or synthetic shift) end to end."""
+        dates = STRESS_SCENARIOS[name]
+        if dates["type"] == "historical":
+            df = PortfolioService._fetch_historical_data(
+                tickers, dates["start"], dates["end"]
+            )
+        else:
+            # Synthetic scenarios shift a recent 1-year baseline (2023) by sector.
+            df = PortfolioService._fetch_historical_data(
+                tickers, "2023-01-01", "2023-12-31"
+            )
+
+        daily_returns = df.pct_change().dropna() if not df.empty else df
+        if daily_returns.empty:
+            return PortfolioService._no_data_result()
+
+        if dates["type"] == "historical":
+            port_daily_return = PortfolioService._weighted_daily_return(
+                daily_returns, normalized_portfolio
+            )
+        else:
+            port_daily_return = PortfolioService._weighted_synthetic_return(
+                daily_returns, normalized_portfolio, dates.get("shifts", {})
+            )
+        return PortfolioService._summarize_performance(port_daily_return)
+
+    @staticmethod
     def calculate_stress_test(
         portfolio: list[dict], scenarios: list[str] = None
     ) -> dict:
@@ -471,117 +524,65 @@ class PortfolioService:
         if not scenarios:
             scenarios = ["2008_Crash", "2020_COVID"]
 
-        results = {}
-        for name in scenarios:
-            if name not in STRESS_SCENARIOS:
-                continue
+        return {
+            name: PortfolioService._run_scenario(name, tickers, normalized_portfolio)
+            for name in scenarios
+            if name in STRESS_SCENARIOS
+        }
 
-            dates = STRESS_SCENARIOS[name]
+    @staticmethod
+    def calculate_concentration(portfolio: list[dict]) -> dict:
+        """
+        Score a portfolio's concentration risk: single-position and sector exposure,
+        plus a Herfindahl-Hirschman Index (HHI) summary score.
+        Expects a list of dicts: [{"ticker": "AAPL", "weight": 0.6}, ...]
+        """
+        total_weight = sum(asset.get("weight", 0.0) for asset in portfolio)
+        if total_weight <= 0:
+            return {"error": "Invalid weights, must sum to > 0"}
 
-            if dates["type"] == "historical":
-                df = PortfolioService._fetch_historical_data(
-                    tickers, dates["start"], dates["end"]
-                )
-                if df.empty:
-                    results[name] = {
-                        "return_pct": 0.0,
-                        "max_drawdown": 0.0,
-                        "status": "no_data",
-                    }
-                    continue
+        normalized = {
+            asset["ticker"].upper(): asset["weight"] / total_weight
+            for asset in portfolio
+            if asset.get("ticker") and asset.get("weight")
+        }
+        if not normalized:
+            return {"error": "No valid tickers provided"}
 
-                daily_returns = df.pct_change().dropna()
-                if daily_returns.empty:
-                    results[name] = {
-                        "return_pct": 0.0,
-                        "max_drawdown": 0.0,
-                        "status": "no_data",
-                    }
-                    continue
+        hhi = sum(weight**2 for weight in normalized.values())
+        if hhi < HHI_DIVERSIFIED_MAX:
+            risk_level = "diversified"
+        elif hhi < HHI_MODERATE_MAX:
+            risk_level = "moderate"
+        else:
+            risk_level = "concentrated"
 
-                # Calculate daily weighted return for the portfolio
-                port_daily_return = pd.Series(0.0, index=daily_returns.index)
-                for ticker, weight in normalized_portfolio.items():
-                    if ticker in daily_returns.columns:
-                        port_daily_return += daily_returns[ticker] * weight
+        max_ticker, max_weight = max(normalized.items(), key=lambda item: item[1])
+        flagged_positions = [
+            {"ticker": ticker, "weight": round(weight, 4)}
+            for ticker, weight in normalized.items()
+            if weight > SINGLE_POSITION_FLAG_THRESHOLD
+        ]
 
-                # Cumulative performance
-                cum_return = (1 + port_daily_return).cumprod()
+        sector_breakdown: dict[str, float] = {}
+        for ticker, weight in normalized.items():
+            sector = _resolve_sector(ticker)
+            sector_breakdown[sector] = sector_breakdown.get(sector, 0.0) + weight
 
-                period_return = (
-                    float(cum_return.iloc[-1] - 1) if not cum_return.empty else 0.0
-                )
-                rolling_max = cum_return.cummax()
-                drawdown = (cum_return - rolling_max) / rolling_max
-                max_drawdown = float(drawdown.min()) if not drawdown.empty else 0.0
+        flagged_sectors = [
+            {"sector": sector, "weight": round(weight, 4)}
+            for sector, weight in sector_breakdown.items()
+            if weight > SECTOR_FLAG_THRESHOLD
+        ]
 
-                results[name] = {
-                    "return_pct": round(period_return * 100, 2),
-                    "max_drawdown": round(max_drawdown * 100, 2),
-                    "status": "success",
-                }
-
-            elif dates["type"] == "synthetic":
-                # Use a recent 1-year baseline for correlation/volatility modeling
-                # from 2023-01-01 to 2023-12-31
-                df = PortfolioService._fetch_historical_data(
-                    tickers, "2023-01-01", "2023-12-31"
-                )
-                if df.empty:
-                    results[name] = {
-                        "return_pct": 0.0,
-                        "max_drawdown": 0.0,
-                        "status": "no_data",
-                    }
-                    continue
-
-                daily_returns = df.pct_change().dropna()
-                if daily_returns.empty:
-                    results[name] = {
-                        "return_pct": 0.0,
-                        "max_drawdown": 0.0,
-                        "status": "no_data",
-                    }
-                    continue
-
-                # Apply synthetic shifts on top of baseline returns
-                shifts = dates.get("shifts", {})
-                num_days = len(daily_returns)
-
-                port_daily_return = pd.Series(0.0, index=daily_returns.index)
-                for ticker, weight in normalized_portfolio.items():
-                    if ticker in daily_returns.columns:
-                        sector = _classify_sector(ticker)
-                        shift = shifts.get(sector, shifts.get("OTHER", 0.0))
-
-                        # Calculate daily shift multiplier factor
-                        # e.g., (1 + shift) total return multiplier over baseline
-                        factor = (
-                            (1.0 + shift) ** (1.0 / num_days)
-                            if (1.0 + shift) > 0
-                            else 0.0
-                        )
-
-                        # Apply daily factor shift to baseline asset returns
-                        asset_daily = (1 + daily_returns[ticker]) * factor - 1
-                        port_daily_return += asset_daily * weight
-
-                cum_return = (1 + port_daily_return).cumprod()
-
-                period_return = (
-                    float(cum_return.iloc[-1] - 1) if not cum_return.empty else 0.0
-                )
-                rolling_max = cum_return.cummax()
-                drawdown = (cum_return - rolling_max) / rolling_max
-                max_drawdown = float(drawdown.min()) if not drawdown.empty else 0.0
-
-                results[name] = {
-                    "return_pct": round(period_return * 100, 2),
-                    "max_drawdown": round(max_drawdown * 100, 2),
-                    "status": "success",
-                }
-
-        return results
+        return {
+            "hhi": round(hhi, 4),
+            "risk_level": risk_level,
+            "max_position": {"ticker": max_ticker, "weight": round(max_weight, 4)},
+            "flagged_positions": flagged_positions,
+            "sector_breakdown": {sector: round(w, 4) for sector, w in sector_breakdown.items()},
+            "flagged_sectors": flagged_sectors,
+        }
 
     @staticmethod
     def get_7_day_performance(tickers: list[str]) -> dict:

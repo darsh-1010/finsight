@@ -1,5 +1,44 @@
 # Changelog
 
+## [2026-08-30]
+
+### Added
+- **Concentration-risk badge** on the Portfolio Sandbox: every stress-test run now also scores
+  the submitted portfolio's concentration risk via a new `PortfolioService.calculate_concentration`
+  — a Herfindahl-Hirschman Index (HHI) summary, any single position above 10%, and any sector
+  above 20% (real Yahoo Finance sector data, falling back to the existing hardcoded sector map
+  on lookup failure). Returned as a new `concentration` field on `POST /portfolio/stress-test`,
+  ungated for all tiers. Backed by real-world research: practitioner guidance flags any single
+  position >10% and any sector >20-25% as concentration risk.
+- **Ask FinSight risk nudges**: two evidence-backed heuristics computed from ticker data already
+  fetched for the turn, appended as guidance to the LLM prompt (`_build_risk_nudges` in
+  `chat_service.py`) — no new LLM call or data fetch:
+  - A **reactive-decision nudge** when a buy/sell question follows a >5% single-day move on the
+    resolved ticker, noting that moves this size often partially revert and encouraging the user
+    to weigh their original thesis rather than the day's move. Retail investors lose an
+    estimated $1,600/year on average to emotionally-driven trades (FinanceBuzz, 2026 survey).
+  - A **pump-and-dump hype-pattern flag** for a resolved ticker matching illiquid microcap
+    (<$300M market cap) + abnormal volume spike (>2x average) + no P/E data on file — the
+    signature the FBI reports a +300% rise in complaints about in 2025.
+
+### Fixed / Verified
+- Live-tested both features against a real local stack (real SQLite DB, real Redis, real
+  yfinance network calls, no mocks): the concentration badge correctly rendered `concentrated`
+  for an 85/15 AAPL/MSFT split (HHI 0.745) and `diversified` for a 10-position equal-weight
+  portfolio (HHI 0.10), end-to-end through the actual frontend UI.
+- The live run surfaced a real Yahoo Finance 429 rate-limit on the sector lookup — confirmed
+  `_resolve_sector`'s exception handling (`json.JSONDecodeError` is a `ValueError` subclass)
+  degrades cleanly to the static sector map instead of failing the request, exactly as designed.
+- The panic-decision nudge was verified against a real, cross-checked market event: Advance
+  Auto Parts' actual -24.55% single-day move on 2026-08-20 (computed from yfinance's own
+  historical OHLC, matching press coverage of "-25.2%") correctly triggers the nudge only on a
+  reactive message ("should I sell...") and stays silent on a calm informational question about
+  the same stock.
+- The pump-and-dump flag was verified against a real, currently-trending microcap (Ucommune
+  International, market cap ~$7.3M, no P/E on file): correctly silent against its real live
+  snapshot (no active volume spike at test time) and correctly fires once a volume spike is
+  present, confirming the heuristic is conservative rather than trigger-happy.
+
 ## [2026-08-27] (2)
 
 ### Added

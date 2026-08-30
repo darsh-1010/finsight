@@ -11,10 +11,30 @@ export interface CrisisResult {
   status: string;
 }
 
+export interface PositionWeight {
+  ticker: string;
+  weight: number;
+}
+
+export interface SectorWeight {
+  sector: string;
+  weight: number;
+}
+
+export interface ConcentrationResult {
+  hhi: number;
+  risk_level: "diversified" | "moderate" | "concentrated";
+  max_position: PositionWeight;
+  flagged_positions: PositionWeight[];
+  sector_breakdown: { [sector: string]: number };
+  flagged_sectors: SectorWeight[];
+}
+
 export interface StressTestResponse {
   crises: {
     [crisisName: string]: CrisisResult;
   };
+  concentration: ConcentrationResult;
 }
 
 export interface StressScenario {

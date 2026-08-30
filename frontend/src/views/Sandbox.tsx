@@ -9,16 +9,70 @@ import {
   AlertTriangle,
   ChevronDown,
   ChevronRight,
+  ShieldAlert,
 } from "lucide-react";
 import {
   portfolioApi,
   type PortfolioAsset,
   type StressTestResponse,
   type StressScenario,
+  type ConcentrationResult,
 } from "@/api/portfolio";
 import { Button } from "@/components/ui/button";
 
 const QUICK_TICKERS = ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "NVDA", "NFLX", "META", "SPY", "QQQ"];
+
+const RISK_LEVEL_STYLE: Record<ConcentrationResult["risk_level"], string> = {
+  diversified: "bg-emerald-500/10 text-emerald-500 border-emerald-500/30",
+  moderate: "bg-amber-500/10 text-amber-500 border-amber-500/30",
+  concentrated: "bg-destructive/10 text-destructive border-destructive/30",
+};
+
+const ConcentrationBadge: React.FC<{ concentration: ConcentrationResult }> = ({ concentration }) => {
+  const {
+    risk_level: riskLevel,
+    hhi,
+    max_position: maxPosition,
+    flagged_positions: flaggedPositions,
+    flagged_sectors: flaggedSectors,
+  } = concentration;
+  const hasFlags = flaggedPositions.length > 0 || flaggedSectors.length > 0;
+
+  return (
+    <div className="glass-panel rounded-2xl p-6 border border-border/40 space-y-3 animate-fade-in-up">
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+          <ShieldAlert className="w-4 h-4 text-primary" /> Concentration Risk
+        </h3>
+        <span
+          className={`px-2.5 py-1 rounded-full border text-2xs font-extrabold uppercase ${RISK_LEVEL_STYLE[riskLevel]}`}
+        >
+          {riskLevel} · HHI {hhi.toFixed(2)}
+        </span>
+      </div>
+      <p className="text-muted-foreground text-xs">
+        Largest position: <span className="font-bold text-foreground">{maxPosition.ticker}</span> at{" "}
+        {(maxPosition.weight * 100).toFixed(1)}% of the portfolio.
+      </p>
+      {hasFlags && (
+        <ul className="text-xs text-amber-500 space-y-1">
+          {flaggedPositions.map((p) => (
+            <li key={p.ticker}>
+              ⚠ {p.ticker} is {(p.weight * 100).toFixed(1)}% of the portfolio (above the 10%
+              single-position threshold).
+            </li>
+          ))}
+          {flaggedSectors.map((s) => (
+            <li key={s.sector}>
+              ⚠ {s.sector} sector is {(s.weight * 100).toFixed(1)}% of the portfolio (above the
+              20% sector threshold).
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
 
 const Sandbox: React.FC = () => {
   const [assets, setAssets] = useState<PortfolioAsset[]>([
@@ -428,6 +482,8 @@ const Sandbox: React.FC = () => {
 
           {results && (
             <div className="space-y-6 animate-fade-in-up">
+              <ConcentrationBadge concentration={results.concentration} />
+
               {/* Bento Grid Results */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[500px] overflow-y-auto pr-1 custom-scrollbar">
                 {Object.entries(results.crises).map(([key, data]) => {

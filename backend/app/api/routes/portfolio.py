@@ -30,8 +30,28 @@ class CrisisResult(BaseModel):
     status: str
 
 
+class PositionWeight(BaseModel):
+    ticker: str
+    weight: float
+
+
+class SectorWeight(BaseModel):
+    sector: str
+    weight: float
+
+
+class ConcentrationResult(BaseModel):
+    hhi: float
+    risk_level: str
+    max_position: PositionWeight
+    flagged_positions: list[PositionWeight]
+    sector_breakdown: dict[str, float]
+    flagged_sectors: list[SectorWeight]
+
+
 class StressTestResponse(BaseModel):
     crises: dict[str, CrisisResult]
+    concentration: ConcentrationResult
 
 
 class ScenarioMetadata(BaseModel):
@@ -83,4 +103,8 @@ def run_stress_test(
     if "error" in results:
         raise HTTPException(status_code=400, detail=results["error"])
 
-    return StressTestResponse(crises=results)
+    concentration = PortfolioService.calculate_concentration(portfolio_dicts)
+    if "error" in concentration:
+        raise HTTPException(status_code=400, detail=concentration["error"])
+
+    return StressTestResponse(crises=results, concentration=concentration)

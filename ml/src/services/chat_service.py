@@ -9,8 +9,8 @@ import json
 import re
 import time
 from collections.abc import AsyncGenerator
-from datetime import UTC, datetime, timezone
-from typing import Any, Dict, List
+from datetime import UTC, datetime
+from typing import Any
 
 from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
@@ -24,6 +24,10 @@ from src.services.chat.domain_guard import DomainGuard
 from src.services.chat.history_service import ChatHistoryService
 from src.services.chat.message_manager import MessageManager
 from src.services.chat.response_generator import ResponseGenerator
+from src.services.market_insights.market_triggers import (
+    INTRADAY_MOVE_THRESHOLD,
+    VOLUME_SPIKE_MULTIPLIER,
+)
 from src.services.quant.quant_service import QuantService
 from src.utils.logger import get_logger
 from src.utils.perf_utils import timed
@@ -54,6 +58,70 @@ def _build_domain_refusal_message() -> str:
         "Feel free to ask me anything in those areas and I'll give you a thorough, "
         "data-driven answer. What financial topic can I help you explore today?"
     )
+
+
+# Reactive buy/sell language - a focused subset of QueryService._COMPLEX_SIGNALS, not the
+# full analytical-routing set, to avoid flagging unrelated complex queries (e.g. "compare
+# AAPL to MSFT") as panic-driven.
+_PANIC_DECISION_SIGNALS = frozenset(
+    {"buy", "sell", "should i", "should", "hold", "panic", "dump", "get out", "bail"}
+)
+# FinancialContext.price_change_pct is a percentage (e.g. -6.5 for -6.5%), while
+# INTRADAY_MOVE_THRESHOLD is a 0-1 fraction - convert once here so both features share the
+# same real-world definition of "a big move."
+_PANIC_MOVE_THRESHOLD_PCT = INTRADAY_MOVE_THRESHOLD * 100
+# Pump-and-dump heuristic: a stock this small is commonly called a "microcap."
+_MICROCAP_MARKET_CAP_CEILING = 300_000_000  # USD
+
+
+def _build_risk_nudges(message: str, analysis_result: dict[str, Any] | None) -> list[str]:
+    """Detect reactive-decision and pump-and-dump patterns from this turn's own data.
+
+    Reuses the FinancialContext(s) QueryService already resolved for this message - no new
+    LLM call, no new data fetch. Returns zero or more system-message strings to append to
+    the LLM prompt.
+    """
+    if not analysis_result:
+        return []
+    contexts = analysis_result.get("contexts") or []
+    if not contexts:
+        return []
+
+    nudges: list[str] = []
+    message_lower = message.lower()
+
+    primary = contexts[0]
+    price_change_pct = primary.get("price_change_pct")
+    if (
+        price_change_pct is not None
+        and abs(price_change_pct) > _PANIC_MOVE_THRESHOLD_PCT
+        and any(signal in message_lower for signal in _PANIC_DECISION_SIGNALS)
+    ):
+        nudges.append(
+            "[RISK NUDGE] The user appears to be asking about a reactive buy/sell decision on "
+            f"{primary.get('ticker', 'this stock')} after a {price_change_pct:+.1f}% move today. "
+            "Answer their question factually, but also gently note that single-day moves of this "
+            "size have often partially reverted within weeks, and encourage them to weigh their "
+            "original investment thesis and time horizon rather than the day's move alone. Do not "
+            "give directive investment advice."
+        )
+
+    for ctx in contexts:
+        market_cap = ctx.get("market_cap")
+        volume = ctx.get("volume")
+        avg_volume = ctx.get("avg_volume")
+        is_microcap = market_cap is not None and market_cap < _MICROCAP_MARKET_CAP_CEILING
+        has_volume_spike = bool(volume and avg_volume and volume / avg_volume > VOLUME_SPIKE_MULTIPLIER)
+        has_no_fundamentals = ctx.get("pe_ratio") is None and ctx.get("forward_pe") is None
+        if is_microcap and has_volume_spike and has_no_fundamentals:
+            nudges.append(
+                f"[RISK NUDGE] {ctx.get('ticker', 'This ticker')} shows a pattern often seen in "
+                "hype/pump-and-dump schemes: a small market cap, an abnormal trading-volume spike, "
+                "and no real earnings/valuation data on file. Mention this pattern to the user as a "
+                "caution alongside your answer, without accusing the company of wrongdoing."
+            )
+
+    return nudges
 
 
 # Regex to detect identity and capabilities queries
@@ -885,6 +953,7 @@ class ChatService(IChatService):
             analysis_result=analysis_result,
             current_state=current_state,
             file_ids=file_ids,
+            message=message,
         )
 
     async def _build_context_dict(
@@ -928,6 +997,7 @@ class ChatService(IChatService):
             "analysis_result": analysis_result,
             "raw_vector": raw_vector,
             "file_ids": kwargs.get("file_ids", []),
+            "risk_nudges": _build_risk_nudges(kwargs.get("message", ""), analysis_result),
         }
 
     @staticmethod
@@ -1030,6 +1100,9 @@ class ChatService(IChatService):
             messages.append(
                 SystemMessage(content=f"[Query Analysis]\n```json\n{analysis_str}\n```")
             )
+
+        for nudge in context_data.get("risk_nudges", []):
+            messages.append(SystemMessage(content=nudge))
 
         formatted_user_msg = self._user_prompt_template.format(
             user_message=message,

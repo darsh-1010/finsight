@@ -38,8 +38,8 @@ finsight/
 
 ---
 
-## ⚙️ AI Engine (FreeLLMAPI)
-The platform is powered by **FreeLLMAPI** as its primary LLM backend provider, with an automatic transparent fallback to standard **OpenAI** to guarantee continuous uptime and reliable query responses.
+## ⚙️ AI Engine (FreeLLMAPI + litellm)
+The platform is powered by **FreeLLMAPI** as its primary LLM backend provider, with an automatic transparent fallback to standard **OpenAI** to guarantee continuous uptime and reliable query responses. Routing between the two is handled by a shared `litellm.Router` (`ml/src/llm/litellm_router.py`) — one primary+fallback deployment pair per model, so a FreeLLMAPI outage falls through to OpenAI without any caller code needing to know. The OpenAI Responses API (hosted web search) and Files API (document uploads) still talk to OpenAI directly, since litellm doesn't cleanly cover those surfaces yet.
 
 ---
 
@@ -124,18 +124,40 @@ pytest ml/tests/ -v
   - **2008 Financial Crisis**
   - **2020 COVID-19 Crash**
 - Custom premium SVG bar-chart comparison.
+- **Concentration-risk badge**: alongside the crisis results, every simulation also scores the
+  submitted portfolio's concentration risk — a Herfindahl-Hirschman Index (HHI) summary, any
+  single position above 10% of the portfolio, and any sector above 20% (real Yahoo Finance
+  sector data, with a static fallback if that lookup is unavailable). Ungated, available to
+  every tier.
 
 ### 2. Weekly Email Briefings
 - Automated weekly performance digests delivered directly to your inbox.
 - Configure/opt-out of briefings in **User Profile > Security & Preferences > Weekly Email Briefings**. Note that this premium service is entitlement-locked and requires **Tier 4 (Institutional)**.
+
+### 3. Cited Research Reports
+- Access via the **Research** tab (Growth tier and above). Enter a ticker or company name and
+  get a structured, cited brief combining live yFinance fundamentals with the company's latest
+  SEC 10-K filing excerpt.
+
+### 4. Ask FinSight Risk Nudges
+- The chat assistant now recognizes two evidence-backed patterns without any extra LLM calls,
+  computed from the same ticker data already fetched for the turn:
+  - **Reactive-decision nudge**: a buy/sell question asked right after a >5% single-day move
+    gets a factual answer plus a note that moves of this size often partially revert, encouraging
+    the user to weigh their original thesis rather than the day's move (retail investors lose an
+    estimated $1,600/year on average to emotionally-driven trades — see sources below).
+  - **Hype-pattern flag**: a ticker matching illiquid-microcap + abnormal-volume-spike + no-real-
+    fundamentals — the signature of a pump-and-dump scheme (FBI: +300% complaint volume in 2025)
+    — gets a caution alongside the answer, without accusing the company of wrongdoing.
 
 ---
 
 ## 📄 Detailed Documentation
 
 For deep dives and installation guides:
-- [Installation Guide](file:///c:/Users/10102/Downloads/codebase/finsight/documentation/install.md) — Local manual setup.
-- [Architecture Blueprint](file:///c:/Users/10102/Downloads/codebase/finsight/documentation/architecture.md) — System flow details.
-- [API Reference Guide](file:///c:/Users/10102/Downloads/codebase/finsight/documentation/api.md) — Full backend endpoint docs.
-- [Workflows & Diagrams](file:///c:/Users/10102/Downloads/codebase/finsight/documentation/workflows.md) — Mermaid workflows.
+- [Installation Guide](documentation/install.md) — Local manual setup.
+- [Architecture Blueprint](documentation/architecture.md) — System flow details.
+- [API Reference Guide](documentation/api.md) — Full backend endpoint docs.
+- [Workflows & Diagrams](documentation/workflows.md) — Mermaid workflows.
+- [CHANGELOG](CHANGELOG.md) — Dated log of everything shipped.
 

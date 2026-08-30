@@ -11,7 +11,6 @@ from unittest.mock import patch
 
 import pytest
 
-
 # ── Sample portfolio payload ──────────────────────────────────────────────────
 
 VALID_PORTFOLIO = [{"ticker": "AAPL", "weight": 0.6}, {"ticker": "MSFT", "weight": 0.4}]
@@ -26,6 +25,15 @@ MOCK_STRESS_RESULT = {
         "status": "computed",
     }
 }
+
+
+@pytest.fixture(autouse=True)
+def _mock_yfinance_sector_lookup():
+    """The stress-test route also computes concentration, which does a live sector
+    lookup per ticker - keep every test in this file offline by faking it."""
+    with patch("app.services.portfolio_service.yf.Ticker") as mock_ticker_cls:
+        mock_ticker_cls.return_value.info = {"sector": "Technology"}
+        yield
 
 
 # ── Scenario Listing ──────────────────────────────────────────────────────────
@@ -169,3 +177,35 @@ class TestRunStressTest:
                 },
             )
         assert response.status_code == 200
+
+    def test_response_has_concentration_key(self, auth_client):
+        """Response body must contain a 'concentration' object alongside 'crises'."""
+        test_client, _ = auth_client
+        with patch(
+            "app.services.portfolio_service.PortfolioService.calculate_stress_test",
+            return_value=MOCK_STRESS_RESULT,
+        ):
+            response = test_client.post(
+                "/api/v1/portfolio/stress-test",
+                json={"portfolio": VALID_PORTFOLIO},
+            )
+        assert response.status_code == 200
+        concentration = response.json()["concentration"]
+        assert concentration["risk_level"] in {"diversified", "moderate", "concentrated"}
+        assert "max_position" in concentration
+
+    def test_concentration_error_also_propagated_as_400(self, auth_client):
+        """When PortfolioService.calculate_concentration errors, endpoint raises HTTP 400."""
+        test_client, _ = auth_client
+        with patch(
+            "app.services.portfolio_service.PortfolioService.calculate_stress_test",
+            return_value=MOCK_STRESS_RESULT,
+        ), patch(
+            "app.services.portfolio_service.PortfolioService.calculate_concentration",
+            return_value={"error": "No valid tickers provided"},
+        ):
+            response = test_client.post(
+                "/api/v1/portfolio/stress-test",
+                json={"portfolio": SINGLE_ASSET_PORTFOLIO},
+            )
+        assert response.status_code == 400

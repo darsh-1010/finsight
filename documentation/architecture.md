@@ -53,9 +53,18 @@ graph TD
 - **Cron / Scheduling System**: Drives token wallet resets and triggers weekly performance digests via SES.
 
 ### 2. ML Service
-- **LLM Engine**: Utilizes OpenAI structured outputs (`gpt-4o-mini`) to extract clean, JSON-conforming financial categories and topics.
+- **LLM Routing (litellm)**: A shared `litellm.Router` (`ml/src/llm/litellm_router.py`) fronts
+  chat, structured-output, and embedding calls — each model is registered as a FreeLLMAPI
+  deployment with an explicit OpenAI fallback, so a FreeLLMAPI outage degrades transparently
+  instead of failing the request. The OpenAI Responses API (hosted web search) and Files API
+  (uploads) bypass the router and talk to OpenAI directly.
+- **LLM Engine**: Utilizes structured outputs (`gpt-4o-mini`) to extract clean, JSON-conforming financial categories and topics.
 - **Tavily Fallback Client**: Initiates live web searches when RAG context is insufficient to satisfy query trust parameters.
 - **Weaviate Vector Database**: Hosts indexed PDF reports for Retrieval-Augmented Generation queries.
+- **Risk Nudges**: The chat pipeline flags two behavioral patterns from data already fetched
+  for the turn — a reactive buy/sell question after a large single-day move, and a
+  pump-and-dump hype signature (illiquid microcap + volume spike + no fundamentals) — and
+  appends a guidance note to the LLM prompt. No extra data fetch or LLM call.
 
 ### 3. Frontend Client
 - **Next.js (App Router) & React**: Server/client component rendering with route groups for public, auth, and protected areas.
