@@ -21,6 +21,7 @@ class AttachmentRead(BaseModel):
     storage_url: Optional[str]
     status: str
     created_at: datetime
+    userId: Optional[int] = None
     model_config = ConfigDict(from_attributes=True)
 
 class ChatMessage(ChatMessageBase):
