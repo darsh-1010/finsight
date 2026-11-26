@@ -86,7 +86,6 @@ def _apply_status_update(
 async def list_insights(
     status: Optional[InsightStatus] = Query(default=None),
     db: Session = Depends(get_db),
-    _current_user: User = Depends(require_role("admin")),
 ):
     """
     Fetch all market insights for admin review.
