@@ -57,9 +57,20 @@ def _base_visible_notifications_query(db: Session, user: User):
 
 
 def _serialize_notification(
+    db: Session,
+    user: User,
     notification: Notification,
-    read_ids: set[int],
 ) -> NotificationResponse:
+    is_read = (
+        db.query(UserNotificationRead)
+        .filter(
+            UserNotificationRead.notification_id == notification.id,
+            UserNotificationRead.user_id == user.id,
+            UserNotificationRead.is_read.is_(True),
+        )
+        .first()
+        is not None
+    )
     return NotificationResponse(
         id=notification.id,
         title=notification.title,
@@ -72,7 +83,7 @@ def _serialize_notification(
         created_by=notification.created_by,
         created_at=notification.created_at,
         expires_at=notification.expires_at,
-        is_read=notification.id in read_ids,
+        is_read=is_read,
         audience_types=[audience.audience_type for audience in notification.audiences],
     )
 
@@ -95,20 +106,8 @@ def list_notifications(
     if not notifications:
         return []
 
-    notification_ids = [item.id for item in notifications]
-    reads = (
-        db.query(UserNotificationRead.notification_id)
-        .filter(
-            UserNotificationRead.user_id == user.id,
-            UserNotificationRead.notification_id.in_(notification_ids),
-            UserNotificationRead.is_read.is_(True),
-        )
-        .all()
-    )
-    read_ids = {row.notification_id for row in reads}
-
     serialized = [
-        _serialize_notification(notification, read_ids)
+        _serialize_notification(db, user, notification)
         for notification in notifications
     ]
 

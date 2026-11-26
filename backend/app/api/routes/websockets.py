@@ -133,6 +133,5 @@ async def websocket_endpoint(websocket: WebSocket) -> None:
             await manager.broadcast(f"Client says: {data}")
 
     except WebSocketDisconnect:
-        manager.disconnect(websocket)
         await manager.broadcast("A client disconnected")
         

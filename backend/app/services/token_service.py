@@ -251,6 +251,7 @@ class TokenService:
         wallet = TokenService.get_or_create_wallet(db, user)
         limits = TokenService._get_tier_token_limits(db, tier)
         daily_usage = TokenService.get_daily_usage(db, user.id)
+        print(f"get_usage for user {user.id}: wallet={wallet.available_tokens}")
 
         return {
             "user_id": user.id,

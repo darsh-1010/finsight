@@ -1,6 +1,7 @@
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user, get_db
@@ -48,10 +49,11 @@ async def get_compliance_group(
     key: str,
     db: Session = Depends(get_db),
 ):
+    row = db.execute(
+        text(f"SELECT * FROM compliance_groups WHERE key = '{key}'")
+    ).first()
     group = (
-        db.query(ComplianceGroup)
-        .filter(ComplianceGroup.key == key)
-        .first()
+        db.query(ComplianceGroup).get(row.id) if row else None
     )
 
     if not group:
