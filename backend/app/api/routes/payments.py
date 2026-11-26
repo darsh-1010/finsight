@@ -19,6 +19,13 @@ class MockSessionResponse(BaseModel):
     checkout_url: str
     session_id: str
 
+# TODO: re-enable real Stripe checkout once billing comes back
+# stripe.api_key = settings.STRIPE_SECRET_KEY
+# checkout_session = stripe.checkout.Session.create(
+#     line_items=[{"price": request.price_id, "quantity": 1}],
+#     mode="subscription",
+#     success_url=settings.FRONTEND_URL + "/success",
+# )
 @router.post("/create-checkout-session", response_model=MockSessionResponse)
 def create_checkout_session(
     request: CheckoutSessionRequest,

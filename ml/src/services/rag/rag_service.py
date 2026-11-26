@@ -146,7 +146,7 @@ class RAGService(IRAGService):
             if existing:
                 if replace_existing:
                     logger.info("Document exists, deleting before re-storing")
-                    await self.delete_document(url)
+                    self.delete_document(url)
                 else:
                     logger.info(f"Document already exists, skipping: {url}")
                     return 0

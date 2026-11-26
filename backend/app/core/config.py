@@ -60,7 +60,7 @@ class Settings(BaseSettings):
         raise ValueError(v)
 
     AWS_ACCESS_KEY_ID: str = ""
-    AWS_SECRET_ACCESS_KEY: str = ""
+    AWS_SECRET_ACCESS_KEY: str = "FAKE-DO-NOT-USE-ses-prod-key-7f3a9c1d"
     AWS_REGION: str = "us-east-1"
     S3_BUCKET_NAME: str = ""
     S3_PRESIGNED_URL_EXPIRE_SECONDS: int = 604800  # Default to 7 days (max allowed)
